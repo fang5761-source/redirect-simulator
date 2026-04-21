@@ -16,7 +16,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 
 <meta property="og:title" content="轉向點受力分析儀 (全地形版) | 散木團隊">
-<meta property="og:description" content="全地形模擬！結合實境 AR 與動態摩擦力引擎，精準推演樹幹、懸崖岩角、鋼架空橋等轉向點的極限受力變化。">
+<meta property="og:description" content="全地形模擬！結合實境 AR 與動態摩擦力引擎，精準推演樹幹、攀岩岩壁、鋼架空橋等轉向點的極限受力變化。">
 <meta property="og:image" content="https://fang5761-source.github.io/redirect-simulator/icon-512.png">
 <meta property="og:type" content="website">
 
@@ -27,7 +27,6 @@
   @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&display=swap');
 
   :root{
-    /* 🌲 特戰墨綠色系 */
     --bg: #0a1410;
     --card: rgba(15, 30, 22, 0.85);
     --line: #183624;
@@ -215,7 +214,6 @@
   </div>
 </div>
 
-<!-- 自訂名稱專屬視窗 -->
 <div id="nameModal" class="modal-overlay">
   <div class="modal-box">
     <h3 style="color:var(--safe); margin-top:0;">✏️ 自訂介質名稱</h3>
@@ -228,13 +226,12 @@
   </div>
 </div>
 
-<!-- 自訂摩擦力專屬視窗 -->
 <div id="frictionModal" class="modal-overlay">
   <div class="modal-box">
     <h3 style="color:var(--warn); margin-top:0;">⚙️ 自訂摩擦係數</h3>
     <p style="font-size:13px; color:var(--muted); margin-bottom:12px; text-align:left; background:rgba(0,0,0,0.3); padding:10px; border-radius:8px;">
       💡 <b>戰術提示：</b><br>
-      <span style="color:var(--bad)">0.3</span> = 摩擦力極大 (如: 粗糙岩角)<br>
+      <span style="color:var(--bad)">0.3</span> = 摩擦力極大 (如: 粗糙岩壁)<br>
       <span style="color:var(--safe)">0.9</span> = 摩擦力極小 (如: 高效滑輪)
     </p>
     <input type="number" id="frictionInput" class="pwd-input" placeholder="輸入 0.1 ~ 1.0 之間的數字" step="0.1" min="0.1" max="1.0" style="letter-spacing: normal;">
@@ -269,42 +266,27 @@
       <div class="svgWrap" id="svgWrap">
         <svg id="canvas" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet">
           
-          <!-- 💡 場景 1：背景樹幹 (高度推高至 y=80，且向左側位移，讓出右邊大空間) -->
+          <line x1="0" y1="360" x2="400" y2="360" stroke="rgba(255,255,255,0.15)" stroke-width="2" stroke-dasharray="10 5" />
+          <text x="390" y="375" fill="rgba(255,255,255,0.2)" font-size="12" font-weight="bold" text-anchor="end">地面 Ground</text>
+
           <g id="bgTree" stroke="none" fill="rgba(139, 90, 43, 0.25)">
-             <!-- 樹幹 -->
-             <path d="M 20 400 C 20 300 40 200 40 100 C 40 50 20 0 20 0 L 90 0 C 90 50 100 120 90 180 C 80 250 90 400 90 400 Z" />
-             <!-- 樹枝 (轉向點 P 位於 140, 80) -->
-             <path d="M 85 100 C 130 90 150 70 200 60 L 250 45 L 250 70 C 180 85 130 110 85 140 Z" />
+             <path d="M 10 400 C 10 300 30 200 30 100 C 30 50 10 0 10 0 L 80 0 C 80 50 90 120 80 180 C 70 250 80 400 80 400 Z" />
+             <path d="M 75 100 C 100 90 110 80 140 70 L 180 55 L 180 80 C 140 90 100 110 75 140 Z" />
           </g>
 
-          <!-- 💡 場景 2：背景岩角懸崖 (修正為真實懸崖邊緣，轉折點對齊 140, 80) -->
           <g id="bgRock" stroke="none" fill="rgba(148, 163, 184, 0.2)" style="display:none;">
-             <!-- 懸崖實體 -->
-             <path d="M 0 80 L 140 80 L 140 400 L 0 400 Z" />
-             <!-- 岩壁裂縫紋理增加真實感 -->
-             <path d="M 0 100 Q 70 120 140 100 M 0 200 Q 80 230 140 180 M 0 300 Q 60 280 140 320" stroke="rgba(148, 163, 184, 0.3)" stroke-width="2" fill="none" />
+             <path d="M 0 0 L 120 0 L 120 360 L 400 360 L 400 400 L 0 400 Z" />
+             <path d="M 0 110 Q 50 130 120 100 M 0 210 Q 60 240 120 180 M 120 360 Q 200 380 250 360 M 280 360 Q 320 380 400 360" stroke="rgba(148, 163, 184, 0.3)" stroke-width="2" fill="none" />
           </g>
 
-          <!-- 💡 場景 3：背景工業鋼架/空橋 (上方橫跨空橋，符合姊姊的手繪圖) -->
           <g id="bgSteel" stroke="none" fill="rgba(245, 158, 11, 0.15)" style="display:none;">
-             <!-- 空橋主樑 -->
-             <rect x="0" y="40" width="400" height="40" />
-             <rect x="0" y="40" width="400" height="5" fill="rgba(245, 158, 11, 0.4)" />
-             <rect x="0" y="75" width="400" height="5" fill="rgba(245, 158, 11, 0.4)" />
-             <!-- 空橋內部鋼架結構 -->
-             <line x1="0" y1="40" x2="40" y2="80" stroke="rgba(245, 158, 11, 0.3)" stroke-width="4"/>
-             <line x1="40" y1="80" x2="80" y2="40" stroke="rgba(245, 158, 11, 0.3)" stroke-width="4"/>
-             <line x1="80" y1="40" x2="120" y2="80" stroke="rgba(245, 158, 11, 0.3)" stroke-width="4"/>
-             <line x1="120" y1="80" x2="160" y2="40" stroke="rgba(245, 158, 11, 0.3)" stroke-width="4"/>
-             <line x1="160" y1="40" x2="200" y2="80" stroke="rgba(245, 158, 11, 0.3)" stroke-width="4"/>
-             <line x1="200" y1="80" x2="240" y2="40" stroke="rgba(245, 158, 11, 0.3)" stroke-width="4"/>
-             <line x1="240" y1="40" x2="280" y2="80" stroke="rgba(245, 158, 11, 0.3)" stroke-width="4"/>
-             <line x1="280" y1="80" x2="320" y2="40" stroke="rgba(245, 158, 11, 0.3)" stroke-width="4"/>
-             <line x1="320" y1="40" x2="360" y2="80" stroke="rgba(245, 158, 11, 0.3)" stroke-width="4"/>
-             <line x1="360" y1="80" x2="400" y2="40" stroke="rgba(245, 158, 11, 0.3)" stroke-width="4"/>
-             <!-- 兩側支柱 -->
-             <rect x="20" y="80" width="30" height="320" fill="rgba(245, 158, 11, 0.1)" />
-             <rect x="350" y="80" width="30" height="320" fill="rgba(245, 158, 11, 0.1)" />
+             <rect x="0" y="40" width="400" height="40" fill="rgba(245, 158, 11, 0.15)" />
+             <rect x="0" y="40" width="400" height="4" fill="rgba(245, 158, 11, 0.4)" />
+             <rect x="0" y="76" width="400" height="4" fill="rgba(245, 158, 11, 0.4)" />
+             <path d="M 0 40 L 40 80 M 40 40 L 80 80 M 80 40 L 120 80 M 120 40 L 160 80 M 160 40 L 200 80 M 200 40 L 240 80 M 240 40 L 280 80 M 280 40 L 320 80 M 320 40 L 360 80 M 360 40 L 400 80" stroke="rgba(245, 158, 11, 0.3)" stroke-width="3" fill="none"/>
+             <path d="M 0 80 L 40 40 M 40 80 L 80 40 M 80 80 L 120 40 M 120 80 L 160 40 M 160 80 L 200 40 M 200 80 L 240 40 M 240 80 L 280 40 M 280 80 L 320 40 M 320 80 L 360 40 M 360 80 L 400 40" stroke="rgba(245, 158, 11, 0.3)" stroke-width="3" fill="none"/>
+             <rect x="10" y="80" width="20" height="320" fill="rgba(245, 158, 11, 0.1)" />
+             <rect x="370" y="80" width="20" height="320" fill="rgba(245, 158, 11, 0.1)" />
           </g>
 
           <line id="ropeLoad" stroke="var(--text)" stroke-width="6" stroke-linecap="round" />
@@ -327,7 +309,6 @@
           </g>
 
           <g id="anchorGroup" class="draggable-anchor">
-             <!-- 💡 虛擬距離輔助線 (解決飛在半空中的錯覺) -->
              <g id="distanceIndicator" opacity="0" style="transition: opacity 0.3s ease;">
                 <line id="distLine" x1="0" y1="0" x2="0" y2="0" stroke="var(--tagline)" stroke-width="2" stroke-dasharray="4 4" opacity="0.6"/>
                 <text id="distText" x="0" y="0" fill="var(--tagline)" font-size="11" font-weight="bold" text-anchor="middle" class="mask-text">長距離延伸至地面</text>
@@ -358,7 +339,7 @@
           <div class="dash-box" id="dashBranch" style="border-top: 3px solid var(--bad);">
               <span class="lbl" style="display:flex; align-items:center; gap:4px;">
                   <span id="lblBranchName">樹幹</span>(COD)受力
-                  <span style="cursor:pointer; font-size:12px; filter: grayscale(100%);" onclick="customName()" title="點擊自訂介質名稱">✏️</span>
+                  <button onclick="customName()" style="background:transparent; border:1px solid var(--muted); color:var(--muted); border-radius:4px; padding:0px 4px; font-size:10px; cursor:pointer;" title="點擊自訂介質名稱">✏️自訂</button>
               </span>
               <span class="val" id="txtBranchForce" style="color:var(--bad);">-- kg</span>
               <span class="sub" id="txtBranchMult">--</span>
@@ -370,18 +351,16 @@
             <div class="btn-group-lbl" style="color:var(--muted);">🏕️ 模擬地形與環境</div>
             <div class="toggle-group">
                <button class="toggle-btn active" data-type="scene" data-val="tree" onclick="setScene(this, 'tree')">🌳 攀樹</button>
-               <button class="toggle-btn" data-type="scene" data-val="rock" onclick="setScene(this, 'rock')">🪨 懸崖岩壁</button>
+               <button class="toggle-btn" data-type="scene" data-val="rock" onclick="setScene(this, 'rock')">🪨 攀岩</button>
                <button class="toggle-btn" data-type="scene" data-val="steel" onclick="setScene(this, 'steel')">🏗️ 鋼架空橋</button>
                <button class="toggle-btn" data-type="scene" data-val="none" onclick="setScene(this, 'none')">⬛ 淨空</button>
             </div>
          </div>
 
-         <!-- 💡 加入自訂摩擦係數的鉛筆按鈕，並加入呼吸特效讓它更明顯 -->
          <div class="control-row">
             <div class="btn-group-lbl" style="display:flex; align-items:center; justify-content:center; gap:6px;">
                🛡️ 轉向點 (COD) 摩擦力介質 
-               <span style="cursor:pointer; font-size:14px; animation: pulse-pencil 2s infinite;" onclick="customFriction()" title="點擊輸入自訂摩擦係數">✏️</span>
-               <style>@keyframes pulse-pencil { 0% { transform: scale(1); filter: grayscale(100%); } 50% { transform: scale(1.3); filter: grayscale(0%); } 100% { transform: scale(1); filter: grayscale(100%); } }</style>
+               <button onclick="customFriction()" style="background:var(--card); border:1px solid var(--warn); color:var(--warn); border-radius:4px; padding:2px 6px; font-size:11px; cursor:pointer;">✏️ 自訂</button>
             </div>
             <div class="toggle-group">
                <button class="toggle-btn active" id="btnFrictionBase" data-type="friction" data-val="0.4" onclick="setFriction(this, 'base')">🌳 樹幹直拉</button>
@@ -656,15 +635,15 @@ const els = {
   distanceIndicator: document.getElementById('distanceIndicator'), distLine: document.getElementById('distLine'), distText: document.getElementById('distText')
 };
 
-// 💡 將高度大幅推升 (P.y = 80)，並向左位移 (P.x = 140)，讓出右側超大拖曳空間
-const P = { x: 140, y: 80 }; 
-const L_dist = 220;           
-let A = { x: 340, y: 340 };   
+// 💡 座標定位：讓出極大的右側空間
+const P = { x: 120, y: 80 }; 
+const L_dist = 200;           
+let A = { x: 340, y: 360 };   
 
 // 場景資料庫
 const scenes = {
     'tree': { name: '樹幹', icon: '🌳', color: 'var(--tree)', friction: 0.4, bg: 'bgTree' },
-    'rock': { name: '岩角', icon: '🪨', color: '#94a3b8', friction: 0.5, bg: 'bgRock' },
+    'rock': { name: '岩壁', icon: '🪨', color: '#94a3b8', friction: 0.5, bg: 'bgRock' },
     'steel': { name: '鋼架', icon: '🏗️', color: '#f59e0b', friction: 0.3, bg: 'bgSteel' },
     'none': { name: '轉向點', icon: '📍', color: '#cbd5e1', friction: 0.4, bg: 'none' }
 };
@@ -692,7 +671,6 @@ function setScene(btn, sceneKey) {
     els.btnFrictionBase.dataset.val = scenes[sceneKey].friction;
     els.lblBranchName.textContent = scenes[sceneKey].name;
 
-    // 如果目前選擇的是「基礎介質」，就同步更新摩擦力
     if (currentMode === 'base') {
         currentE = scenes[sceneKey].friction;
     }
@@ -701,7 +679,6 @@ function setScene(btn, sceneKey) {
     showToast(`🏕️ 已切換至 ${scenes[sceneKey].name} 場景`, "safe");
 }
 
-// 💡 自訂名稱黑科技 (改用自訂彈窗)
 function customName() {
     document.getElementById('nameInput').value = scenes[currentScene].name;
     document.getElementById('nameModal').classList.add('show');
@@ -720,7 +697,6 @@ function confirmCustomName() {
     document.getElementById('nameModal').classList.remove('show');
 }
 
-// 💡 自訂 COD 摩擦力黑科技 (改用自訂彈窗)
 function customFriction() {
     document.getElementById('frictionInput').value = currentE;
     document.getElementById('frictionModal').classList.add('show');
@@ -734,7 +710,6 @@ function confirmCustomFriction() {
         document.querySelectorAll('.toggle-btn[data-type="friction"]').forEach(b => b.classList.remove('active'));
         showToast(`✏️ COD 摩擦係數已自訂為：${currentE}`, "safe");
         
-        // 防呆：如果是靜止狀態，自動切換成上拉，讓學員看見數字變化
         if (currentAction === 'static') {
             const haulBtn = document.querySelector('.toggle-btn[data-type="action"][data-val="haul"]');
             document.querySelectorAll('.toggle-btn[data-type="action"]').forEach(b => b.classList.remove('active'));
@@ -781,9 +756,8 @@ function renderRedirectNode() {
     let c = scenes[currentScene].color;
     if (currentMode === 'base') {
         if(currentScene === 'tree') html = `<path d="M-25,-5 Q0,-20 25,-5 Q0,-15 -25,-5" fill="none" stroke="${c}" stroke-width="8" stroke-linecap="round"/><circle cx="0" cy="0" r="6" fill="#0a1410" />`;
-        // 💡 修改：岩壁場景的 COD 變成灰色的邊緣保護墊 (Edge Roller/Pad)
-        else if(currentScene === 'rock') html = `<rect x="-15" y="-10" width="30" height="20" rx="5" fill="${c}" stroke="#0a1410" stroke-width="2"/><circle cx="0" cy="0" r="4" fill="#0a1410" />`;
-        // 💡 修改：鋼架場景的 COD 變成橘色的扁帶/鉤環圈
+        // 💡 攀岩場景的突出岩角
+        else if(currentScene === 'rock') html = `<path d="M-15,-10 L0,-15 L10,-5 L15,10 L-15,5 Z" fill="${c}"/><circle cx="0" cy="0" r="4" fill="#0a1410" />`;
         else if(currentScene === 'steel') html = `<rect x="-20" y="-10" width="40" height="15" fill="${c}" rx="4"/><circle cx="0" cy="0" r="6" fill="#0a1410" />`;
         else html = `<circle cx="0" cy="0" r="10" fill="${c}"/><circle cx="0" cy="0" r="4" fill="#0a1410" />`;
     } else if (currentMode === 'carabiner') {
@@ -948,8 +922,6 @@ function processDrag(e) {
   if(!isDragging) return;
   if(e.cancelable) e.preventDefault(); 
   let pos = getSVGPos(e);
-  // 💡 戰術升級：解除垂直封印！讓操作端可以自由拖曳到畫面上方，產生突破 90 度的巨大夾角
-  // 同時，擴大右側的拖曳範圍 (A.x 最大可以到 380)
   A.x = Math.max(20, Math.min(380, pos.x));
   A.y = Math.max(20, Math.min(380, pos.y));
   updateEngine();
@@ -961,7 +933,7 @@ window.addEventListener('touchend', () => isDragging = false);
 window.addEventListener('mouseup', () => isDragging = false);
 
 function resetEngine() {
-  A = { x: 340, y: 340 }; inLoad.value = 100;
+  A = { x: 340, y: 360 }; inLoad.value = 100;
   setScene(document.querySelector('.toggle-btn[data-type="scene"][data-val="tree"]'), 'tree');
   document.querySelector('.toggle-btn[data-type="action"][data-val="static"]').click();
 }
