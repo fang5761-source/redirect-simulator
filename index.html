@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#0a1410" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+
+<title>下方固定點架設 (轉向摩擦力版) | 散木團隊</title>
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="下方固定點">
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta property="og:title" content="下方固定點架設 (轉向摩擦力版) | 散木團隊">
+<meta property="og:description" content="全球首創！結合實境 AR 與動態摩擦力引擎，精準推演攀樹轉向點的極限受力與上下放張力變化。">
+<meta property="og:image" content="https://fang5761-source.github.io/redirect-simulator/icon-512.png">
+<meta property="og:type" content="website">
+
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&display=swap');
+
+  :root{
+    /* 🌲 特戰墨綠色系 */
+    --bg: #0a1410;
+    --card: rgba(15, 30, 22, 0.85);
+    --line: #183624;
+    --grid: #132a1b;
+    --text: #e8f5e9;
+    --muted: #81c784;
+    
+    /* 狀態色彩保留高對比 */
+    --safe: #4ade80;
+    --warn: #fbbf24;
+    --bad: #ef4444;
+    --tagline: #fb923c; /* 地面操作端改用高能橘 */
+    --vip: #c084fc;
+    --tree: #65a30d;
+  }
+
+  html, body { 
+    height: 100%; width: 100%; overflow: hidden; overscroll-behavior: none; 
+    position: fixed; inset: 0; background-color: var(--bg);
+  }
+  
+  body {
+    margin: 0; color: var(--text); font-family: 'Noto Serif TC', serif;
+    -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
+    display: flex; flex-direction: column; align-items: center;
+    padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom);
+    transition: background-color 0.3s ease;
+  }
+
+  body.camera-mode { background-color: transparent !important; }
+
+  #status-bar-protector {
+    position: fixed; top: 0; left: 0; width: 100%; height: env(safe-area-inset-top);
+    background-color: var(--bg); z-index: 9998; transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
+  }
+  body.camera-mode #status-bar-protector {
+    background-color: rgba(10, 20, 16, 0.7); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  }
+
+  #scroll-wrapper {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    overflow-y: auto; -webkit-overflow-scrolling: touch;
+    display: flex; flex-direction: column; align-items: center;
+  }
+
+  input, textarea { -webkit-user-select: auto; user-select: auto; box-sizing: border-box; }
+  *{box-sizing:border-box}
+
+  #bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background-color: var(--bg); overflow: hidden; }
+  #bg-video, #bg-image { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s; }
+  #grid-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+    background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 20px 20px; opacity: 0.5; pointer-events: none; transition: opacity 0.3s;
+  }
+
+  .app-container { 
+    max-width: 500px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; position: relative; z-index: 1; 
+    padding: 10px 10px 40px 10px;
+  }
+  input[type="file"] { display: none; }
+
+  .card { 
+    width:100%; background:var(--card); border:2px solid var(--line); 
+    border-radius:16px; padding: 10px; box-shadow:0 10px 30px rgba(0,0,0,.5); 
+    backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); 
+    transition: border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+  }
+  .card.camera-mode {
+    background: transparent !important; border-color: rgba(255,255,255,0.2) !important;
+    backdrop-filter: none !important; -webkit-backdrop-filter: none !important; box-shadow: none !important;
+  }
+  
+  /* 💡 修改：標題極簡單行化 */
+  .topbar { display: flex; align-items: center; margin-bottom: 8px; width: 100%; justify-content: space-between; }
+  .title-left { display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; border-left: 4px solid var(--warn); padding-left: 8px; font-size: 15px; font-weight: bold; white-space: nowrap; }
+  
+  .vip-badge { display: none; background: var(--vip); color: #fff; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 12px; letter-spacing: 0.5px; box-shadow: 0 0 8px rgba(192, 132, 252, 0.6); margin-left: 4px; }
+  .is-vip .vip-badge { display: inline-block; }
+
+  .icon-bar { display: flex; justify-content: space-between; align-items: center; gap: 6px; background: rgba(0,0,0,0.4); padding: 6px 8px; border-radius: 12px; margin-bottom: 8px; border: 1px solid var(--line); }
+  .icon-btn { flex: 1; aspect-ratio: 1/1; max-height: 36px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid transparent; display: flex; justify-content: center; align-items: center; position: relative; cursor: pointer; transition: all 0.2s; font-size: 16px; color: var(--text); padding: 0; }
+  .icon-btn:active { background: var(--line); transform: scale(0.95); }
+  .icon-btn.active { background: var(--safe); color: var(--bg); border-color: var(--safe); }
+  .lock-icon { position: absolute; bottom: 2px; right: 2px; font-size: 10px; background: rgba(0,0,0,0.8); border-radius: 50%; padding: 2px; }
+  .is-vip .lock-icon { display: none; }
+
+  /* 💡 修改：縮小畫布高度，讓下方不需滑動 */
+  .svgWrap { 
+    position:relative; width:100%; height: 35vh; min-height: 280px; max-height: 380px;
+    background: transparent; border-radius: 12px; border: 1px dashed var(--line); overflow: hidden; 
+    margin-bottom: 8px;
+  }
+  svg { display: block; width: 100%; height: 100%; }
+  .draggable-anchor { cursor: grab; touch-action: none; }
+  .draggable-anchor:active { cursor: grabbing; }
+
+  /* 💡 新增：集中式戰術儀表板 */
+  .dashboard {
+      display: flex; justify-content: space-between; gap: 6px; margin-bottom: 8px;
+  }
+  .dash-box {
+      flex: 1; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; text-align: center;
+  }
+  .dash-box .lbl { font-size: 11px; color: var(--muted); font-weight: bold; margin-bottom: 4px; }
+  .dash-box .val { font-size: 18px; font-weight: 900; font-family: monospace; }
+  .dash-box .sub { font-size: 10px; opacity: 0.8; margin-top: 2px; }
+
+  /* 💡 縮減控制區間距 */
+  .control-deck { background: rgba(0,0,0,0.3); border: 1px solid var(--line); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+  
+  .control-row { display: flex; flex-direction: column; gap: 6px; }
+  .btn-group-lbl { font-size: 12px; color: var(--safe); font-weight: bold; }
+  .toggle-group { display: flex; gap: 6px; width: 100%; justify-content: center; }
+  .toggle-btn { flex: 1; background: rgba(0,0,0,0.4); border: 1px solid var(--line); color: var(--muted); border-radius: 6px; padding: 8px 2px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.2s; position: relative;}
+  .toggle-btn.active { background: var(--safe); color: var(--bg); border-color: var(--safe); }
+  .toggle-btn[data-type="action"].active { background: var(--tagline); color: var(--bg); border-color: var(--tagline); }
+
+  /* 💡 新增：小白白話文教學面板 */
+  .edu-wrap { 
+    margin-top: 8px; padding: 12px; background: rgba(255, 216, 77, 0.1); 
+    border-radius: 8px; border: 1px solid var(--warn); text-align: justify; 
+    font-size: 13.5px; font-weight: bold; color: var(--text); line-height: 1.6; 
+    transition: background 0.3s, border 0.3s;
+  }
+
+  .mask-text { paint-order: stroke fill; stroke: var(--bg); stroke-width: 4px; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* V3.0 UI 組件 */
+  .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; z-index: 9999; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+  .modal-overlay.show { opacity: 1; pointer-events: auto; }
+  .modal-box { background: var(--bg); border: 2px solid var(--vip); border-radius: 16px; padding: 24px; width: 90%; max-width: 350px; text-align: center; box-shadow: 0 10px 40px rgba(192, 132, 252, 0.3); transform: scale(0.9); transition: transform 0.3s ease; }
+  .modal-overlay.show .modal-box { transform: scale(1); }
+  .modal-box h3 { margin: 0 0 10px 0; color: var(--text); }
+  .modal-actions { display: flex; gap: 10px; margin-top: 15px; }
+  .btn-cancel { flex: 1; background: transparent; border: 1px solid var(--line); color: var(--text); padding: 10px; border-radius: 8px; cursor: pointer; }
+  .btn-unlock { flex: 1; background: var(--warn); border: none; color: #0f1623; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+  .pwd-input { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--line); color: #fff; padding: 10px; border-radius: 8px; font-size: 16px; text-align: center; outline: none; margin-bottom: 12px; font-family: monospace; }
+  
+  #toastMessage { position: fixed; top: -50px; left: 50%; transform: translateX(-50%); background: var(--card); color: var(--text); padding: 14px 24px; border-radius: 10px; border-left: 4px solid var(--safe); box-shadow: 0 8px 25px rgba(0,0,0,0.6); z-index: 10000; font-weight: bold; text-align: center; font-size: 14px; width: 85%; max-width: 320px; transition: top 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); opacity: 0; pointer-events: none; }
+  #toastMessage.show { top: 20px; opacity: 1; }
+
+  .menu-list { display: flex; flex-direction: column; gap: 8px; margin-top: 5px; width: 100%; }
+  .main-accordion { background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
+  details.main-accordion > summary { padding: 12px 16px; font-weight: bold; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; color: var(--safe); background: rgba(0,0,0,0.3); font-size: 14px; }
+  details.main-accordion > summary::-webkit-details-marker { display: none; }
+  .menu-content { padding: 14px 16px; font-size: 13px; color: var(--text); line-height: 1.6; background: rgba(0,0,0,0.4); text-align: justify; }
+  .menu-action-btn { padding: 14px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 14px; border-bottom: 1px solid var(--line); color: var(--text); }
+  .menu-action-btn:active { background: var(--line); }
+</style>
+</head>
+<body>
+
+<script>
+// 散木團隊 · 多層次防盜保護系統 v3.0
+(function(){
+  const _0xd = atob('ZmFuZzU3NjEtc291cmNlLmdpdGh1Yi5pbw=='); 
+  const _0xh = window[atob('bG9jYXRpb24=')][atob('aG9zdG5hbWU=')]; 
+  window['_unlockApp']   = function(){ _0xKill(); };
+  window['_bypassCheck'] = function(){ _0xKill(); };
+  window['_disableLock'] = function(){ _0xKill(); };
+
+  function _0xKill(msg) {
+    const _m = msg || atob('5pyq57aT5o6l5qC85qih6Iiq5ZCn77yc5bey57O757uf5bim5Yqo5aSx5pWX');
+    try {
+      document.open();
+      document.write('<html><body style="margin:0;height:100vh;display:flex;flex-direction:column;background:#0a1410;color:#ef4444;justify-content:center;align-items:center;text-align:center;font-family:monospace;padding:20px;"><span style="font-size:72px;margin-bottom:16px;">&#x1F480;</span><div style="font-size:22px;font-weight:bold;margin-bottom:8px;">' + _m + '</div><div style="font-size:13px;color:#81c784;margin-top:12px;">' + atob('5pys5bel5YW36aSa5qih6Iiq55qE5q2k5bqT77yM5Lul56aB5q2k5q+P5qih6IiqICsgU2NhdHRlck1hcA==') + '</div></body></html>');
+      document.close();
+    } catch(e) {
+      document.body.innerHTML = '<span style="font-size:72px">&#x1F480;</span><br>' + _m;
+    }
+    throw new Error('[SM-SHIELD] Unauthorized access terminated.');
+  }
+
+  (function _0xVerify(){
+    const _whitelist = [_0xd, 'localhost', '127.0.0.1', ''];
+    const _isOk = _whitelist.some(function(w){ return _0xh === w || _0xh.endsWith('.' + w); });
+    if (!_isOk) { _0xKill(); }
+  })();
+})();
+</script>
+
+<div id="status-bar-protector" data-html2canvas-ignore="true"></div>
+<div id="bg-layer"><video id="bg-video" autoplay playsinline muted></video><img id="bg-image" src="" alt="背景圖片"></div>
+<div id="grid-overlay"></div>
+<div id="toastMessage"></div>
+
+<!-- 技術支援引導視窗 -->
+<div id="supportModal" class="modal-overlay">
+  <div class="modal-box">
+    <h3 style="color:var(--warn); margin-top:0;">💬 技術支援與問題回報</h3>
+    <p style="text-align:left; font-size:13px; line-height:1.7; margin-bottom:15px; color:var(--text);">
+      如果您遇到系統異常，或是<strong>更換新手機需要重新取得授權碼</strong>，請準備好您的：<br><br>
+      <span style="color:var(--safe);">✔ 購買收據 Email 截圖</span><br>
+      <span style="color:var(--safe);">✔ 遭遇的問題描述</span><br><br>
+      請點擊下方按鈕前往「專屬回報表單」填寫。朵朵老師確認無誤後，會盡速將新密碼發送至您的信箱！<br>
+    </p>
+    <div class="modal-actions" style="margin-top: 15px;">
+      <button class="btn-cancel" onclick="document.getElementById('supportModal').classList.remove('show')">稍後再說</button>
+      <button class="btn-unlock" style="background:var(--warn); color:#000;" onclick="window.open('https://forms.gle/fnxHcegcwQSPKmuQ6', '_blank'); document.getElementById('supportModal').classList.remove('show')">前往填寫表單</button>
+    </div>
+  </div>
+</div>
+
+<!-- VIP 控制台視窗 -->
+<div id="vipModal" class="modal-overlay">
+  <div class="modal-box" id="vipModalBox">
+    <h3>🔒 專業版功能解鎖 <span class="vip-badge" style="display:inline-block;">PRO</span></h3>
+    <p>您即將啟用「<span id="vipFeatureName" style="color:var(--vip); font-weight:bold; font-size:16px;"></span>」！</p>
+    <p id="vipFeatureDesc" style="font-size:14px; color:var(--safe); font-weight:bold; margin-bottom: 12px;"></p>
+    <p style="font-size:13px;">此功能為進階專業版限定。<br>支持散木團隊研發，永久解鎖全功能！</p>
+    <button style="background:var(--vip); color:#fff; border:none; padding:12px 20px; border-radius:8px; font-weight:bold; width:100%; margin-bottom:10px; cursor:pointer;" onclick="window.open('https://gumroad.com', '_blank')">🛒 前往專業版自動販賣機</button>
+    <hr style="border:0; border-top:1px dashed var(--line); margin: 15px 0;">
+    <p style="font-size:12px; color:var(--muted); margin-bottom:8px;">已取得密碼？請在此輸入：</p>
+    <input type="text" id="vipPwdInput" placeholder="輸入 VIP 通關密碼" class="pwd-input" autocomplete="off">
+    <div id="vipErrorMsg" style="color:var(--bad); font-size:12px; height:16px; margin-bottom:8px;"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeVipModal()">稍後再說</button>
+      <button class="btn-unlock" onclick="verifyVip()">立即解鎖 🔓</button>
+    </div>
+  </div>
+</div>
+
+<div id="scroll-wrapper">
+  <div class="app-container">
+
+    <div class="card" id="mainCard">
+      <!-- 💡 極簡單行標題 -->
+      <div class="topbar">
+          <div class="title-left" id="mainTitleText">
+            下方固定點架設儀 <span class="vip-badge">PRO</span>
+          </div>
+          <img src="./sunmoon_logo.png" alt="散木團隊" style="width: 26px; height: 26px; border-radius: 4px; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.5);" onerror="this.style.display='none'">
+      </div>
+
+      <!-- 裝備工具列 -->
+      <div class="icon-bar" data-html2canvas-ignore="true">
+        <button class="icon-btn" id="btn-camera" onclick="attemptFeature('📷 實境相機疊圖', toggleCamera)" title="實境相機">📷<span class="lock-icon">🔒</span></button>
+        <button class="icon-btn" id="btn-flashlight" onclick="toggleFlashlight()" title="手電筒">🔦</button>
+        <label class="icon-btn" onclick="handleImageUploadClick(event)" title="載入照片" style="margin:0;">📁<span class="lock-icon">🔒</span></label>
+        <input type="file" id="upload-image" accept="image/*" onchange="loadImage(event)">
+        <button class="icon-btn" onclick="toggleGrid()" title="工程網格">🌐</button>
+        <button class="icon-btn" onclick="attemptFeature('📸 戰術純淨截圖', takeScreenshot)" title="戰術截圖">📸<span class="lock-icon">🔒</span></button>
+        <button class="icon-btn" onclick="resetEngine()" title="重置沙盤">↺</button>
+      </div>
+
+      <!-- 💡 畫布高度縮小，去除內部雜亂數值 -->
+      <div class="svgWrap" id="svgWrap">
+        <svg id="canvas" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet">
+          <!-- 背景裝飾樹幹 -->
+          <g id="treeArt" stroke="none" fill="rgba(139, 90, 43, 0.25)">
+             <path d="M 50 400 C 50 300 70 200 70 100 C 70 50 50 0 50 0 L 120 0 C 120 50 130 120 120 180 C 110 250 120 400 120 400 Z" />
+             <path d="M 115 160 C 180 160 250 130 320 110 L 320 135 C 250 155 180 190 115 210 Z" />
+          </g>
+
+          <!-- 繩索 -->
+          <line id="ropeLoad" stroke="var(--text)" stroke-width="6" stroke-linecap="round" />
+          <line id="ropeAnchor" stroke="var(--tagline)" stroke-width="6" stroke-linecap="round" />
+          
+          <!-- 夾角 -->
+          <path id="angleArc" fill="rgba(255, 216, 77, 0.1)" stroke="var(--warn)" stroke-width="2" />
+          <text id="angleText" class="mask-text" fill="var(--warn)" font-size="16" font-weight="bold" text-anchor="middle"></text>
+
+          <!-- 轉向點介質圖示 -->
+          <g id="redirectNode"></g>
+
+          <!-- 樹幹受力箭頭 (紅色/黃色/綠色) -->
+          <g id="forceArrowGroup">
+             <line id="forceArrowLine" x1="0" y1="0" x2="0" y2="0" stroke="var(--bad)" stroke-width="6" stroke-linecap="round" />
+             <polygon id="forceArrowHead" points="0,0 0,0 0,0" fill="var(--bad)" />
+          </g>
+
+          <!-- 攀樹者圖示 -->
+          <g id="loadGroup">
+             <circle cx="0" cy="12" r="10" fill="#e8f5e9" />
+             <rect x="-12" y="24" width="24" height="26" rx="5" fill="#e8f5e9" />
+             <text x="0" y="42" fill="#0a1410" font-size="14" font-weight="bold" text-anchor="middle" font-family="monospace">W</text>
+          </g>
+
+          <!-- 下方固定點 (拖曳端) -->
+          <g id="anchorGroup" class="draggable-anchor">
+             <circle cx="0" cy="0" r="40" fill="transparent" /> 
+             <rect x="-14" y="-20" width="28" height="40" fill="#2d3748" rx="4" id="anchorBox" />
+             <path d="M -15 -5 L 15 5 M -15 5 L 15 15" stroke="var(--tagline)" stroke-width="4" stroke-linecap="round" />
+             <text y="-25" fill="var(--tagline)" font-size="13" font-weight="bold" text-anchor="middle" pointer-events="none" id="anchorLabel" class="mask-text">地面操作</text>
+          </g>
+        </svg>
+      </div>
+
+      <!-- 💡 新增：集中式戰術儀表板 -->
+      <div class="dashboard">
+          <div class="dash-box" style="border-top: 3px solid var(--text);">
+              <span class="lbl">攀樹者 (負載)</span>
+              <div style="display:flex; align-items:center; gap:2px;">
+                <input type="number" id="inLoad" value="100" step="10" min="10" style="width:45px; background:transparent; border:none; border-bottom:1px solid var(--text); color:var(--text); font-size:18px; font-weight:900; text-align:center; padding:0;">
+                <span style="font-size:12px;">kg</span>
+              </div>
+              <span class="sub">永遠 = 1 倍</span>
+          </div>
+          <div class="dash-box" id="dashAnchor" style="border-top: 3px solid var(--tagline);">
+              <span class="lbl">地面牽引力</span>
+              <span class="val" id="txtAnchorTension" style="color:var(--tagline);">-- kg</span>
+              <span class="sub" id="txtAnchorMult">--</span>
+          </div>
+          <div class="dash-box" id="dashBranch" style="border-top: 3px solid var(--bad);">
+              <span class="lbl">樹枝破壞力</span>
+              <span class="val" id="txtBranchForce" style="color:var(--bad);">-- kg</span>
+              <span class="sub" id="txtBranchMult">--</span>
+          </div>
+      </div>
+      
+      <!-- 控制區域 -->
+      <div class="control-deck">
+         <div class="control-row">
+            <div class="btn-group-lbl">🛡️ 轉向點摩擦力介質</div>
+            <div class="toggle-group">
+               <button class="toggle-btn active" data-type="friction" data-val="0.4" onclick="setFriction(this, 'tree')">🌳 樹幹直拉</button>
+               <button class="toggle-btn" data-type="friction" data-val="0.6" onclick="setFriction(this, 'carabiner')">🪝 鉤環<span class="lock-icon">🔒</span></button>
+               <button class="toggle-btn" data-type="friction" data-val="0.95" onclick="setFriction(this, 'pulley')">⚙️ 滑輪<span class="lock-icon">🔒</span></button>
+            </div>
+         </div>
+
+         <div class="control-row">
+            <div class="btn-group-lbl" style="color:var(--tagline);">🕹️ 地面確保/救援動作</div>
+            <div class="toggle-group">
+               <button class="toggle-btn active" data-type="action" data-val="static" onclick="setAction(this)">⏸️ 靜止鎖定</button>
+               <button class="toggle-btn" data-type="action" data-val="haul" onclick="setAction(this)">⬆️ 地面上拉<span class="lock-icon">🔒</span></button>
+               <button class="toggle-btn" data-type="action" data-val="lower" onclick="setAction(this)">⬇️ 確保下放<span class="lock-icon">🔒</span></button>
+            </div>
+         </div>
+      </div>
+      
+      <!-- 💡 新增：小白白話文教學面板 -->
+      <div class="edu-wrap" id="eduPanel">
+         📍 請在上方沙盤中拖曳「地面操作」，觀察樹枝承受的力量變化。
+      </div>
+    </div> 
+    
+    <div class="menu-list" data-html2canvas-ignore="true">
+      <details class="main-accordion">
+        <summary>📚 戰術原理解析：摩擦力與破壞力</summary>
+        <div class="menu-content">
+          <p><b style="color:var(--tagline)">⚓ 地面牽引力 (操作端張力)</b><br>繩索繞過樹幹會產生巨大摩擦力。若地面人員要將 100kg 攀樹者 <b style="color:var(--warn)">上拉 (Hauling)</b>，必須額外克服摩擦力，拉力可能暴增至 250kg 以上！反之，若是將攀樹者 <b style="color:var(--safe)">下放 (Lowering)</b>，樹幹摩擦力會變成天然的煞車器，地面人員只需握住 40kg 即可控制。</p>
+          <p><b style="color:var(--bad)">💀 轉向點破壞力 (Redirect Force)</b><br>上方樹枝同時被「攀樹者」與「地面操作」往下拉！根據向量力學，除了夾角 $\theta$ 越小受力越大之外，**「摩擦力導致下方張力暴增」**更是壓垮樹枝的最後一根稻草！</p>
+          <ul style="padding-left: 20px; margin-top: 5px;">
+            <li><b style="color:var(--bad)">極致危險：樹幹直拉 + 上拉操作</b>。下方需施力高達 250kg，加上攀樹者 100kg，樹枝將承受超過 3.5 倍負載的毀滅性力量！</li>
+            <li><b style="color:var(--safe)">最省力安全：專業滑輪</b>。幾乎消除摩擦力，下方張力回歸 100kg，樹枝受力也隨之降至最低的 2 倍以內。</li>
+          </ul>
+        </div>
+      </details>
+
+      <div class="main-accordion" style="margin-top: 10px;">
+        <div class="menu-action-btn" id="supportBtnAction">
+          <div style="display:flex; align-items:center; gap:8px;"><span style="font-size:18px;">💬</span>技術支援與問題回報</div>
+          <span style="color:var(--muted); font-size:12px; font-weight:bold;">❯</span>
+        </div>
+      </div>
+      
+      <div style="margin-top: 5px; padding: 10px; font-size: 11px; color: var(--muted); line-height: 1.6; background: rgba(0,0,0,0.3); border-radius: 8px; border-left: 4px solid var(--bad); text-align: justify;">
+        <strong style="color: var(--bad);">⚖️ 軟體免責聲明：</strong><br>本軟體摩擦係數為理論估算均值(樹幹0.4/鉤環0.6/滑輪0.95)。實際攀樹與救援中，樹皮粗糙度、繩索濕度皆會劇烈改變摩擦力。請務必遵循專業教官之指導實地判定。
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// --- V3.0 Toast 提示引擎 ---
+function showToast(msg, type = 'safe') {
+    const toast = document.getElementById('toastMessage');
+    toast.innerHTML = msg;
+    toast.style.borderLeftColor = `var(--${type})`;
+    toast.classList.add('show');
+    setTimeout(() => { toast.classList.remove('show'); }, 3000);
+}
+
+// --- V3.0 金鑰與 VIP 系統 ---
+const PERMANENT_KEYS = ["SM-A7K9-X2M4", "SM-B3Q8-P9Y1", "SM-C5R2-W6Z7"];
+const MASTER_KEY = "SUNMOON-BOSS";
+
+function getDailyKey(offsetDays = 0) {
+    const d = new Date(); d.setDate(d.getDate() + offsetDays);
+    const dateStr = d.toLocaleDateString('zh-TW', { timeZone: 'Asia/Taipei', year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '');
+    const hash = (parseInt(dateStr) * 17 % 9000) + 1000;
+    return "SM-" + hash;
+}
+
+const todayStr = new Date().toLocaleDateString('en-CA', {timeZone: 'Asia/Taipei'}); 
+let isUserVip = false;
+
+try {
+    if (localStorage.getItem('sunmoon_vip_status') === 'true') { isUserVip = true; }
+    else if (localStorage.getItem('sunmoon_vip_expire') === todayStr) { isUserVip = true; }
+} catch (e) {}
+
+if (isUserVip) { document.body.classList.add('is-vip'); }
+
+const featureDescriptions = {
+    '📷 實境相機疊圖': '開啟鏡頭將沙盤完美重疊於真實攀樹現場，實地精準推演轉向角度！',
+    '📁 場勘照片疊圖': '匯入現場環境照片，即使在地面也能進行最真實的樹上受力兵推！',
+    '📸 戰術純淨截圖': '自動濾除雜訊，一鍵匯出無浮水印、最高解析度的專業戰術報告圖紙！',
+    '⚙️ 動態摩擦力運算': '解鎖鉤環與滑輪摩擦係數！精準推演不同轉向介質對系統的受力影響。',
+    '🕹️ 上拉下放引擎': '解鎖動態操作！真實模擬上拉 (Hauling) 與下放 (Lowering) 時，摩擦力造成的恐怖張力翻倍效應！'
+};
+
+const originalVipModalHtml = document.getElementById('vipModalBox').innerHTML;
+let pendingFeatureCallback = null;
+
+function attemptFeature(featureName, callback) {
+    if (isUserVip) { callback(); } 
+    else {
+        pendingFeatureCallback = callback;
+        document.getElementById('vipModalBox').innerHTML = originalVipModalHtml; 
+        document.getElementById('vipFeatureName').textContent = featureName;
+        document.getElementById('vipFeatureDesc').textContent = featureDescriptions[featureName] || "";
+        document.getElementById('vipErrorMsg').textContent = "";
+        document.getElementById('vipPwdInput').value = "";
+        document.getElementById('vipModal').classList.add('show');
+    }
+}
+
+// 點擊標題召喚控制台
+const mainTitleEl = document.getElementById('mainTitleText');
+if (mainTitleEl) {
+    mainTitleEl.addEventListener('click', () => {
+        if (isUserVip) {
+            pendingFeatureCallback = null;
+            document.getElementById('vipModalBox').innerHTML = originalVipModalHtml; 
+            document.querySelector('#vipModalBox h3').innerHTML = "🛡️ 系統狀態：已解鎖";
+            document.querySelector('#vipModalBox p').innerHTML = "如需進入指揮官控制台，請輸入最高權限金鑰：";
+            document.getElementById('vipErrorMsg').textContent = "";
+            document.getElementById('vipPwdInput').value = "";
+            document.getElementById('vipModal').classList.add('show');
+        }
+    });
+}
+
+window.logoutVip = function() {
+    try { localStorage.removeItem('sunmoon_vip_status'); localStorage.removeItem('sunmoon_vip_expire'); } catch(e) {}
+    showToast("🔄 登出成功，重新載入鎖定狀態...", "warn");
+    setTimeout(() => { window.location.reload(); }, 1000); 
+};
+
+function verifyVip() {
+    const inputPwd = document.getElementById('vipPwdInput').value.trim().toUpperCase(); 
+    const errorMsg = document.getElementById('vipErrorMsg');
+    
+    if (inputPwd === MASTER_KEY) {
+        try { localStorage.setItem('sunmoon_vip_status', 'true'); } catch(e){} 
+        isUserVip = true; document.body.classList.add('is-vip'); 
+        const todayKey = getDailyKey(0); const tmrwKey = getDailyKey(1); const permKey = PERMANENT_KEYS[0];
+        document.getElementById('vipModalBox').innerHTML = `
+          <h3 style="color: var(--warn); margin-top:0;">👑 指揮官專屬控制台</h3>
+          <p style="font-size:14px; margin-bottom:15px; color:var(--text);">報告長官！以下是動態教學體驗碼：</p>
+          <div style="background:rgba(0,0,0,0.3); padding:12px; border-radius:8px; margin-bottom:10px; text-align:left; border-left: 4px solid var(--safe);">
+            <span style="color:var(--muted); font-size:12px;">👉 今天的體驗碼 (今晚失效)</span><br><strong style="color:var(--safe); font-size:22px; letter-spacing:1px;">${todayKey}</strong>
+          </div>
+          <div style="background:rgba(0,0,0,0.3); padding:12px; border-radius:8px; margin-bottom:10px; text-align:left; border-left: 4px solid var(--warn);">
+            <span style="color:var(--muted); font-size:12px;">👉 明天的體驗碼</span><br><strong style="color:var(--warn); font-size:22px; letter-spacing:1px;">${tmrwKey}</strong>
+          </div>
+          <div style="background:rgba(0,0,0,0.3); padding:12px; border-radius:8px; margin-bottom:20px; text-align:left; border-left: 4px solid var(--vip);">
+            <span style="color:var(--muted); font-size:12px;">👉 🌟 總部專屬配發碼</span><br><strong style="color:var(--vip); font-size:18px; letter-spacing:1px;">${permKey}</strong>
+          </div>
+          <div class="modal-actions" style="margin-top: 15px;">
+            <button class="btn-cancel" style="border:1px solid var(--bad); color:var(--bad);" onclick="logoutVip()">清除授權(登出)</button>
+            <button class="btn-unlock" style="background:var(--warn); color:#000;" onclick="closeVipModal()">關閉控制台</button>
+          </div>
+        `;
+        return; 
+    }
+
+    if (PERMANENT_KEYS.includes(inputPwd) || inputPwd === getDailyKey(0)) {
+        try { localStorage.setItem('sunmoon_vip_status', 'true'); } catch(e){} 
+        isUserVip = true; document.body.classList.add('is-vip'); closeVipModal();
+        showToast("🎉 授權成功！歡迎使用！", "safe");
+        if (pendingFeatureCallback) { pendingFeatureCallback(); pendingFeatureCallback = null; }
+        return;
+    }
+    errorMsg.textContent = "❌ 授權碼錯誤，請確認輸入是否正確。"; 
+}
+function closeVipModal() { document.getElementById('vipModal').classList.remove('show'); pendingFeatureCallback = null;}
+
+// 技術支援表單
+const supportBtnAction = document.getElementById('supportBtnAction');
+if(supportBtnAction) { 
+    supportBtnAction.addEventListener('click', () => document.getElementById('supportModal').classList.add('show')); 
+}
+
+// --- AR 與截圖系統 ---
+let stream = null, videoTrack = null, torchOn = false; 
+const video = document.getElementById('bg-video'), image = document.getElementById('bg-image'), btnCamera = document.getElementById('btn-camera'), btnFlashlight = document.getElementById('btn-flashlight'), gridOverlay = document.getElementById('grid-overlay'); 
+let gridVisible = true;
+
+async function toggleCamera() { 
+  if (stream) { 
+    stream.getTracks().forEach(track => track.stop()); stream = null; videoTrack = null; 
+    video.style.opacity = "0"; btnCamera.classList.remove('active'); 
+    torchOn = false; btnFlashlight.classList.remove('active');
+    mainCard.classList.remove('camera-mode'); document.body.classList.remove('camera-mode');
+  } else { 
+    try { 
+      image.style.opacity = "0"; 
+      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }); 
+      videoTrack = stream.getVideoTracks()[0];
+      video.srcObject = stream; video.style.opacity = "1"; btnCamera.classList.add('active'); 
+      mainCard.classList.add('camera-mode'); document.body.classList.add('camera-mode');
+    } catch (err) { showToast("⚠️ 鏡頭啟動失敗：" + err.message, "bad"); } 
+  } 
+}
+
+async function toggleFlashlight() {
+  if (!videoTrack) { showToast("⚠️ 請先開啟 📷 實境鏡頭！", "warn"); return; }
+  try {
+    const capabilities = videoTrack.getCapabilities();
+    if (!capabilities.torch) { showToast("⚠️ 您的裝置或瀏覽器不支援手電筒功能！", "bad"); return; }
+    torchOn = !torchOn; await videoTrack.applyConstraints({ advanced: [{ torch: torchOn }] });
+    if(torchOn) btnFlashlight.classList.add('active'); else btnFlashlight.classList.remove('active');
+  } catch(e) { showToast("⚠️ 手電筒切換失敗：" + e.message, "bad"); }
+}
+
+function handleImageUploadClick(e) {
+    if (!isUserVip) { e.preventDefault(); attemptFeature('📁 場勘照片疊圖', () => document.getElementById('upload-image').click()); }
+}
+function loadImage(event) { 
+  const file = event.target.files[0]; 
+  if (file) { 
+    if(stream) toggleCamera(); 
+    const reader = new FileReader(); 
+    reader.onload = function(e) { 
+      image.src = e.target.result; image.style.opacity = "1"; 
+      mainCard.classList.add('camera-mode'); document.body.classList.add('camera-mode');
+    }; reader.readAsDataURL(file); 
+  } 
+}
+function toggleGrid() { gridVisible = !gridVisible; gridOverlay.style.opacity = gridVisible ? "0.5" : "0"; }
+
+async function takeScreenshot() {
+  const target = document.getElementById('mainCard'); 
+  target.classList.add('capture-mode');
+  
+  const inputs = target.querySelectorAll('input[type="number"]');
+  const placeholders = [];
+  inputs.forEach(inp => {
+      if(inp.closest('.capture-hide')) return;
+      const span = document.createElement('span');
+      span.textContent = inp.value;
+      span.style.color = 'var(--text)'; span.style.fontSize = '18px'; span.style.fontWeight = 'bold'; span.style.fontFamily = 'monospace'; span.style.margin = '0 2px';
+      inp.style.display = 'none'; inp.parentNode.insertBefore(span, inp); placeholders.push({ span, inp });
+  });
+
+  window.scrollTo(0, 0); await new Promise(r => setTimeout(r, 100));
+  
+  try {
+    const canvas = await html2canvas(target, { backgroundColor: '#0a1410', scale: 2, useCORS: true, ignoreElements: (el) => el.hasAttribute('data-html2canvas-ignore') || el.classList.contains('capture-hide') });
+    const link = document.createElement('a'); link.download = `下方固定點戰術報告_${new Date().getTime()}.png`; link.href = canvas.toDataURL('image/png'); link.click();
+  } catch(e) { showToast("❌ 截圖失敗，請稍後再試！", "bad"); }
+  
+  placeholders.forEach(p => { p.inp.style.display = ''; p.span.remove(); });
+  target.classList.remove('capture-mode');
+}
+
+function resetEngine() {
+  A = { x: 280, y: 340 };
+  inLoad.value = 100;
+  document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('.toggle-btn[data-type="friction"][data-val="0.4"]').classList.add('active');
+  document.querySelector('.toggle-btn[data-type="action"][data-val="static"]').classList.add('active');
+  currentE = 0.4; currentMode = 'tree'; currentAction = 'static';
+  updateEngine();
+  showToast("↺ 沙盤已重置", "safe");
+}
+
+// --- 黑科技：動態摩擦力物理引擎與沙盤互動 ---
+const svgEl = document.getElementById('canvas');
+const inLoad = document.getElementById('inLoad');
+const els = {
+  ropeLoad: document.getElementById('ropeLoad'), ropeAnchor: document.getElementById('ropeAnchor'),
+  redirectNode: document.getElementById('redirectNode'), loadGroup: document.getElementById('loadGroup'),
+  anchorGroup: document.getElementById('anchorGroup'), anchorBox: document.getElementById('anchorBox'), anchorLabel: document.getElementById('anchorLabel'),
+  angleArc: document.getElementById('angleArc'), angleText: document.getElementById('angleText'),
+  forceArrowLine: document.getElementById('forceArrowLine'), forceArrowHead: document.getElementById('forceArrowHead'),
+  txtBranchForce: document.getElementById('txtBranchForce'), txtBranchMult: document.getElementById('txtBranchMult'),
+  dashBranch: document.getElementById('dashBranch'), dashAnchor: document.getElementById('dashAnchor'),
+  txtAnchorTension: document.getElementById('txtAnchorTension'), txtAnchorMult: document.getElementById('txtAnchorMult'),
+  eduPanel: document.getElementById('eduPanel')
+};
+
+// 座標設定
+const P = { x: 200, y: 130 }; // 轉向點 (固定)
+const L_dist = 160;           // 負載懸吊距離
+let A = { x: 280, y: 340 };   // 下方固定點/操作端 (可拖曳)
+
+let currentE = 0.4; // 預設樹幹效率
+let currentMode = 'tree';
+let currentAction = 'static';
+
+// 💡 防呆教學設計：如果選擇了介質，但動作是靜止，自動切換成「上拉」，讓小白看出數字變化！
+function setFriction(btn, mode) {
+    const doSet = () => {
+        document.querySelectorAll('.toggle-btn[data-type="friction"]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentE = parseFloat(btn.dataset.val);
+        currentMode = mode;
+        
+        if (currentAction === 'static') {
+            const haulBtn = document.querySelector('.toggle-btn[data-type="action"][data-val="haul"]');
+            document.querySelectorAll('.toggle-btn[data-type="action"]').forEach(b => b.classList.remove('active'));
+            haulBtn.classList.add('active');
+            currentAction = 'haul';
+        }
+        updateEngine();
+    };
+    if (mode !== 'tree') attemptFeature('⚙️ 動態摩擦力運算', doSet); else doSet();
+}
+
+function setAction(btn) {
+    const doSet = () => {
+        document.querySelectorAll('.toggle-btn[data-type="action"]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentAction = btn.dataset.val;
+        updateEngine();
+    };
+    if (btn.dataset.val !== 'static') attemptFeature('🕹️ 上拉下放引擎', doSet); else doSet();
+}
+
+function renderRedirectNode() {
+    let html = '';
+    if (currentMode === 'tree') {
+        html = `<path d="M-25,-5 Q0,-20 25,-5 Q0,-15 -25,-5" fill="none" stroke="var(--tree)" stroke-width="8" stroke-linecap="round"/><circle cx="0" cy="0" r="6" fill="#0a1410" />`;
+    } else if (currentMode === 'carabiner') {
+        html = `<path d="M-15,0 A15,15 0 1,1 15,0 A15,15 0 0,1 -15,0" fill="none" stroke="#cbd5e1" stroke-width="6"/><line x1="12" y1="-10" x2="12" y2="10" stroke="#f1f5f9" stroke-width="4" stroke-linecap="round"/>`;
+    } else {
+        html = `<circle cx="0" cy="0" r="18" fill="var(--warn)" stroke="#0a1410" stroke-width="3" /><circle cx="0" cy="0" r="6" fill="#0a1410" /><line x1="0" y1="0" x2="10" y2="10" stroke="#000" stroke-width="2"/>`;
+    }
+    els.redirectNode.innerHTML = html;
+}
+
+function describeArc(x, y, r, startAngle, endAngle) {
+    let start = { x: x + r * Math.cos(endAngle), y: y + r * Math.sin(endAngle) };
+    let end = { x: x + r * Math.cos(startAngle), y: y + r * Math.sin(startAngle) };
+    let largeArcFlag = endAngle - startAngle <= Math.PI ? "0" : "1";
+    return ["M", x, y, "L", start.x, start.y, "A", r, r, 0, largeArcFlag, 0, end.x, end.y, "Z"].join(" ");
+}
+
+function updateEngine() {
+    let W = parseFloat(inLoad.value) || 100;
+    
+    let T_L = W; 
+    let T_A = W; 
+
+    if (currentAction === 'haul') {
+        T_A = W / currentE; 
+    } else if (currentAction === 'lower') {
+        T_A = W * currentE; 
+    }
+    
+    let vecL = { x: 0, y: 1 }; 
+    let lenA = Math.hypot(A.x - P.x, A.y - P.y);
+    let vecA = { x: (A.x - P.x) / lenA, y: (A.y - P.y) / lenA }; 
+    
+    let dot = vecL.x * vecA.x + vecL.y * vecA.y;
+    let thetaRad = Math.acos(Math.max(-1, Math.min(1, dot)));
+    let thetaDeg = thetaRad * 180 / Math.PI;
+    
+    let vForceL = { x: vecL.x * T_L, y: vecL.y * T_L };
+    let vForceA = { x: vecA.x * T_A, y: vecA.y * T_A };
+    
+    let vecForce = { x: vForceL.x + vForceA.x, y: vForceL.y + vForceA.y };
+    let Force = Math.hypot(vecForce.x, vecForce.y);
+    let multiplier = Force / W;
+    
+    let dirForce = { x: 0, y: 0 };
+    if(Force > 0) { dirForce.x = vecForce.x / Force; dirForce.y = vecForce.y / Force; }
+    
+    // UI 繪製
+    renderRedirectNode();
+    els.redirectNode.setAttribute('transform', `translate(${P.x}, ${P.y})`);
+    
+    let loadPt = { x: P.x, y: P.y + L_dist };
+    els.ropeLoad.setAttribute('x1', P.x); els.ropeLoad.setAttribute('y1', P.y);
+    els.ropeLoad.setAttribute('x2', loadPt.x); els.ropeLoad.setAttribute('y2', loadPt.y);
+    els.loadGroup.setAttribute('transform', `translate(${loadPt.x}, ${loadPt.y})`);
+    
+    els.ropeAnchor.setAttribute('x1', P.x); els.ropeAnchor.setAttribute('y1', P.y);
+    els.ropeAnchor.setAttribute('x2', A.x); els.ropeAnchor.setAttribute('y2', A.y);
+    els.anchorGroup.setAttribute('transform', `translate(${A.x}, ${A.y})`);
+    
+    let angleL = Math.PI / 2; 
+    let angleA = Math.atan2(vecA.y, vecA.x);
+    if(angleA < 0) angleA += 2 * Math.PI;
+    
+    let startAng = Math.min(angleL, angleA); let endAng = Math.max(angleL, angleA);
+    if (endAng - startAng > Math.PI) { startAng = Math.max(angleL, angleA); endAng = Math.min(angleL, angleA) + 2*Math.PI; }
+    els.angleArc.setAttribute("d", describeArc(P.x, P.y, 40, startAng, endAng));
+    
+    let midAng = (startAng + endAng) / 2;
+    els.angleText.textContent = `θ ${thetaDeg.toFixed(0)}°`;
+    els.angleText.setAttribute('x', P.x + 70 * Math.cos(midAng)); 
+    els.angleText.setAttribute('y', P.y + 70 * Math.sin(midAng) + 6);
+    
+    let arrowLen = 30 + multiplier * 15; 
+    let arrowEnd = { x: P.x + dirForce.x * arrowLen, y: P.y + dirForce.y * arrowLen };
+    els.forceArrowLine.setAttribute('x1', P.x); els.forceArrowLine.setAttribute('y1', P.y);
+    els.forceArrowLine.setAttribute('x2', arrowEnd.x); els.forceArrowLine.setAttribute('y2', arrowEnd.y);
+    
+    let headAng = Math.atan2(dirForce.y, dirForce.x);
+    let h1 = { x: arrowEnd.x - 12 * Math.cos(headAng - 0.5), y: arrowEnd.y - 12 * Math.sin(headAng - 0.5) };
+    let h2 = { x: arrowEnd.x - 12 * Math.cos(headAng + 0.5), y: arrowEnd.y - 12 * Math.sin(headAng + 0.5) };
+    els.forceArrowHead.setAttribute('points', `${arrowEnd.x},${arrowEnd.y} ${h1.x},${h1.y} ${h2.x},${h2.y}`);
+    
+    // 小白白話文教學邏輯
+    let eduText = "";
+    let eduColor = "var(--safe)";
+    let eduBg = "rgba(74, 222, 128, 0.1)";
+
+    let aMult = T_A / W;
+    
+    if (currentAction === 'static') {
+        eduText = `⏸️ <b>靜止鎖定時，沒有摩擦阻力產生。</b><br>此時不管你掛在哪裡，下方操作端只要付出相等於體重 (${T_A.toFixed(0)}kg) 的力量就能拉住人。`;
+        eduColor = "var(--text)"; eduBg = "rgba(255,255,255,0.05)";
+    } else if (currentAction === 'haul') {
+        if (currentMode === 'tree') {
+            eduText = `🌳🥵 <b>樹皮摩擦力極大！這是最累的拉法。</b><br>為了把人往上拉，地面人員必須多花 <b>${(aMult).toFixed(1)} 倍</b> 的力氣 (${T_A.toFixed(0)}kg) 才能克服摩擦力！樹枝也因此承受恐怖的連帶破壞力。`;
+            eduColor = "var(--bad)"; eduBg = "rgba(239, 68, 68, 0.15)";
+        } else if (currentMode === 'carabiner') {
+            eduText = `🪝🤨 <b>鉤環有稍微好一點。</b><br>雖然比樹幹滑順，但金屬摩擦力還是讓地面人員要出 <b>${(aMult).toFixed(1)} 倍</b> 的力氣 (${T_A.toFixed(0)}kg) 才能把人往上拉。`;
+            eduColor = "var(--warn)"; eduBg = "rgba(251, 191, 36, 0.15)";
+        } else {
+            eduText = `⚙️😎 <b>滑輪太滑順了！極度省力。</b><br>摩擦力幾乎消失，地面人員只需要出 <b>${(aMult).toFixed(1)} 倍</b> 左右的力量 (${T_A.toFixed(0)}kg) 就能把人拉上去。樹枝也比較安全！`;
+            eduColor = "var(--safe)"; eduBg = "rgba(74, 222, 128, 0.15)";
+        }
+    } else if (currentAction === 'lower') {
+        if (currentMode === 'tree') {
+            eduText = `🌳🛡️ <b>下放時，樹皮反而變成救星！</b><br>巨大的摩擦力變成「天然煞車」，地面人員只要輕輕握住 <b>${T_A.toFixed(0)}kg</b> 的力量，就能穩穩控制住 100kg 的攀樹者！`;
+        } else if (currentMode === 'carabiner') {
+            eduText = `🪝🛡️ <b>鉤環提供適中的煞車力。</b><br>下放時，金屬摩擦力幫忙煞車，地面人員需出力 <b>${T_A.toFixed(0)}kg</b> 即可穩穩控制。`;
+        } else {
+            eduText = `⚙️⚠️ <b>滑輪太溜了！下放請小心。</b><br>因為沒有摩擦力幫忙煞車，地面人員必須死命握住將近 100kg (${T_A.toFixed(0)}kg) 的力量，很容易失手滑掉！`;
+            eduColor = "var(--bad)"; eduBg = "rgba(239, 68, 68, 0.15)";
+        }
+    }
+
+    if (thetaDeg < 60 && multiplier >= 2) {
+        eduText += `<br><br>🚨 <b>滑輪倍增效應：</b> 繩索夾角太小(貼近樹幹)，讓樹枝承受了超過 2 倍的合力，非常危險！`;
+        eduColor = "var(--bad)"; eduBg = "rgba(239, 68, 68, 0.15)";
+    }
+
+    els.eduPanel.innerHTML = eduText;
+    els.eduPanel.style.borderColor = eduColor;
+    els.eduPanel.style.background = eduBg;
+
+    // 儀表板顏色更新
+    let forceColor = "var(--safe)";
+    if (multiplier >= 2.5) forceColor = "var(--bad)";
+    else if (multiplier >= 1.8) forceColor = "var(--warn)";
+    
+    els.forceArrowLine.setAttribute('stroke', forceColor);
+    els.forceArrowHead.setAttribute('fill', forceColor);
+    
+    els.txtAnchorTension.textContent = `${T_A.toFixed(0)} kg`;
+    els.txtAnchorMult.textContent = `(負載的 ${(aMult).toFixed(1)} 倍)`;
+    
+    els.txtBranchForce.textContent = `${Force.toFixed(0)} kg`;
+    els.txtBranchForce.style.color = forceColor;
+    els.txtBranchMult.textContent = `(負載的 ${multiplier.toFixed(1)} 倍)`;
+    els.dashBranch.style.borderTopColor = forceColor;
+}
+
+inLoad.addEventListener('input', updateEngine);
+
+// 拖曳邏輯
+let pt = svgEl.createSVGPoint();
+function getSVGPos(e) {
+  pt.x = e.touches ? e.touches[0].clientX : e.clientX; 
+  pt.y = e.touches ? e.touches[0].clientY : e.clientY;
+  return pt.matrixTransform(svgEl.getScreenCTM().inverse());
+}
+
+let isDragging = false;
+function startDrag(e) { 
+  isDragging = true; 
+  if(e.type === 'touchstart' && e.cancelable) { e.preventDefault(); }
+}
+
+els.anchorGroup.addEventListener('mousedown', startDrag);
+els.anchorGroup.addEventListener('touchstart', startDrag, {passive: false});
+
+function processDrag(e) {
+  if(!isDragging) return;
+  if(e.cancelable) e.preventDefault(); 
+  
+  let pos = getSVGPos(e);
+  A.x = Math.max(50, Math.min(350, pos.x));
+  A.y = Math.max(P.y + 40, Math.min(380, pos.y));
+  updateEngine();
+}
+
+window.addEventListener('touchmove', processDrag, {passive: false});
+window.addEventListener('mousemove', processDrag);
+window.addEventListener('touchend', () => isDragging = false);
+window.addEventListener('mouseup', () => isDragging = false);
+
+// 啟動引擎
+setTimeout(updateEngine, 100);
+
+</script>
+</body>
+</html>
