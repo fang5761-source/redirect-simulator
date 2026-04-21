@@ -38,7 +38,7 @@
     --safe: #4ade80;
     --warn: #fbbf24;
     --bad: #ef4444;
-    --tagline: #fb923c; /* 地面操作端改用高能橘 */
+    --tagline: #fb923c; 
     --vip: #c084fc;
     --tree: #65a30d;
   }
@@ -99,8 +99,14 @@
     background: transparent !important; border-color: rgba(255,255,255,0.2) !important;
     backdrop-filter: none !important; -webkit-backdrop-filter: none !important; box-shadow: none !important;
   }
+  .card.capture-mode {
+    background-color: var(--bg) !important;
+    background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px) !important;
+    background-size: 20px 20px !important; border-color: var(--line) !important;
+    box-shadow: none !important; border-radius: 0 !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+  }
+  .capture-mode .capture-hide { display: none !important; }
   
-  /* 💡 修改：標題極簡單行化 */
   .topbar { display: flex; align-items: center; margin-bottom: 8px; width: 100%; justify-content: space-between; }
   .title-left { display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; border-left: 4px solid var(--warn); padding-left: 8px; font-size: 15px; font-weight: bold; white-space: nowrap; }
   
@@ -114,7 +120,6 @@
   .lock-icon { position: absolute; bottom: 2px; right: 2px; font-size: 10px; background: rgba(0,0,0,0.8); border-radius: 50%; padding: 2px; }
   .is-vip .lock-icon { display: none; }
 
-  /* 💡 修改：縮小畫布高度，讓下方不需滑動 */
   .svgWrap { 
     position:relative; width:100%; height: 35vh; min-height: 280px; max-height: 380px;
     background: transparent; border-radius: 12px; border: 1px dashed var(--line); overflow: hidden; 
@@ -124,19 +129,12 @@
   .draggable-anchor { cursor: grab; touch-action: none; }
   .draggable-anchor:active { cursor: grabbing; }
 
-  /* 💡 新增：集中式戰術儀表板 */
-  .dashboard {
-      display: flex; justify-content: space-between; gap: 6px; margin-bottom: 8px;
-  }
-  .dash-box {
-      flex: 1; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 8px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; text-align: center;
-  }
+  .dashboard { display: flex; justify-content: space-between; gap: 6px; margin-bottom: 8px; }
+  .dash-box { flex: 1; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; text-align: center; }
   .dash-box .lbl { font-size: 11px; color: var(--muted); font-weight: bold; margin-bottom: 4px; }
   .dash-box .val { font-size: 18px; font-weight: 900; font-family: monospace; }
   .dash-box .sub { font-size: 10px; opacity: 0.8; margin-top: 2px; }
 
-  /* 💡 縮減控制區間距 */
   .control-deck { background: rgba(0,0,0,0.3); border: 1px solid var(--line); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
   
   .control-row { display: flex; flex-direction: column; gap: 6px; }
@@ -146,17 +144,9 @@
   .toggle-btn.active { background: var(--safe); color: var(--bg); border-color: var(--safe); }
   .toggle-btn[data-type="action"].active { background: var(--tagline); color: var(--bg); border-color: var(--tagline); }
 
-  /* 💡 新增：小白白話文教學面板 */
-  .edu-wrap { 
-    margin-top: 8px; padding: 12px; background: rgba(255, 216, 77, 0.1); 
-    border-radius: 8px; border: 1px solid var(--warn); text-align: justify; 
-    font-size: 13.5px; font-weight: bold; color: var(--text); line-height: 1.6; 
-    transition: background 0.3s, border 0.3s;
-  }
-
+  .edu-wrap { margin-top: 8px; padding: 12px; background: rgba(255, 216, 77, 0.1); border-radius: 8px; border: 1px solid var(--warn); text-align: justify; font-size: 13.5px; font-weight: bold; color: var(--text); line-height: 1.6; transition: background 0.3s, border 0.3s; }
   .mask-text { paint-order: stroke fill; stroke: var(--bg); stroke-width: 4px; stroke-linecap: round; stroke-linejoin: round; }
 
-  /* V3.0 UI 組件 */
   .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; z-index: 9999; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
   .modal-overlay.show { opacity: 1; pointer-events: auto; }
   .modal-box { background: var(--bg); border: 2px solid var(--vip); border-radius: 16px; padding: 24px; width: 90%; max-width: 350px; text-align: center; box-shadow: 0 10px 40px rgba(192, 132, 252, 0.3); transform: scale(0.9); transition: transform 0.3s ease; }
@@ -174,11 +164,6 @@
   .main-accordion { background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
   details.main-accordion > summary { padding: 12px 16px; font-weight: bold; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; color: var(--safe); background: rgba(0,0,0,0.3); font-size: 14px; }
   details.main-accordion > summary::-webkit-details-marker { display: none; }
-  .menu-content { padding: 14px 16px; font-size: 13px; color: var(--text); line-height: 1.6; background: rgba(0,0,0,0.4); text-align: justify; }
-  .menu-action-btn { padding: 14px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 14px; border-bottom: 1px solid var(--line); color: var(--text); }
-  .menu-action-btn:active { background: var(--line); }
-  
-  /* 💡 新增：子選單樣式 (安裝說明專用) */
   .menu-group { display: flex; flex-direction: column; }
   .menu-item { border-top: 1px solid var(--line); }
   .menu-item summary { padding: 12px 16px; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; font-size: 14px; transition: background 0.2s; color: var(--text); }
@@ -188,12 +173,15 @@
   .menu-icon { font-size: 18px; }
   .menu-arrow { color: var(--muted); font-size: 12px; transition: transform 0.3s; }
   .menu-item[open] > summary .menu-arrow { transform: rotate(90deg); }
+  .menu-content { padding: 14px 16px; font-size: 13px; color: var(--text); line-height: 1.6; background: rgba(0,0,0,0.4); text-align: justify; }
+  .menu-action-btn { padding: 14px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 14px; border-bottom: 1px solid var(--line); color: var(--text); }
+  .menu-action-btn:active { background: var(--line); }
 </style>
 </head>
 <body>
 
 <script>
-// 散木團隊 · 多層次防盜保護系統 v3.0
+// 散木團隊 · 多層次防盜保護系統 v4.0
 (function(){
   const _0xd = atob('ZmFuZzU3NjEtc291cmNlLmdpdGh1Yi5pbw=='); 
   const _0xh = window[atob('bG9jYXRpb24=')][atob('aG9zdG5hbWU=')]; 
@@ -266,7 +254,6 @@
   <div class="app-container">
 
     <div class="card" id="mainCard">
-      <!-- 💡 極簡單行標題 -->
       <div class="topbar">
           <div class="title-left" id="mainTitleText">
             下方固定點架設儀 <span class="vip-badge">PRO</span>
@@ -274,7 +261,6 @@
           <img src="./sunmoon_logo.png" alt="散木團隊" style="width: 26px; height: 26px; border-radius: 4px; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.5);" onerror="this.style.display='none'">
       </div>
 
-      <!-- 裝備工具列 -->
       <div class="icon-bar" data-html2canvas-ignore="true">
         <button class="icon-btn" id="btn-camera" onclick="attemptFeature('📷 實境相機疊圖', toggleCamera)" title="實境相機">📷<span class="lock-icon">🔒</span></button>
         <button class="icon-btn" id="btn-flashlight" onclick="toggleFlashlight()" title="手電筒">🔦</button>
@@ -285,27 +271,22 @@
         <button class="icon-btn" onclick="resetEngine()" title="重置沙盤">↺</button>
       </div>
 
-      <!-- 💡 畫布高度縮小，去除內部雜亂數值 -->
       <div class="svgWrap" id="svgWrap">
         <svg id="canvas" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet">
-          <!-- 背景裝飾樹幹 -->
           <g id="treeArt" stroke="none" fill="rgba(139, 90, 43, 0.25)">
              <path d="M 50 400 C 50 300 70 200 70 100 C 70 50 50 0 50 0 L 120 0 C 120 50 130 120 120 180 C 110 250 120 400 120 400 Z" />
              <path d="M 115 160 C 180 160 250 130 320 110 L 320 135 C 250 155 180 190 115 210 Z" />
           </g>
 
-          <!-- 繩索 -->
           <line id="ropeLoad" stroke="var(--text)" stroke-width="6" stroke-linecap="round" />
           <line id="ropeAnchor" stroke="var(--tagline)" stroke-width="6" stroke-linecap="round" />
           
-          <!-- 夾角 -->
           <path id="angleArc" fill="rgba(255, 216, 77, 0.1)" stroke="var(--warn)" stroke-width="2" />
           <text id="angleText" class="mask-text" fill="var(--warn)" font-size="16" font-weight="bold" text-anchor="middle"></text>
 
           <!-- 轉向點介質圖示 -->
           <g id="redirectNode"></g>
 
-          <!-- 樹幹受力箭頭 (紅色/黃色/綠色) -->
           <g id="forceArrowGroup">
              <line id="forceArrowLine" x1="0" y1="0" x2="0" y2="0" stroke="var(--bad)" stroke-width="6" stroke-linecap="round" />
              <polygon id="forceArrowHead" points="0,0 0,0 0,0" fill="var(--bad)" />
@@ -328,7 +309,6 @@
         </svg>
       </div>
 
-      <!-- 💡 新增：集中式戰術儀表板 -->
       <div class="dashboard">
           <div class="dash-box" style="border-top: 3px solid var(--text);">
               <span class="lbl">攀樹者 (負載)</span>
@@ -344,18 +324,26 @@
               <span class="sub" id="txtAnchorMult">--</span>
           </div>
           <div class="dash-box" id="dashBranch" style="border-top: 3px solid var(--bad);">
-              <span class="lbl">樹枝破壞力</span>
+              <span class="lbl">轉向點(COD)破壞力</span>
               <span class="val" id="txtBranchForce" style="color:var(--bad);">-- kg</span>
               <span class="sub" id="txtBranchMult">--</span>
           </div>
       </div>
       
-      <!-- 控制區域 -->
       <div class="control-deck">
          <div class="control-row">
-            <div class="btn-group-lbl">🛡️ 轉向點摩擦力介質</div>
+            <!-- 💡 V4.1 新增：自訂 COD 效率輸入框 -->
+            <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:4px;">
+              <span class="btn-group-lbl">🛡️ 轉向點 (COD) 介質效率</span>
+              <div style="display:flex; align-items:baseline; gap:4px; cursor:pointer;" onclick="handleEfficiencyClick(event)">
+                <span style="font-size:11px; color:var(--muted);">效率值</span>
+                <input type="number" id="inEfficiency" value="40" step="1" min="1" max="100" readonly style="width:38px; background:rgba(0,0,0,0.5); border:1px solid var(--line); border-radius:4px; color:var(--warn); font-size:15px; font-weight:bold; text-align:center; font-family:monospace; outline:none; padding:2px;">
+                <span style="font-size:12px; color:var(--muted); font-weight:bold;">% <span class="lock-icon-inline" id="lockEfficiency" style="font-size:10px; color:var(--vip);">🔒</span></span>
+              </div>
+            </div>
+            
             <div class="toggle-group">
-               <button class="toggle-btn active" data-type="friction" data-val="0.4" onclick="setFriction(this, 'tree')">🌳 樹幹直拉</button>
+               <button class="toggle-btn active" data-type="friction" data-val="0.4" onclick="setFriction(this, 'tree')">🌳 樹幹</button>
                <button class="toggle-btn" data-type="friction" data-val="0.6" onclick="setFriction(this, 'carabiner')">🪝 鉤環<span class="lock-icon">🔒</span></button>
                <button class="toggle-btn" data-type="friction" data-val="0.95" onclick="setFriction(this, 'pulley')">⚙️ 滑輪<span class="lock-icon">🔒</span></button>
             </div>
@@ -371,9 +359,8 @@
          </div>
       </div>
       
-      <!-- 💡 新增：小白白話文教學面板 -->
       <div class="edu-wrap" id="eduPanel">
-         📍 請在上方沙盤中拖曳「地面操作」，觀察樹枝承受的力量變化。
+         📍 請在上方沙盤中拖曳「地面操作」，觀察轉向點承受的力量變化。
       </div>
     </div> 
     
@@ -381,61 +368,58 @@
       <details class="main-accordion">
         <summary>📚 戰術原理解析：摩擦力與破壞力</summary>
         <div class="menu-content">
-          <p><b style="color:var(--tagline)">⚓ 地面牽引力 (操作端張力)</b><br>繩索繞過樹幹會產生巨大摩擦力。若地面人員要將 100kg 攀樹者 <b style="color:var(--warn)">上拉 (Hauling)</b>，必須額外克服摩擦力，拉力可能暴增至 250kg 以上！反之，若是將攀樹者 <b style="color:var(--safe)">下放 (Lowering)</b>，樹幹摩擦力會變成天然的煞車器，地面人員只需握住 40kg 即可控制。</p>
+          <p><b style="color:var(--tagline)">⚓ 地面牽引力 (操作端張力)</b><br>繩索繞過轉向點 (COD) 會產生巨大摩擦力。若地面人員要將 100kg 攀樹者 <b style="color:var(--warn)">上拉 (Hauling)</b>，必須額外克服摩擦力，拉力可能暴增至 250kg 以上！反之，若是將攀樹者 <b style="color:var(--safe)">下放 (Lowering)</b>，轉向點摩擦力會變成天然的煞車器，地面人員只需握住小部分力量即可控制。</p>
           <p><b style="color:var(--bad)">💀 轉向點破壞力 (Redirect Force)</b><br>上方樹枝同時被「攀樹者」與「地面操作」往下拉！根據向量力學，除了夾角 $\theta$ 越小受力越大之外，**「摩擦力導致下方張力暴增」**更是壓垮樹枝的最後一根稻草！</p>
           <ul style="padding-left: 20px; margin-top: 5px;">
             <li><b style="color:var(--bad)">極致危險：樹幹直拉 + 上拉操作</b>。下方需施力高達 250kg，加上攀樹者 100kg，樹枝將承受超過 3.5 倍負載的毀滅性力量！</li>
             <li><b style="color:var(--safe)">最省力安全：專業滑輪</b>。幾乎消除摩擦力，下方張力回歸 100kg，樹枝受力也隨之降至最低的 2 倍以內。</li>
-      </ul>
-    </div>
-  </details>
+          </ul>
+        </div>
+      </details>
 
-  <!-- 💡 新增：安裝與系統工具 -->
-  <details class="main-accordion" style="margin-top: 10px;">
-    <summary>⚙️ 系統工具與安裝說明</summary>
-    <div class="menu-group">
-      <details class="menu-item">
-        <summary>
-          <div class="menu-header-left"><span class="menu-icon">📱</span>將裝備安裝至手機 (加入主畫面)</div>
-          <span class="menu-arrow">❯</span>
-        </summary>
-        <div class="menu-content">
-          <!-- 安卓專屬一鍵安裝按鈕 (透過 JS 動態顯示) -->
-          <button id="installAppBtn" style="display:none; width:100%; padding:12px; margin-bottom:12px; background:var(--safe); color:#0a1410; border:none; border-radius:8px; font-weight:bold; font-size:15px; cursor:pointer; box-shadow:0 4px 10px rgba(74, 222, 128, 0.3);">📥 點擊一鍵安裝 APP</button>
-          
-          <p style="margin-top: 0; margin-bottom: 8px; color: var(--text);">若上方未出現按鈕，請手動將捷徑加至主畫面，獲得 100% 沉浸式體驗：</p>
-          <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; margin-bottom: 12px;">
-            <p style="margin-top: 0; margin-bottom: 8px; font-weight: bold; color: var(--safe);">🤖 Android (安卓版)</p>
-            <ol style="padding-left: 20px; margin: 0; font-size: 13px;">
-              <li style="margin-bottom: 4px;">點選瀏覽器右上角的「⋮」</li>
-              <li style="margin-bottom: 4px;">選擇「加到主畫面」或「安裝應用程式」</li>
-              <li style="margin-bottom: 0;">點選「安裝」，即可在桌面找到 APP</li>
-            </ol>
+      <details class="main-accordion" style="margin-top: 10px;">
+        <summary>⚙️ 系統工具與安裝說明</summary>
+        <div class="menu-group">
+          <details class="menu-item">
+            <summary>
+              <div class="menu-header-left"><span class="menu-icon">📱</span>將裝備安裝至手機 (加入主畫面)</div>
+              <span class="menu-arrow">❯</span>
+            </summary>
+            <div class="menu-content">
+              <button id="installAppBtn" style="display:none; width:100%; padding:12px; margin-bottom:12px; background:var(--safe); color:#0a1410; border:none; border-radius:8px; font-weight:bold; font-size:15px; cursor:pointer; box-shadow:0 4px 10px rgba(74, 222, 128, 0.3);">📥 點擊一鍵安裝 APP</button>
+              <p style="margin-top: 0; margin-bottom: 8px; color: var(--text);">若上方未出現按鈕，請手動將捷徑加至主畫面，獲得 100% 沉浸式體驗：</p>
+              <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; margin-bottom: 12px;">
+                <p style="margin-top: 0; margin-bottom: 8px; font-weight: bold; color: var(--safe);">🤖 Android (安卓版)</p>
+                <ol style="padding-left: 20px; margin: 0; font-size: 13px;">
+                  <li style="margin-bottom: 4px;">點選瀏覽器右上角的「⋮」</li>
+                  <li style="margin-bottom: 4px;">選擇「加到主畫面」或「安裝應用程式」</li>
+                  <li style="margin-bottom: 0;">點選「安裝」，即可在桌面找到 APP</li>
+                </ol>
+              </div>
+              <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px;">
+                <p style="margin-top: 0; margin-bottom: 8px; font-weight: bold; color: var(--safe);">🍎 iOS (iPhone)</p>
+                <ol style="padding-left: 20px; margin: 0; font-size: 13px;">
+                  <li style="margin-bottom: 4px;">請務必使用 <b>Safari</b> 瀏覽器開啟</li>
+                  <li style="margin-bottom: 4px;">點選畫面下方的「分享」圖示 (方框加上箭頭)</li>
+                  <li style="margin-bottom: 4px;">往下滑，選擇「加入主畫面」</li>
+                  <li style="margin-bottom: 0;">點選「加入」，即可將捷徑加到主畫面</li>
+                </ol>
+              </div>
+            </div>
+          </details>
+          <div class="menu-action-btn" id="shareBtnAction">
+            <div class="menu-header-left"><span class="menu-icon">🔗</span>分享裝備連結</div>
+            <span class="menu-arrow">❯</span>
           </div>
-          <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px;">
-            <p style="margin-top: 0; margin-bottom: 8px; font-weight: bold; color: var(--safe);">🍎 iOS (iPhone)</p>
-            <ol style="padding-left: 20px; margin: 0; font-size: 13px;">
-              <li style="margin-bottom: 4px;">請務必使用 <b>Safari</b> 瀏覽器開啟</li>
-              <li style="margin-bottom: 4px;">點選畫面下方的「分享」圖示 (方框加上箭頭)</li>
-              <li style="margin-bottom: 4px;">往下滑，選擇「加入主畫面」</li>
-              <li style="margin-bottom: 0;">點選「加入」，即可將捷徑加到主畫面</li>
-            </ol>
+          <div class="menu-action-btn" onclick="checkForUpdates()">
+            <div class="menu-header-left"><span class="menu-icon">🔄</span>檢查並載入最新版本</div>
+            <span class="menu-arrow">❯</span>
           </div>
         </div>
       </details>
-      <div class="menu-action-btn" id="shareBtnAction">
-        <div class="menu-header-left"><span class="menu-icon">🔗</span>分享裝備連結</div>
-        <span class="menu-arrow">❯</span>
-      </div>
-      <div class="menu-action-btn" onclick="checkForUpdates()">
-        <div class="menu-header-left"><span class="menu-icon">🔄</span>檢查並載入最新版本</div>
-        <span class="menu-arrow">❯</span>
-      </div>
-    </div>
-  </details>
 
-  <div class="main-accordion" style="margin-top: 10px;">
-    <div class="menu-action-btn" id="supportBtnAction">
+      <div class="main-accordion" style="margin-top: 10px;">
+        <div class="menu-action-btn" id="supportBtnAction">
           <div style="display:flex; align-items:center; gap:8px;"><span style="font-size:18px;">💬</span>技術支援與問題回報</div>
           <span style="color:var(--muted); font-size:12px; font-weight:bold;">❯</span>
         </div>
@@ -477,14 +461,18 @@ try {
     else if (localStorage.getItem('sunmoon_vip_expire') === todayStr) { isUserVip = true; }
 } catch (e) {}
 
-if (isUserVip) { document.body.classList.add('is-vip'); }
+if (isUserVip) { 
+    document.body.classList.add('is-vip'); 
+    document.getElementById('lockEfficiency').style.display = 'none';
+}
 
 const featureDescriptions = {
     '📷 實境相機疊圖': '開啟鏡頭將沙盤完美重疊於真實攀樹現場，實地精準推演轉向角度！',
     '📁 場勘照片疊圖': '匯入現場環境照片，即使在地面也能進行最真實的樹上受力兵推！',
     '📸 戰術純淨截圖': '自動濾除雜訊，一鍵匯出無浮水印、最高解析度的專業戰術報告圖紙！',
     '⚙️ 動態摩擦力運算': '解鎖鉤環與滑輪摩擦係數！精準推演不同轉向介質對系統的受力影響。',
-    '🕹️ 上拉下放引擎': '解鎖動態操作！真實模擬上拉 (Hauling) 與下放 (Lowering) 時，摩擦力造成的恐怖張力翻倍效應！'
+    '🕹️ 上拉下放引擎': '解鎖動態操作！真實模擬上拉 (Hauling) 與下放 (Lowering) 時，摩擦力造成的恐怖張力翻倍效應！',
+    '⚙️ 自訂 COD 效率': '無限制解鎖！自由輸入您手邊特定裝備（如高效率培林滑輪、特定鉤環）的真實摩擦效率（如 85%），進行最精準的客製化兵推！'
 };
 
 const originalVipModalHtml = document.getElementById('vipModalBox').innerHTML;
@@ -531,7 +519,7 @@ function verifyVip() {
     
     if (inputPwd === MASTER_KEY) {
         try { localStorage.setItem('sunmoon_vip_status', 'true'); } catch(e){} 
-        isUserVip = true; document.body.classList.add('is-vip'); 
+        isUserVip = true; document.body.classList.add('is-vip'); document.getElementById('lockEfficiency').style.display = 'none';
         const todayKey = getDailyKey(0); const tmrwKey = getDailyKey(1); const permKey = PERMANENT_KEYS[0];
         document.getElementById('vipModalBox').innerHTML = `
           <h3 style="color: var(--warn); margin-top:0;">👑 指揮官專屬控制台</h3>
@@ -555,7 +543,7 @@ function verifyVip() {
 
     if (PERMANENT_KEYS.includes(inputPwd) || inputPwd === getDailyKey(0)) {
         try { localStorage.setItem('sunmoon_vip_status', 'true'); } catch(e){} 
-        isUserVip = true; document.body.classList.add('is-vip'); closeVipModal();
+        isUserVip = true; document.body.classList.add('is-vip'); document.getElementById('lockEfficiency').style.display = 'none'; closeVipModal();
         showToast("🎉 授權成功！歡迎使用！", "safe");
         if (pendingFeatureCallback) { pendingFeatureCallback(); pendingFeatureCallback = null; }
         return;
@@ -569,6 +557,24 @@ const supportBtnAction = document.getElementById('supportBtnAction');
 if(supportBtnAction) { 
     supportBtnAction.addEventListener('click', () => document.getElementById('supportModal').classList.add('show')); 
 }
+
+// PWA 一鍵安裝
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault(); deferredPrompt = e;
+    const installBtn = document.getElementById('installAppBtn');
+    if (installBtn) {
+        installBtn.style.display = 'block';
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt(); 
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') installBtn.style.display = 'none';
+                deferredPrompt = null;
+            }
+        });
+    }
+});
 
 // --- AR 與截圖系統 ---
 let stream = null, videoTrack = null, torchOn = false; 
@@ -650,13 +656,64 @@ function resetEngine() {
   document.querySelector('.toggle-btn[data-type="friction"][data-val="0.4"]').classList.add('active');
   document.querySelector('.toggle-btn[data-type="action"][data-val="static"]').classList.add('active');
   currentE = 0.4; currentMode = 'tree'; currentAction = 'static';
+  document.getElementById('inEfficiency').value = 40;
   updateEngine();
   showToast("↺ 沙盤已重置", "safe");
 }
 
+if ('serviceWorker' in navigator) { 
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').then(reg => {
+      reg.update();
+    }).catch(err => console.error(err));
+  }); 
+}
+function checkForUpdates() {
+  showToast("🔄 正在清除快取並載入最新版本...", "warn");
+  if ('caches' in window) {
+    caches.keys().then((names) => {
+      names.forEach(name => caches.delete(name));
+    });
+  }
+  setTimeout(() => { window.location.href = window.location.href.split('?')[0] + '?v=' + new Date().getTime(); }, 1500);
+}
+
+const shareBtnAction = document.getElementById('shareBtnAction');
+if(shareBtnAction) {
+    shareBtnAction.addEventListener('click', async () => {
+      const shareData = { title: '下方固定點架設儀', text: '推薦這套散木團隊專屬的攀樹黑科技！結合實境相機與動態摩擦力引擎，快來試試！', url: window.location.href };
+      try {
+        if (navigator.share) { await navigator.share(shareData); } 
+        else {
+          const dummy = document.createElement('input'); document.body.appendChild(dummy); dummy.value = window.location.href;
+          dummy.select(); document.execCommand('copy'); document.body.removeChild(dummy);
+          showToast('🔗 網址已複製，您可以貼上分享給其他人囉！', 'safe');
+        }
+      } catch (err) { }
+    });
+}
+
+const menuGroups = document.querySelectorAll('.menu-group');
+menuGroups.forEach(group => {
+  const items = group.querySelectorAll('details.menu-item');
+  items.forEach(item => {
+    item.addEventListener('toggle', function() {
+      if (this.open) {
+        group.classList.add('has-open-item');
+        items.forEach(other => { if (other !== this && other.open) other.removeAttribute('open'); });
+        setTimeout(() => { this.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 50);
+      } else {
+        const anyOpen = Array.from(items).some(i => i.open);
+        if (!anyOpen) group.classList.remove('has-open-item');
+      }
+    });
+  });
+});
+
 // --- 黑科技：動態摩擦力物理引擎與沙盤互動 ---
 const svgEl = document.getElementById('canvas');
 const inLoad = document.getElementById('inLoad');
+const inEfficiency = document.getElementById('inEfficiency');
 const els = {
   ropeLoad: document.getElementById('ropeLoad'), ropeAnchor: document.getElementById('ropeAnchor'),
   redirectNode: document.getElementById('redirectNode'), loadGroup: document.getElementById('loadGroup'),
@@ -678,12 +735,48 @@ let currentE = 0.4; // 預設樹幹效率
 let currentMode = 'tree';
 let currentAction = 'static';
 
+// 💡 點擊解鎖自訂效率
+function handleEfficiencyClick(e) {
+    if (!isUserVip) {
+        e.preventDefault();
+        attemptFeature('⚙️ 自訂 COD 效率', () => {
+            inEfficiency.removeAttribute('readonly');
+            inEfficiency.focus();
+            document.getElementById('lockEfficiency').style.display = 'none';
+        });
+    } else {
+        inEfficiency.removeAttribute('readonly');
+        inEfficiency.focus();
+    }
+}
+
+// 💡 自訂效率數值變動
+inEfficiency.addEventListener('input', () => {
+    let val = parseFloat(inEfficiency.value);
+    if (isNaN(val) || val <= 0) val = 1;
+    if (val > 100) val = 100;
+    
+    currentE = val / 100;
+    currentMode = 'custom';
+    document.querySelectorAll('.toggle-btn[data-type="friction"]').forEach(b => b.classList.remove('active'));
+    
+    // 如果是靜止狀態，自動幫他切成上拉，讓他看到差異
+    if (currentAction === 'static') {
+        const haulBtn = document.querySelector('.toggle-btn[data-type="action"][data-val="haul"]');
+        document.querySelectorAll('.toggle-btn[data-type="action"]').forEach(b => b.classList.remove('active'));
+        haulBtn.classList.add('active');
+        currentAction = 'haul';
+    }
+    updateEngine();
+});
+
 // 💡 防呆教學設計：如果選擇了介質，但動作是靜止，自動切換成「上拉」，讓小白看出數字變化！
 function setFriction(btn, mode) {
     const doSet = () => {
         document.querySelectorAll('.toggle-btn[data-type="friction"]').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         currentE = parseFloat(btn.dataset.val);
+        inEfficiency.value = Math.round(currentE * 100);
         currentMode = mode;
         
         if (currentAction === 'static') {
@@ -713,8 +806,11 @@ function renderRedirectNode() {
         html = `<path d="M-25,-5 Q0,-20 25,-5 Q0,-15 -25,-5" fill="none" stroke="var(--tree)" stroke-width="8" stroke-linecap="round"/><circle cx="0" cy="0" r="6" fill="#0a1410" />`;
     } else if (currentMode === 'carabiner') {
         html = `<path d="M-15,0 A15,15 0 1,1 15,0 A15,15 0 0,1 -15,0" fill="none" stroke="#cbd5e1" stroke-width="6"/><line x1="12" y1="-10" x2="12" y2="10" stroke="#f1f5f9" stroke-width="4" stroke-linecap="round"/>`;
-    } else {
+    } else if (currentMode === 'pulley') {
         html = `<circle cx="0" cy="0" r="18" fill="var(--warn)" stroke="#0a1410" stroke-width="3" /><circle cx="0" cy="0" r="6" fill="#0a1410" /><line x1="0" y1="0" x2="10" y2="10" stroke="#000" stroke-width="2"/>`;
+    } else {
+        // 自訂 COD 圖示 (特戰多邊形)
+        html = `<polygon points="0,-16 14,-8 14,8 0,16 -14,8 -14,-8" fill="none" stroke="var(--warn)" stroke-width="3"/><circle cx="0" cy="0" r="6" fill="var(--warn)" />`;
     }
     els.redirectNode.innerHTML = html;
 }
@@ -800,32 +896,38 @@ function updateEngine() {
     let aMult = T_A / W;
     
     if (currentAction === 'static') {
-        eduText = `⏸️ <b>靜止鎖定時，沒有摩擦阻力產生。</b><br>此時不管你掛在哪裡，下方操作端只要付出相等於體重 (${T_A.toFixed(0)}kg) 的力量就能拉住人。`;
+        eduText = `⏸️ <b>靜止鎖定時，沒有摩擦阻力產生。</b><br>此時不管你掛在哪裡，下方操作端只要付出相等於負載 (${T_A.toFixed(0)}kg) 的力量就能拉住人。`;
         eduColor = "var(--text)"; eduBg = "rgba(255,255,255,0.05)";
     } else if (currentAction === 'haul') {
         if (currentMode === 'tree') {
-            eduText = `🌳🥵 <b>樹皮摩擦力極大！這是最累的拉法。</b><br>為了把人往上拉，地面人員必須多花 <b>${(aMult).toFixed(1)} 倍</b> 的力氣 (${T_A.toFixed(0)}kg) 才能克服摩擦力！樹枝也因此承受恐怖的連帶破壞力。`;
+            eduText = `🌳🥵 <b>樹皮摩擦力極大！這是最累的拉法。</b><br>為了把人往上拉，地面人員必須多花 <b>${(aMult).toFixed(1)} 倍</b> 的力氣 (${T_A.toFixed(0)}kg) 才能克服摩擦力！轉向點也因此承受恐怖的連帶破壞力。`;
             eduColor = "var(--bad)"; eduBg = "rgba(239, 68, 68, 0.15)";
         } else if (currentMode === 'carabiner') {
             eduText = `🪝🤨 <b>鉤環有稍微好一點。</b><br>雖然比樹幹滑順，但金屬摩擦力還是讓地面人員要出 <b>${(aMult).toFixed(1)} 倍</b> 的力氣 (${T_A.toFixed(0)}kg) 才能把人往上拉。`;
             eduColor = "var(--warn)"; eduBg = "rgba(251, 191, 36, 0.15)";
-        } else {
-            eduText = `⚙️😎 <b>滑輪太滑順了！極度省力。</b><br>摩擦力幾乎消失，地面人員只需要出 <b>${(aMult).toFixed(1)} 倍</b> 左右的力量 (${T_A.toFixed(0)}kg) 就能把人拉上去。樹枝也比較安全！`;
+        } else if (currentMode === 'pulley') {
+            eduText = `⚙️😎 <b>滑輪太滑順了！極度省力。</b><br>摩擦力幾乎消失，地面人員只需要出 <b>${(aMult).toFixed(1)} 倍</b> 左右的力量 (${T_A.toFixed(0)}kg) 就能把人拉上去。轉向點也比較安全！`;
             eduColor = "var(--safe)"; eduBg = "rgba(74, 222, 128, 0.15)";
+        } else {
+            eduText = `🛠️ <b>自訂 COD 效率 (${Math.round(currentE * 100)}%)</b><br>根據您輸入的介質效率，為了把人往上拉，地面人員必須花費 <b>${(aMult).toFixed(1)} 倍</b> 的牽引力 (${T_A.toFixed(0)}kg) 才能克服摩擦力！`;
+            eduColor = "var(--warn)"; eduBg = "rgba(251, 191, 36, 0.15)";
         }
     } else if (currentAction === 'lower') {
         if (currentMode === 'tree') {
             eduText = `🌳🛡️ <b>下放時，樹皮反而變成救星！</b><br>巨大的摩擦力變成「天然煞車」，地面人員只要輕輕握住 <b>${T_A.toFixed(0)}kg</b> 的力量，就能穩穩控制住 100kg 的攀樹者！`;
         } else if (currentMode === 'carabiner') {
             eduText = `🪝🛡️ <b>鉤環提供適中的煞車力。</b><br>下放時，金屬摩擦力幫忙煞車，地面人員需出力 <b>${T_A.toFixed(0)}kg</b> 即可穩穩控制。`;
-        } else {
+        } else if (currentMode === 'pulley') {
             eduText = `⚙️⚠️ <b>滑輪太溜了！下放請小心。</b><br>因為沒有摩擦力幫忙煞車，地面人員必須死命握住將近 100kg (${T_A.toFixed(0)}kg) 的力量，很容易失手滑掉！`;
             eduColor = "var(--bad)"; eduBg = "rgba(239, 68, 68, 0.15)";
+        } else {
+            eduText = `🛠️ <b>自訂 COD 效率 (${Math.round(currentE * 100)}%)</b><br>下放時，介質摩擦力轉為輔助煞車，地面人員僅需出力 <b>${T_A.toFixed(0)}kg</b> 即可穩穩控制。`;
+            eduColor = "var(--safe)"; eduBg = "rgba(74, 222, 128, 0.15)";
         }
     }
 
     if (thetaDeg < 60 && multiplier >= 2) {
-        eduText += `<br><br>🚨 <b>滑輪倍增效應：</b> 繩索夾角太小(貼近樹幹)，讓樹枝承受了超過 2 倍的合力，非常危險！`;
+        eduText += `<br><br>🚨 <b>滑輪倍增效應：</b> 繩索夾角太小(貼近樹幹)，讓轉向點承受了超過 2 倍的合力，非常危險！`;
         eduColor = "var(--bad)"; eduBg = "rgba(239, 68, 68, 0.15)";
     }
 
@@ -887,77 +989,6 @@ window.addEventListener('mouseup', () => isDragging = false);
 // 啟動引擎
 setTimeout(updateEngine, 100);
 
-// 💡 新增：PWA 一鍵安裝、分享與更新邏輯
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', (e) => {
-    // 攔截預設的安裝提示
-    e.preventDefault();
-    deferredPrompt = e;
-    const installBtn = document.getElementById('installAppBtn');
-    if (installBtn) {
-        installBtn.style.display = 'block';
-        installBtn.addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt(); // 顯示系統原生的安裝對話框
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') installBtn.style.display = 'none';
-                deferredPrompt = null;
-            }
-        });
-    }
-});
-
-if ('serviceWorker' in navigator) { 
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').then(reg => {
-      reg.update();
-    }).catch(err => console.error(err));
-  }); 
-}
-
-function checkForUpdates() {
-  showToast("🔄 正在清除快取並載入最新版本...", "warn");
-  if ('caches' in window) {
-    caches.keys().then((names) => {
-      names.forEach(name => caches.delete(name));
-    });
-  }
-  // 延遲 1.5 秒後強制加上時間戳記重整，確保抓取最新檔案
-  setTimeout(() => { window.location.href = window.location.href.split('?')[0] + '?v=' + new Date().getTime(); }, 1500);
-}
-
-const shareBtnAction = document.getElementById('shareBtnAction');
-if(shareBtnAction) {
-    shareBtnAction.addEventListener('click', async () => {
-      const shareData = { title: '下方固定點架設儀', text: '推薦這套散木團隊專屬的攀樹黑科技！結合實境相機與動態摩擦力引擎，快來試試！', url: window.location.href };
-      try {
-        if (navigator.share) { await navigator.share(shareData); } 
-        else {
-          const dummy = document.createElement('input'); document.body.appendChild(dummy); dummy.value = window.location.href;
-          dummy.select(); document.execCommand('copy'); document.body.removeChild(dummy);
-          showToast('🔗 網址已複製，您可以貼上分享給其他人囉！', 'safe');
-        }
-      } catch (err) { }
-    });
-}
-
-// 綁定子選單的手風琴收合特效
-const menuGroups = document.querySelectorAll('.menu-group');
-menuGroups.forEach(group => {
-  const items = group.querySelectorAll('details.menu-item');
-  items.forEach(item => {
-    item.addEventListener('toggle', function() {
-      if (this.open) {
-        group.classList.add('has-open-item');
-        items.forEach(other => { if (other !== this && other.open) other.removeAttribute('open'); });
-        setTimeout(() => { this.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 50);
-      } else {
-        const anyOpen = Array.from(items).some(i => i.open);
-        if (!anyOpen) group.classList.remove('has-open-item');
-      }
-    });
-  });
-});
 </script>
 </body>
 </html>
