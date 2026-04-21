@@ -177,6 +177,17 @@
   .menu-content { padding: 14px 16px; font-size: 13px; color: var(--text); line-height: 1.6; background: rgba(0,0,0,0.4); text-align: justify; }
   .menu-action-btn { padding: 14px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 14px; border-bottom: 1px solid var(--line); color: var(--text); }
   .menu-action-btn:active { background: var(--line); }
+  
+  /* 💡 新增：子選單樣式 (安裝說明專用) */
+  .menu-group { display: flex; flex-direction: column; }
+  .menu-item { border-top: 1px solid var(--line); }
+  .menu-item summary { padding: 12px 16px; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; font-size: 14px; transition: background 0.2s; color: var(--text); }
+  .menu-item summary::-webkit-details-marker { display: none; }
+  .menu-item summary:active { background: var(--line); }
+  .menu-header-left { display: flex; align-items: center; gap: 10px; }
+  .menu-icon { font-size: 18px; }
+  .menu-arrow { color: var(--muted); font-size: 12px; transition: transform 0.3s; }
+  .menu-item[open] > summary .menu-arrow { transform: rotate(90deg); }
 </style>
 </head>
 <body>
@@ -375,12 +386,56 @@
           <ul style="padding-left: 20px; margin-top: 5px;">
             <li><b style="color:var(--bad)">極致危險：樹幹直拉 + 上拉操作</b>。下方需施力高達 250kg，加上攀樹者 100kg，樹枝將承受超過 3.5 倍負載的毀滅性力量！</li>
             <li><b style="color:var(--safe)">最省力安全：專業滑輪</b>。幾乎消除摩擦力，下方張力回歸 100kg，樹枝受力也隨之降至最低的 2 倍以內。</li>
-          </ul>
+      </ul>
+    </div>
+  </details>
+
+  <!-- 💡 新增：安裝與系統工具 -->
+  <details class="main-accordion" style="margin-top: 10px;">
+    <summary>⚙️ 系統工具與安裝說明</summary>
+    <div class="menu-group">
+      <details class="menu-item">
+        <summary>
+          <div class="menu-header-left"><span class="menu-icon">📱</span>將裝備安裝至手機 (加入主畫面)</div>
+          <span class="menu-arrow">❯</span>
+        </summary>
+        <div class="menu-content">
+          <!-- 安卓專屬一鍵安裝按鈕 (透過 JS 動態顯示) -->
+          <button id="installAppBtn" style="display:none; width:100%; padding:12px; margin-bottom:12px; background:var(--safe); color:#0a1410; border:none; border-radius:8px; font-weight:bold; font-size:15px; cursor:pointer; box-shadow:0 4px 10px rgba(74, 222, 128, 0.3);">📥 點擊一鍵安裝 APP</button>
+          
+          <p style="margin-top: 0; margin-bottom: 8px; color: var(--text);">若上方未出現按鈕，請手動將捷徑加至主畫面，獲得 100% 沉浸式體驗：</p>
+          <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; margin-bottom: 12px;">
+            <p style="margin-top: 0; margin-bottom: 8px; font-weight: bold; color: var(--safe);">🤖 Android (安卓版)</p>
+            <ol style="padding-left: 20px; margin: 0; font-size: 13px;">
+              <li style="margin-bottom: 4px;">點選瀏覽器右上角的「⋮」</li>
+              <li style="margin-bottom: 4px;">選擇「加到主畫面」或「安裝應用程式」</li>
+              <li style="margin-bottom: 0;">點選「安裝」，即可在桌面找到 APP</li>
+            </ol>
+          </div>
+          <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px;">
+            <p style="margin-top: 0; margin-bottom: 8px; font-weight: bold; color: var(--safe);">🍎 iOS (iPhone)</p>
+            <ol style="padding-left: 20px; margin: 0; font-size: 13px;">
+              <li style="margin-bottom: 4px;">請務必使用 <b>Safari</b> 瀏覽器開啟</li>
+              <li style="margin-bottom: 4px;">點選畫面下方的「分享」圖示 (方框加上箭頭)</li>
+              <li style="margin-bottom: 4px;">往下滑，選擇「加入主畫面」</li>
+              <li style="margin-bottom: 0;">點選「加入」，即可將捷徑加到主畫面</li>
+            </ol>
+          </div>
         </div>
       </details>
+      <div class="menu-action-btn" id="shareBtnAction">
+        <div class="menu-header-left"><span class="menu-icon">🔗</span>分享裝備連結</div>
+        <span class="menu-arrow">❯</span>
+      </div>
+      <div class="menu-action-btn" onclick="checkForUpdates()">
+        <div class="menu-header-left"><span class="menu-icon">🔄</span>檢查並載入最新版本</div>
+        <span class="menu-arrow">❯</span>
+      </div>
+    </div>
+  </details>
 
-      <div class="main-accordion" style="margin-top: 10px;">
-        <div class="menu-action-btn" id="supportBtnAction">
+  <div class="main-accordion" style="margin-top: 10px;">
+    <div class="menu-action-btn" id="supportBtnAction">
           <div style="display:flex; align-items:center; gap:8px;"><span style="font-size:18px;">💬</span>技術支援與問題回報</div>
           <span style="color:var(--muted); font-size:12px; font-weight:bold;">❯</span>
         </div>
@@ -832,6 +887,77 @@ window.addEventListener('mouseup', () => isDragging = false);
 // 啟動引擎
 setTimeout(updateEngine, 100);
 
+// 💡 新增：PWA 一鍵安裝、分享與更新邏輯
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+    // 攔截預設的安裝提示
+    e.preventDefault();
+    deferredPrompt = e;
+    const installBtn = document.getElementById('installAppBtn');
+    if (installBtn) {
+        installBtn.style.display = 'block';
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt(); // 顯示系統原生的安裝對話框
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') installBtn.style.display = 'none';
+                deferredPrompt = null;
+            }
+        });
+    }
+});
+
+if ('serviceWorker' in navigator) { 
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').then(reg => {
+      reg.update();
+    }).catch(err => console.error(err));
+  }); 
+}
+
+function checkForUpdates() {
+  showToast("🔄 正在清除快取並載入最新版本...", "warn");
+  if ('caches' in window) {
+    caches.keys().then((names) => {
+      names.forEach(name => caches.delete(name));
+    });
+  }
+  // 延遲 1.5 秒後強制加上時間戳記重整，確保抓取最新檔案
+  setTimeout(() => { window.location.href = window.location.href.split('?')[0] + '?v=' + new Date().getTime(); }, 1500);
+}
+
+const shareBtnAction = document.getElementById('shareBtnAction');
+if(shareBtnAction) {
+    shareBtnAction.addEventListener('click', async () => {
+      const shareData = { title: '下方固定點架設儀', text: '推薦這套散木團隊專屬的攀樹黑科技！結合實境相機與動態摩擦力引擎，快來試試！', url: window.location.href };
+      try {
+        if (navigator.share) { await navigator.share(shareData); } 
+        else {
+          const dummy = document.createElement('input'); document.body.appendChild(dummy); dummy.value = window.location.href;
+          dummy.select(); document.execCommand('copy'); document.body.removeChild(dummy);
+          showToast('🔗 網址已複製，您可以貼上分享給其他人囉！', 'safe');
+        }
+      } catch (err) { }
+    });
+}
+
+// 綁定子選單的手風琴收合特效
+const menuGroups = document.querySelectorAll('.menu-group');
+menuGroups.forEach(group => {
+  const items = group.querySelectorAll('details.menu-item');
+  items.forEach(item => {
+    item.addEventListener('toggle', function() {
+      if (this.open) {
+        group.classList.add('has-open-item');
+        items.forEach(other => { if (other !== this && other.open) other.removeAttribute('open'); });
+        setTimeout(() => { this.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 50);
+      } else {
+        const anyOpen = Array.from(items).some(i => i.open);
+        if (!anyOpen) group.classList.remove('has-open-item');
+      }
+    });
+  });
+});
 </script>
 </body>
 </html>
