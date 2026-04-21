@@ -214,6 +214,7 @@
   </div>
 </div>
 
+<!-- 自訂名稱專屬視窗 -->
 <div id="nameModal" class="modal-overlay">
   <div class="modal-box">
     <h3 style="color:var(--safe); margin-top:0;">✏️ 自訂介質名稱</h3>
@@ -226,6 +227,7 @@
   </div>
 </div>
 
+<!-- 自訂摩擦力專屬視窗 -->
 <div id="frictionModal" class="modal-overlay">
   <div class="modal-box">
     <h3 style="color:var(--warn); margin-top:0;">⚙️ 自訂摩擦係數</h3>
@@ -463,8 +465,9 @@ function getDailyKey(offsetDays = 0) {
 const todayStr = new Date().toLocaleDateString('en-CA', {timeZone: 'Asia/Taipei'}); 
 let isUserVip = false;
 try {
-    if (localStorage.getItem('sunmoon_vip_status') === 'true') { isUserVip = true; }
-    else if (localStorage.getItem('sunmoon_vip_expire') === todayStr) { isUserVip = true; }
+    // 💡 戰術升級：本套裝備專屬獨立金鑰印章，不與舊裝備共用
+    if (localStorage.getItem('sunmoon_vip_redirect_status') === 'true') { isUserVip = true; }
+    else if (localStorage.getItem('sunmoon_vip_redirect_expire') === todayStr) { isUserVip = true; }
 } catch (e) {}
 if (isUserVip) { document.body.classList.add('is-vip'); }
 
@@ -508,7 +511,7 @@ if (mainTitleEl) {
 }
 
 window.logoutVip = function() {
-    try { localStorage.removeItem('sunmoon_vip_status'); localStorage.removeItem('sunmoon_vip_expire'); } catch(e) {}
+    try { localStorage.removeItem('sunmoon_vip_redirect_status'); localStorage.removeItem('sunmoon_vip_redirect_expire'); } catch(e) {}
     showToast("🔄 登出成功，重新載入鎖定狀態...", "warn");
     setTimeout(() => { window.location.reload(); }, 1000); 
 };
@@ -518,7 +521,7 @@ function verifyVip() {
     const errorMsg = document.getElementById('vipErrorMsg');
     
     if (inputPwd === MASTER_KEY) {
-        try { localStorage.setItem('sunmoon_vip_status', 'true'); } catch(e){} 
+        try { localStorage.setItem('sunmoon_vip_redirect_status', 'true'); } catch(e){} 
         isUserVip = true; document.body.classList.add('is-vip'); 
         const todayKey = getDailyKey(0); const tmrwKey = getDailyKey(1); const permKey = PERMANENT_KEYS[0];
         document.getElementById('vipModalBox').innerHTML = `
@@ -541,12 +544,22 @@ function verifyVip() {
     }
 
     if (PERMANENT_KEYS.includes(inputPwd) || inputPwd === getDailyKey(0)) {
-        try { localStorage.setItem('sunmoon_vip_status', 'true'); } catch(e){} 
+        try { localStorage.setItem('sunmoon_vip_redirect_status', 'true'); } catch(e){} 
         isUserVip = true; document.body.classList.add('is-vip'); closeVipModal();
         showToast("🎉 授權成功！歡迎使用！", "safe");
         if (pendingFeatureCallback) { pendingFeatureCallback(); pendingFeatureCallback = null; }
         return;
     }
+    
+    // 【體驗碼發放邏輯】
+    if (inputPwd === getDailyKey(0)) {
+        try { localStorage.setItem('sunmoon_vip_redirect_expire', todayStr); } catch(e){} 
+        isUserVip = true; document.body.classList.add('is-vip'); closeVipModal();
+        showToast("⏱️ 體驗授權成功！(今晚自動失效)", "safe");
+        if (pendingFeatureCallback) { pendingFeatureCallback(); pendingFeatureCallback = null; }
+        return;
+    }
+    
     errorMsg.textContent = "❌ 授權碼錯誤，請確認輸入是否正確。"; 
 }
 function closeVipModal() { document.getElementById('vipModal').classList.remove('show'); pendingFeatureCallback = null;}
