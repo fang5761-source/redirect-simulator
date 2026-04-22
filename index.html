@@ -8,14 +8,14 @@
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
 
-<title>轉向點受力分析儀 (全地形版) | 散木團隊</title>
+<title>下方固定點架設儀 (全地形) | 散木團隊</title>
 
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="全地形轉向">
+<meta name="apple-mobile-web-app-title" content="下方固定點">
 <meta name="mobile-web-app-capable" content="yes">
 
-<meta property="og:title" content="轉向點受力分析儀 (全地形版) | 散木團隊">
+<meta property="og:title" content="下方固定點架設儀 (全地形) | 散木團隊">
 <meta property="og:description" content="全地形模擬！結合實境 AR 與動態摩擦力引擎，精準推演樹幹、攀岩岩壁、鋼架空橋等轉向點的極限受力變化。">
 <meta property="og:image" content="https://fang5761-source.github.io/redirect-simulator/icon-512.png">
 <meta property="og:type" content="website">
@@ -83,7 +83,6 @@
   .vip-badge { display: none; background: var(--vip); color: #fff; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 12px; letter-spacing: 0.5px; box-shadow: 0 0 8px rgba(192, 132, 252, 0.6); margin-left: 4px; }
   .is-vip .vip-badge { display: inline-block; }
 
-  /* 語言切換按鈕 */
   #langToggleBtn {
     background: rgba(255,255,255,0.05); border: 1px solid var(--line); color: var(--muted);
     border-radius: 8px; padding: 4px 10px; font-size: 12px; font-weight: bold; cursor: pointer;
@@ -138,7 +137,6 @@
   #toastMessage { position: fixed; top: -50px; left: 50%; transform: translateX(-50%); background: var(--card); color: var(--text); padding: 14px 24px; border-radius: 10px; border-left: 4px solid var(--safe); box-shadow: 0 8px 25px rgba(0,0,0,0.6); z-index: 10000; font-weight: bold; text-align: center; font-size: 14px; width: 85%; max-width: 320px; transition: top 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); opacity: 0; pointer-events: none; }
   #toastMessage.show { top: 20px; opacity: 1; }
 
-  /* 統一：選單樣式全面對齊張力儀 */
   .menu-list { display: flex; flex-direction: column; gap: 10px; margin-top: 5px; width: 100%; }
   .main-accordion { background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
   details.main-accordion > summary { padding: 14px 16px; font-weight: bold; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; color: var(--warn); background: rgba(0,0,0,0.3); font-size: 15px; }
@@ -174,39 +172,10 @@
 <body>
 
 <script>
-// 散木團隊 · 多層次防盜保護系統 v4.0 (墨綠色特戰版)
-(function(){
-  const _0xd = atob('ZmFuZzU3NjEtc291cmNlLmdpdGh1Yi5pbw=='); 
-  const _0xh = window[atob('bG9jYXRpb24=')][atob('aG9zdG5hbWU=')]; 
-  window['_unlockApp']   = function(){ _0xKill(); };
-  window['_bypassCheck'] = function(){ _0xKill(); };
-  window['_disableLock'] = function(){ _0xKill(); };
-
-  function _0xKill(msg) {
-    const _m = msg || atob('5pyq57aT5o6l5qC85qih6Iiq5ZCn77yc5bey57O757uf5bim5Yqo5aSx5pWX');
-    try {
-      document.open();
-      document.write('<html><body style="margin:0;height:100vh;display:flex;flex-direction:column;background:#0a1410;color:#ef4444;justify-content:center;align-items:center;text-align:center;font-family:monospace;padding:20px;"><span style="font-size:72px;margin-bottom:16px;">&#x1F480;</span><div style="font-size:22px;font-weight:bold;margin-bottom:8px;">' + _m + '</div><div style="font-size:13px;color:#81c784;margin-top:12px;">' + atob('5pys5bel5YW36aSa5qih6Iiq55qE5q2k5bqT77yM5Lul56aB5q2k5q+P5qih6IiqICsgU2NhdHRlck1hcA==') + '</div></body></html>');
-      document.close();
-    } catch(e) {
-      document.body.innerHTML = '<span style="font-size:72px">&#x1F480;</span><br>' + _m;
-    }
-    throw new Error('[SM-SHIELD] Unauthorized access terminated.');
-  }
-
-  (function _0xVerify(){
-    const _whitelist = [_0xd, 'localhost', '127.0.0.1', ''];
-    const _isOk = _whitelist.some(function(w){ return _0xh === w || _0xh.endsWith('.' + w); });
-    if (!_isOk) { _0xKill(); }
-  })();
-})();
-</script>
-
-<script>
 // 💡 V5.0 無資料庫多語系字典引擎 (i18n Engine)
 const i18n = {
   zh: {
-    appTitle: "全地形轉向沙盤",
+    appTitle: "下方固定點架設儀 (全地形)",
     ground: "地面 Ground",
     distExt: "長距離延伸至地面",
     groundOp: "地面操作",
@@ -259,7 +228,7 @@ const i18n = {
     op3: "切換 <b>轉向點 (COD) 摩擦力介質</b>，觀察直拉、鉤環、滑輪對操作者負擔的影響。",
     op4: "點擊 <b>✏️自訂</b>，可手動設定轉向介質名稱與摩擦係數。",
     op5: "切換 <b>🕹️系統操作動作</b>，比對靜止、上拉與下放時，摩擦力帶來的截然不同效應。",
-    devTitle: "全地形轉向沙盤 專業正式版",
+    devTitle: "下方固定點架設儀 專業正式版",
     devTeam: "本工具由 <span style='color:var(--warn);'>散木團隊</span> 開發製作",
     devT1: "教學架構與工程判斷／徐世豐",
     devT2: "工具設計與互動介面／吳佩芳（朵朵）",
@@ -278,7 +247,56 @@ const i18n = {
     thFricD: "繩索與介質接觸產生的阻力。系統上拉時，摩擦力是「敵人」，會大幅增加操作端負擔；系統下放時，摩擦力是「朋友」，能提供額外的煞車力道。",
     thMultT: "🚨 滑輪倍增效應 (Multiplier Effect)",
     thMultD: "當使用高效率滑輪且繩索夾角極小時（如 0°），轉向點將承受將近 2 倍 (200%) 的負載總張力，容易造成固定點崩塌！",
-    collapse: "🔼 收起說明"
+    collapse: "🔼 收起說明",
+    pwaDesc: "將捷徑加至主畫面，獲得無網址列的 100% 沉浸式體驗：",
+    pwaAnd: "🤖 Android (安卓版)",
+    pwaIOS: "🍎 iOS (iPhone)",
+    pwaStep1: "點開連結（可直接從 LINE 開啟）",
+    pwaStep2: "點選瀏覽器右上角的「⋮」",
+    pwaStep3: "選擇「加到主畫面」或「安裝應用程式」",
+    pwaStep4: "點選「安裝」，即可在桌面找到 APP",
+    pwaStep5: "請務必使用 <b>Safari</b> 瀏覽器開啟",
+    pwaStep6: "點選畫面下方的「分享」圖示",
+    pwaStep7: "往下滑，選擇「加入主畫面」",
+    pwaStep8: "點選「加入」，即可將捷徑加到主畫面",
+    installBtn: "📥 點擊一鍵安裝 APP",
+    disclaimer: "<strong style='color: var(--bad); font-size: 14px;'>⚠️ 軟體免責聲明：</strong><br>本軟體摩擦係數為理論估算均值(樹幹0.4/鉤環0.6/滑輪0.95)。實際救援中，表面粗糙度皆會劇烈改變摩擦力。請務必遵循專業教官之指導實地判定。",
+    // VIP & Modal
+    vipTitle: "🔒 專業版功能解鎖",
+    vipEnable1: "您即將啟用「",
+    vipEnable2: "」！",
+    vipProOnly: "此功能為進階專業版限定。<br>支持散木團隊研發，永久解鎖全功能！",
+    vipStoreBtn: "🛒 前往專業版自動販賣機",
+    vipHasPwd: "已取得密碼？請在此輸入：",
+    vipPwdPlh: "輸入 VIP 通關密碼",
+    vipCancel: "稍後再說",
+    vipUnlock: "立即解鎖 🔓",
+    vipErrPwd: "❌ 授權碼錯誤，請確認輸入是否正確。",
+    vipStateUnlocked: "🛡️ 系統狀態：已解鎖",
+    vipStateDesc: "如需進入指揮官控制台，請輸入最高權限金鑰：",
+    cmdTitle: "👑 指揮官專屬控制台",
+    cmdExpToday: "👉 今天的體驗碼 (今晚失效)",
+    cmdExpTmrw: "👉 明天的體驗碼",
+    cmdPerm: "👉 🌟 總部專屬配發碼",
+    cmdLogout: "清除授權(登出)",
+    cmdClose: "關閉控制台",
+    toastAuthSuccess: "🎉 授權成功！歡迎使用！",
+    toastTrialSuccess: "⏱️ 體驗授權成功！(今晚自動失效)",
+    toastLogout: "🔄 登出成功，重新載入鎖定狀態...",
+    supTitle: "💬 技術支援與問題回報",
+    supDesc: "如果您遇到系統異常，或是<strong>更換新手機需要重新取得授權碼</strong>，請準備好您的：<br><br><span style='color:var(--safe);'>✔ 購買收據 Email 截圖</span><br><span style='color:var(--safe);'>✔ 遭遇的問題描述</span><br><br>請點擊下方按鈕前往「專屬回報表單」填寫。團隊確認無誤後，會盡速將新密碼發送至您的信箱！",
+    supLater: "稍後再說",
+    supGo: "前往填寫表單",
+    featCam: "📷 實境相機疊圖",
+    featCamDesc: "開啟鏡頭將沙盤重疊於真實救援現場，實地精準推演轉向角度！",
+    featPhoto: "📁 場勘照片疊圖",
+    featPhotoDesc: "匯入現場環境照片，進行最真實的受力兵推！",
+    featShot: "📸 戰術純淨截圖",
+    featShotDesc: "自動濾除雜訊，一鍵匯出無浮水印、最高解析度的專業戰術報告圖紙！",
+    featFric: "⚙️ 動態摩擦力運算",
+    featFricDesc: "解鎖鉤環與滑輪摩擦係數！精準推演不同轉向介質對系統的受力影響。",
+    featAction: "🕹️ 上拉下放引擎",
+    featActionDesc: "解鎖動態操作！真實模擬上拉與下放時，摩擦力造成的恐怖張力翻倍效應！"
   },
   en: {
     appTitle: "Redirect Sandbox",
@@ -353,7 +371,56 @@ const i18n = {
     thFricD: "Resistance when rope contacts an object. It's an 'enemy' when hauling (adds effort), but a 'friend' when lowering (adds braking).",
     thMultT: "🚨 Pulley Multiplier Effect",
     thMultD: "When using an efficient pulley and a very sharp angle (e.g., 0°), the COD bears nearly 2x (200%) of the load, risking anchor failure!",
-    collapse: "🔼 Collapse"
+    collapse: "🔼 Collapse",
+    pwaDesc: "Add to home screen for a 100% immersive, fullscreen experience:",
+    pwaAnd: "🤖 Android",
+    pwaIOS: "🍎 iOS (iPhone)",
+    pwaStep1: "Open the link in your browser",
+    pwaStep2: "Tap '⋮' in the browser menu",
+    pwaStep3: "Select 'Add to Home Screen'",
+    pwaStep4: "Tap 'Install' to add the app to your desktop",
+    pwaStep5: "Must use the <b>Safari</b> browser",
+    pwaStep6: "Tap the 'Share' icon at the bottom",
+    pwaStep7: "Scroll down and select 'Add to Home Screen'",
+    pwaStep8: "Tap 'Add' to create the shortcut",
+    installBtn: "📥 Install APP",
+    disclaimer: "<strong style='color: var(--bad); font-size: 14px;'>⚠️ Disclaimer:</strong><br>Friction coefficients are theoretical averages (Tree 0.4 / Carabiner 0.6 / Pulley 0.95). Real-world surface roughness drastically alters actual friction. Always follow professional instructors and on-site assessments.",
+    // VIP & Modal
+    vipTitle: "🔒 PRO Feature Unlock",
+    vipEnable1: "You are about to enable '",
+    vipEnable2: "'!",
+    vipProOnly: "This is an advanced PRO feature.<br>Support SunMoon Team to unlock all features permanently!",
+    vipStoreBtn: "🛒 Go to PRO Store",
+    vipHasPwd: "Already have a password? Enter here:",
+    vipPwdPlh: "Enter VIP Password",
+    vipCancel: "Maybe Later",
+    vipUnlock: "Unlock Now 🔓",
+    vipErrPwd: "❌ Incorrect password. Please try again.",
+    vipStateUnlocked: "🛡️ System: Unlocked",
+    vipStateDesc: "To enter Commander Console, enter MASTER KEY:",
+    cmdTitle: "👑 Commander Console",
+    cmdExpToday: "👉 Today's Trial Code (Expires Tonight)",
+    cmdExpTmrw: "👉 Tomorrow's Trial Code",
+    cmdPerm: "👉 🌟 HQ Permanent Code",
+    cmdLogout: "Clear Auth (Logout)",
+    cmdClose: "Close Console",
+    toastAuthSuccess: "🎉 Auth Success! Welcome!",
+    toastTrialSuccess: "⏱️ Trial Activated! (Expires tonight)",
+    toastLogout: "🔄 Logged out. Reloading...",
+    supTitle: "💬 Support & Feedback",
+    supDesc: "If you encountered an issue or <strong>need a new access code after changing phones</strong>, please prepare:<br><br><span style='color:var(--safe);'>✔ Receipt Email Screenshot</span><br><span style='color:var(--safe);'>✔ Issue Description</span><br><br>Click the button below to fill out the Support Form. Our team will send you a new code ASAP!",
+    supLater: "Maybe Later",
+    supGo: "Go to Support Form",
+    featCam: "📷 AR Camera Overlay",
+    featCamDesc: "Overlay sandbox on real rescue scene for precise angle deduction!",
+    featPhoto: "📁 Photo Overlay",
+    featPhotoDesc: "Import site photos for realistic force simulation!",
+    featShot: "📸 Tactical Screenshot",
+    featShotDesc: "Auto-filter noise, one-click export watermark-free, hi-res tactical report!",
+    featFric: "⚙️ Dynamic Friction",
+    featFricDesc: "Unlock carabiner & pulley friction! Accurately simulate COD material effects.",
+    featAction: "🕹️ Haul & Lower Engine",
+    featActionDesc: "Simulate massive tension spikes from friction during hauling & lowering!"
   },
   ja: {
     appTitle: "リダイレクト砂盤",
@@ -399,8 +466,8 @@ const i18n = {
     menu1: "原理と専門用語",
     menu2: "ツールと操作",
     menu3: "リンク共有",
-    menu4: "更新の確認",
-    menu5: "サポート/フィードバック",
+    menu4: "更新確認",
+    menu5: "サポート",
     menuOp: "操作マニュアル",
     menuInfo: "バージョン情報",
     menuPWA: "ホーム画面に追加",
@@ -428,7 +495,56 @@ const i18n = {
     thFricD: "ロープが接触する際に生じる抵抗。引き上げ時は負担を増やす「敵」ですが、ロワリング時はブレーキを助ける「味方」になります。",
     thMultT: "🚨 プーリー倍増効果 (Multiplier Effect)",
     thMultD: "高効率プーリーを使用し、角度が非常に狭い(例:0°)場合、CODは負荷の約2倍(200%)の力を受け、崩壊の危険があります！",
-    collapse: "🔼 閉じる"
+    collapse: "🔼 閉じる",
+    pwaDesc: "ホーム画面に追加して、フルスクリーンの没入型体験を：",
+    pwaAnd: "🤖 Android",
+    pwaIOS: "🍎 iOS (iPhone)",
+    pwaStep1: "ブラウザでリンクを開く",
+    pwaStep2: "右上の「⋮」をタップ",
+    pwaStep3: "「ホーム画面に追加」を選択",
+    pwaStep4: "「インストール」をタップ",
+    pwaStep5: "必ず <b>Safari</b> ブラウザを使用してください",
+    pwaStep6: "下部の「共有」アイコンをタップ",
+    pwaStep7: "下にスクロールし、「ホーム画面に追加」を選択",
+    pwaStep8: "「追加」をタップ",
+    installBtn: "📥 アプリをインストール",
+    disclaimer: "<strong style='color: var(--bad); font-size: 14px;'>⚠️ 免責事項：</strong><br>摩擦係数は理論上の平均値です（樹木0.4/カラビナ0.6/プーリー0.95）。実際の救助では、表面の粗さにより摩擦が劇的に変化します。必ず専門教官の指導と現場の判断に従ってください。",
+    // VIP & Modal
+    vipTitle: "🔒 PRO版ロック解除",
+    vipEnable1: "「",
+    vipEnable2: "」を有効にします！",
+    vipProOnly: "これはPRO版限定機能です。<br>SunMoonチームを支援し、全機能を永久解放しましょう！",
+    vipStoreBtn: "🛒 PRO版ストアへ",
+    vipHasPwd: "パスワードをお持ちですか？ここに入力：",
+    vipPwdPlh: "VIPパスワードを入力",
+    vipCancel: "後で",
+    vipUnlock: "今すぐロック解除 🔓",
+    vipErrPwd: "❌ パスワードが間違っています。もう一度確認してください。",
+    vipStateUnlocked: "🛡️ システム状態: ロック解除済み",
+    vipStateDesc: "指揮官コンソールに入るには、マスターキーを入力してください：",
+    cmdTitle: "👑 指揮官専用コンソール",
+    cmdExpToday: "👉 今日の体験コード (今夜失効)",
+    cmdExpTmrw: "👉 明日の体験コード",
+    cmdPerm: "👉 🌟 本部専用パーマネントコード",
+    cmdLogout: "認証解除 (ログアウト)",
+    cmdClose: "コンソールを閉じる",
+    toastAuthSuccess: "🎉 認証成功！ようこそ！",
+    toastTrialSuccess: "⏱️ 体験版有効化！(今夜自動失効)",
+    toastLogout: "🔄 ログアウトしました。再読み込み中...",
+    supTitle: "💬 サポートとフィードバック",
+    supDesc: "システムの異常が発生した場合や、<strong>機種変更で新しい認証コードが必要な場合</strong>は、以下をご用意ください：<br><br><span style='color:var(--safe);'>✔ 購入時のレシート画面</span><br><span style='color:var(--safe);'>✔ 問題の詳細</span><br><br>下のボタンから「サポートフォーム」にご記入ください。確認後、すぐに新しいパスワードをメールでお送りします！",
+    supLater: "後で",
+    supGo: "サポートフォームへ",
+    featCam: "📷 ARカメラオーバーレイ",
+    featCamDesc: "カメラを起動し、実際の救助現場に砂盤を重ねて角度を正確にシミュレーション！",
+    featPhoto: "📁 写真オーバーレイ",
+    featPhotoDesc: "現場の写真をインポートし、最もリアルな荷重シミュレーションを行います！",
+    featShot: "📸 戦術クリーン・スクリーンショット",
+    featShotDesc: "ノイズを除去し、透かしのない高解像度の戦術レポートをワンクリックで出力！",
+    featFric: "⚙️ 動的摩擦力計算",
+    featFricDesc: "カラビナとプーリーの摩擦係数を解放！異なる材質がシステムに与える影響を正確に推測。",
+    featAction: "🕹️ 引き上げ・ロワリングエンジン",
+    featActionDesc: "引き上げとロワリング時の摩擦による恐ろしい張力倍増効果をリアルにシミュレーション！"
   }
 };
 
@@ -478,36 +594,38 @@ function toggleLang() {
 <div id="grid-overlay"></div>
 <div id="toastMessage"></div>
 
+<!-- 💡 技術支援視窗套用多語系翻譯 -->
 <div id="supportModal" class="modal-overlay">
   <div class="modal-box">
-    <h3 style="color:var(--warn); margin-top:0;">💬 技術支援與問題回報</h3>
-    <p style="text-align:left; font-size:13px; line-height:1.7; margin-bottom:15px; color:var(--text);">
+    <h3 style="color:var(--warn); margin-top:0;" data-i18n="supTitle">💬 技術支援與問題回報</h3>
+    <p style="text-align:left; font-size:13px; line-height:1.7; margin-bottom:15px; color:var(--text);" data-i18n="supDesc">
       如果您遇到系統異常，或是<strong>更換新手機需要重新取得授權碼</strong>，請準備好您的：<br><br>
       <span style="color:var(--safe);">✔ 購買收據 Email 截圖</span><br>
       <span style="color:var(--safe);">✔ 遭遇的問題描述</span><br><br>
-      請點擊下方按鈕前往「專屬回報表單」填寫。朵朵老師確認無誤後，會盡速將新密碼發送至您的信箱！<br>
+      請點擊下方按鈕前往「專屬回報表單」填寫。團隊確認無誤後，會盡速將新密碼發送至您的信箱！
     </p>
     <div class="modal-actions" style="margin-top: 15px;">
-      <button class="btn-cancel" onclick="document.getElementById('supportModal').classList.remove('show')">稍後再說</button>
-      <button class="btn-unlock" style="background:var(--warn); color:#000;" onclick="window.open('https://forms.gle/fnxHcegcwQSPKmuQ6', '_blank'); document.getElementById('supportModal').classList.remove('show')">前往填寫表單</button>
+      <button class="btn-cancel" onclick="document.getElementById('supportModal').classList.remove('show')" data-i18n="supLater">稍後再說</button>
+      <button class="btn-unlock" style="background:var(--warn); color:#000;" onclick="window.open('https://forms.gle/fnxHcegcwQSPKmuQ6', '_blank'); document.getElementById('supportModal').classList.remove('show')" data-i18n="supGo">前往填寫表單</button>
     </div>
   </div>
 </div>
 
+<!-- 💡 付費解鎖視窗套用多語系翻譯 -->
 <div id="vipModal" class="modal-overlay">
   <div class="modal-box" id="vipModalBox">
-    <h3>🔒 專業版功能解鎖 <span class="vip-badge" style="display:inline-block;">PRO</span></h3>
-    <p>您即將啟用「<span id="vipFeatureName" style="color:var(--vip); font-weight:bold; font-size:16px;"></span>」！</p>
+    <h3><span data-i18n="vipTitle">🔒 專業版功能解鎖</span> <span class="vip-badge" style="display:inline-block;">PRO</span></h3>
+    <p><span data-i18n="vipEnable1">您即將啟用「</span><span id="vipFeatureName" style="color:var(--vip); font-weight:bold; font-size:16px;"></span><span data-i18n="vipEnable2">」！</span></p>
     <p id="vipFeatureDesc" style="font-size:14px; color:var(--safe); font-weight:bold; margin-bottom: 12px;"></p>
-    <p style="font-size:13px;">此功能為進階專業版限定。<br>支持散木團隊研發，永久解鎖全功能！</p>
-    <button style="background:var(--vip); color:#fff; border:none; padding:12px 20px; border-radius:8px; font-weight:bold; width:100%; margin-bottom:10px; cursor:pointer;" onclick="window.open('https://gumroad.com', '_blank')">🛒 前往專業版自動販賣機</button>
+    <p style="font-size:13px;" data-i18n="vipProOnly">此功能為進階專業版限定。<br>支持散木團隊研發，永久解鎖全功能！</p>
+    <button style="background:var(--vip); color:#fff; border:none; padding:12px 20px; border-radius:8px; font-weight:bold; width:100%; margin-bottom:10px; cursor:pointer;" onclick="window.open('https://gumroad.com', '_blank')" data-i18n="vipStoreBtn">🛒 前往專業版自動販賣機</button>
     <hr style="border:0; border-top:1px dashed var(--line); margin: 15px 0;">
-    <p style="font-size:12px; color:var(--muted); margin-bottom:8px;">已取得密碼？請在此輸入：</p>
-    <input type="text" id="vipPwdInput" placeholder="輸入 VIP 通關密碼" class="pwd-input" autocomplete="off">
+    <p style="font-size:12px; color:var(--muted); margin-bottom:8px;" data-i18n="vipHasPwd">已取得密碼？請在此輸入：</p>
+    <input type="text" id="vipPwdInput" data-i18n-plh="vipPwdPlh" placeholder="輸入 VIP 通關密碼" class="pwd-input" autocomplete="off">
     <div id="vipErrorMsg" style="color:var(--bad); font-size:12px; height:16px; margin-bottom:8px;"></div>
     <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeVipModal()">稍後再說</button>
-      <button class="btn-unlock" onclick="verifyVip()">立即解鎖 🔓</button>
+      <button class="btn-cancel" onclick="closeVipModal()" data-i18n="vipCancel">稍後再說</button>
+      <button class="btn-unlock" onclick="verifyVip()" data-i18n="vipUnlock">立即解鎖 🔓</button>
     </div>
   </div>
 </div>
@@ -548,7 +666,7 @@ function toggleLang() {
     <div class="card" id="mainCard">
       <div class="topbar">
           <div class="title-left" id="mainTitleText">
-            <span data-i18n="appTitle">全地形轉向沙盤</span> <span class="vip-badge">PRO</span>
+            <span data-i18n="appTitle">下方固定點架設儀 (全地形)</span> <span class="vip-badge">PRO</span>
           </div>
           <div style="display:flex; align-items:center; gap:8px;">
             <button id="langToggleBtn" onclick="toggleLang()">🌐 繁中</button>
@@ -557,12 +675,12 @@ function toggleLang() {
       </div>
 
       <div class="icon-bar" data-html2canvas-ignore="true">
-        <button class="icon-btn" id="btn-camera" onclick="attemptFeature('📷 實境相機疊圖', toggleCamera)" title="實境相機">📷<span class="lock-icon">🔒</span></button>
+        <button class="icon-btn" id="btn-camera" onclick="attemptFeature('featCam', toggleCamera)" title="實境相機">📷<span class="lock-icon">🔒</span></button>
         <button class="icon-btn" id="btn-flashlight" onclick="toggleFlashlight()" title="手電筒">🔦</button>
         <label class="icon-btn" onclick="handleImageUploadClick(event)" title="載入照片" style="margin:0;">📁<span class="lock-icon">🔒</span></label>
         <input type="file" id="upload-image" accept="image/*" onchange="loadImage(event)">
         <button class="icon-btn" onclick="toggleGrid()" title="工程網格">🌐</button>
-        <button class="icon-btn" onclick="attemptFeature('📸 戰術純淨截圖', takeScreenshot)" title="戰術截圖">📸<span class="lock-icon">🔒</span></button>
+        <button class="icon-btn" onclick="attemptFeature('featShot', takeScreenshot)" title="戰術截圖">📸<span class="lock-icon">🔒</span></button>
         <button class="icon-btn" onclick="resetEngine()" title="重置沙盤">↺</button>
       </div>
 
@@ -687,7 +805,6 @@ function toggleLang() {
       </div>
     </div> 
     
-    <!-- 💡 統一：選單樣式全面對齊張力儀，並新增操作手冊與多語系動態翻譯 -->
     <div class="menu-list" data-html2canvas-ignore="true">
       <details class="main-accordion" id="theoryAccordion">
         <summary><div style="display:flex; align-items:center; gap:8px;"><span class="menu-icon">📚</span> <span data-i18n="menu1">專業名詞與原理解析</span></div></summary>
@@ -743,24 +860,24 @@ function toggleLang() {
               <span class="menu-arrow">❯</span>
             </summary>
             <div class="menu-content">
-              <button id="installAppBtn" style="display:none; width:100%; padding:12px; margin-bottom:12px; background:var(--safe); color:#0a1410; border:none; border-radius:8px; font-weight:bold; font-size:15px; cursor:pointer; box-shadow:0 4px 10px rgba(74, 222, 128, 0.3);">📥 點擊一鍵安裝 APP</button>
-              <p style="margin-top: 0; margin-bottom: 8px; color: var(--text);">將捷徑加至主畫面，獲得無網址列的 100% 沉浸式體驗：</p>
+              <button id="installAppBtn" style="display:none; width:100%; padding:12px; margin-bottom:12px; background:var(--safe); color:#0a1410; border:none; border-radius:8px; font-weight:bold; font-size:15px; cursor:pointer; box-shadow:0 4px 10px rgba(74, 222, 128, 0.3);" data-i18n="installBtn">📥 點擊一鍵安裝 APP</button>
+              <p style="margin-top: 0; margin-bottom: 8px; color: var(--text);" data-i18n="pwaDesc">將捷徑加至主畫面，獲得無網址列的 100% 沉浸式體驗：</p>
               <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; margin-bottom: 12px;">
-                <p style="margin-top: 0; margin-bottom: 8px; font-weight: bold; color: var(--safe);">🤖 Android (安卓版)</p>
+                <p style="margin-top: 0; margin-bottom: 8px; font-weight: bold; color: var(--safe);" data-i18n="pwaAnd">🤖 Android (安卓版)</p>
                 <ol style="padding-left: 20px; margin: 0; font-size: 13px;">
-                  <li style="margin-bottom: 4px;">點開連結（可直接從 LINE 開啟）</li>
-                  <li style="margin-bottom: 4px;">點選瀏覽器右上角的「⋮」</li>
-                  <li style="margin-bottom: 4px;">選擇「加到主畫面」或「安裝應用程式」</li>
-                  <li style="margin-bottom: 0;">點選「安裝」，即可在桌面找到 APP</li>
+                  <li style="margin-bottom: 4px;" data-i18n="pwaStep1">點開連結（可直接從 LINE 開啟）</li>
+                  <li style="margin-bottom: 4px;" data-i18n="pwaStep2">點選瀏覽器右上角的「⋮」</li>
+                  <li style="margin-bottom: 4px;" data-i18n="pwaStep3">選擇「加到主畫面」或「安裝應用程式」</li>
+                  <li style="margin-bottom: 0;" data-i18n="pwaStep4">點選「安裝」，即可在桌面找到 APP</li>
                 </ol>
               </div>
               <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px;">
-                <p style="margin-top: 0; margin-bottom: 8px; font-weight: bold; color: var(--safe);">🍎 iOS (iPhone)</p>
+                <p style="margin-top: 0; margin-bottom: 8px; font-weight: bold; color: var(--safe);" data-i18n="pwaIOS">🍎 iOS (iPhone)</p>
                 <ol style="padding-left: 20px; margin: 0; font-size: 13px;">
-                  <li style="margin-bottom: 4px;">請務必使用 <b>Safari</b> 瀏覽器開啟</li>
-                  <li style="margin-bottom: 4px;">點選畫面下方的「分享」圖示</li>
-                  <li style="margin-bottom: 4px;">往下滑，選擇「加入主畫面」</li>
-                  <li style="margin-bottom: 0;">點選「加入」，即可將捷徑加到主畫面</li>
+                  <li style="margin-bottom: 4px;" data-i18n="pwaStep5">請務必使用 <b>Safari</b> 瀏覽器開啟</li>
+                  <li style="margin-bottom: 4px;" data-i18n="pwaStep6">點選畫面下方的「分享」圖示</li>
+                  <li style="margin-bottom: 4px;" data-i18n="pwaStep7">往下滑，選擇「加入主畫面」</li>
+                  <li style="margin-bottom: 0;" data-i18n="pwaStep8">點選「加入」，即可將捷徑加到主畫面</li>
                 </ol>
               </div>
             </div>
@@ -783,8 +900,8 @@ function toggleLang() {
         </div>
       </div>
 
-      <div class="footer-disclaimer">
-        <strong style="color: var(--bad); font-size: 14px;">⚖️ 軟體免責聲明：</strong><br>
+      <div class="footer-disclaimer" data-i18n="disclaimer">
+        <strong style="color: var(--bad); font-size: 14px;">⚠️ 軟體免責聲明：</strong><br>
         本軟體摩擦係數為理論估算均值(樹幹0.4/鉤環0.6/滑輪0.95)。實際救援中，表面粗糙度皆會劇烈改變摩擦力。請務必遵循專業教官之指導實地判定。
       </div>
     </div>
@@ -821,23 +938,21 @@ try {
 if (isUserVip) { document.body.classList.add('is-vip'); }
 
 const featureDescriptions = {
-    '📷 實境相機疊圖': '開啟鏡頭將沙盤重疊於真實救援現場，實地精準推演轉向角度！',
-    '📁 場勘照片疊圖': '匯入現場環境照片，進行最真實的受力兵推！',
-    '📸 戰術純淨截圖': '自動濾除雜訊，一鍵匯出無浮水印、最高解析度的專業戰術報告圖紙！',
-    '⚙️ 動態摩擦力運算': '解鎖鉤環與滑輪摩擦係數！精準推演不同轉向介質對系統的受力影響。',
-    '🕹️ 上拉下放引擎': '解鎖動態操作！真實模擬上拉 (Hauling) 與下放 (Lowering) 時，摩擦力造成的恐怖張力翻倍效應！'
+    'featCam': '', 'featPhoto': '', 'featShot': '', 'featFric': '', 'featAction': ''
 };
 
 const originalVipModalHtml = document.getElementById('vipModalBox').innerHTML;
 let pendingFeatureCallback = null;
 
-function attemptFeature(featureName, callback) {
+function attemptFeature(featureKey, callback) {
     if (isUserVip) { callback(); } 
     else {
         pendingFeatureCallback = callback;
         document.getElementById('vipModalBox').innerHTML = originalVipModalHtml; 
-        document.getElementById('vipFeatureName').textContent = featureName;
-        document.getElementById('vipFeatureDesc').textContent = featureDescriptions[featureName] || "";
+        applyTranslations();
+        
+        document.getElementById('vipFeatureName').textContent = t(featureKey);
+        document.getElementById('vipFeatureDesc').textContent = t(featureKey + 'Desc');
         document.getElementById('vipErrorMsg').textContent = "";
         document.getElementById('vipPwdInput').value = "";
         document.getElementById('vipModal').classList.add('show');
@@ -850,18 +965,22 @@ if (mainTitleEl) {
         if (isUserVip) {
             pendingFeatureCallback = null;
             document.getElementById('vipModalBox').innerHTML = originalVipModalHtml; 
-            document.querySelector('#vipModalBox h3').innerHTML = "🛡️ 系統狀態：已解鎖";
-            document.querySelector('#vipModalBox p').innerHTML = "如需進入指揮官控制台，請輸入最高權限金鑰：";
+            applyTranslations();
+            
+            document.querySelector('[data-i18n="vipTitle"]').textContent = t('vipStateUnlocked');
+            document.getElementById('vipFeatureName').parentElement.innerHTML = t('vipStateDesc');
+            document.getElementById('vipFeatureDesc').textContent = "";
             document.getElementById('vipErrorMsg').textContent = "";
             document.getElementById('vipPwdInput').value = "";
             document.getElementById('vipModal').classList.add('show');
+            setTimeout(() => document.getElementById('vipPwdInput').focus(), 100);
         }
     });
 }
 
 window.logoutVip = function() {
     try { localStorage.removeItem('sunmoon_vip_redirect_status'); localStorage.removeItem('sunmoon_vip_redirect_expire'); } catch(e) {}
-    showToast("🔄 登出成功，重新載入鎖定狀態...", "warn");
+    showToast(t('toastLogout'), "warn");
     setTimeout(() => { window.location.reload(); }, 1000); 
 };
 
@@ -874,19 +993,19 @@ function verifyVip() {
         isUserVip = true; document.body.classList.add('is-vip'); 
         const todayKey = getDailyKey(0); const tmrwKey = getDailyKey(1); const permKey = PERMANENT_KEYS[0];
         document.getElementById('vipModalBox').innerHTML = `
-          <h3 style="color: var(--warn); margin-top:0;">👑 指揮官專屬控制台</h3>
+          <h3 style="color: var(--warn); margin-top:0;">${t('cmdTitle')}</h3>
           <div style="background:rgba(0,0,0,0.3); padding:12px; border-radius:8px; margin-bottom:10px; text-align:left; border-left: 4px solid var(--safe);">
-            <span style="color:var(--muted); font-size:12px;">👉 今天的體驗碼 (今晚失效)</span><br><strong style="color:var(--safe); font-size:22px; letter-spacing:1px;">${todayKey}</strong>
+            <span style="color:var(--muted); font-size:12px;">${t('cmdExpToday')}</span><br><strong style="color:var(--safe); font-size:22px; letter-spacing:1px;">${todayKey}</strong>
           </div>
           <div style="background:rgba(0,0,0,0.3); padding:12px; border-radius:8px; margin-bottom:10px; text-align:left; border-left: 4px solid var(--warn);">
-            <span style="color:var(--muted); font-size:12px;">👉 明天的體驗碼</span><br><strong style="color:var(--warn); font-size:22px; letter-spacing:1px;">${tmrwKey}</strong>
+            <span style="color:var(--muted); font-size:12px;">${t('cmdExpTmrw')}</span><br><strong style="color:var(--warn); font-size:22px; letter-spacing:1px;">${tmrwKey}</strong>
           </div>
           <div style="background:rgba(0,0,0,0.3); padding:12px; border-radius:8px; margin-bottom:20px; text-align:left; border-left: 4px solid var(--vip);">
-            <span style="color:var(--muted); font-size:12px;">👉 🌟 總部專屬配發碼</span><br><strong style="color:var(--vip); font-size:18px; letter-spacing:1px;">${permKey}</strong>
+            <span style="color:var(--muted); font-size:12px;">${t('cmdPerm')}</span><br><strong style="color:var(--vip); font-size:18px; letter-spacing:1px;">${permKey}</strong>
           </div>
           <div class="modal-actions" style="margin-top: 15px;">
-            <button class="btn-cancel" style="border:1px solid var(--bad); color:var(--bad);" onclick="logoutVip()">清除授權(登出)</button>
-            <button class="btn-unlock" style="background:var(--warn); color:#000;" onclick="closeVipModal()">關閉控制台</button>
+            <button class="btn-cancel" style="border:1px solid var(--bad); color:var(--bad);" onclick="logoutVip()">${t('cmdLogout')}</button>
+            <button class="btn-unlock" style="background:var(--warn); color:#000;" onclick="closeVipModal()">${t('cmdClose')}</button>
           </div>
         `;
         return; 
@@ -895,7 +1014,7 @@ function verifyVip() {
     if (PERMANENT_KEYS.includes(inputPwd) || inputPwd === getDailyKey(0)) {
         try { localStorage.setItem('sunmoon_vip_redirect_status', 'true'); } catch(e){} 
         isUserVip = true; document.body.classList.add('is-vip'); closeVipModal();
-        showToast("🎉 授權成功！歡迎使用！", "safe");
+        showToast(t('toastAuthSuccess'), "safe");
         if (pendingFeatureCallback) { pendingFeatureCallback(); pendingFeatureCallback = null; }
         return;
     }
@@ -903,12 +1022,12 @@ function verifyVip() {
     if (inputPwd === getDailyKey(0)) {
         try { localStorage.setItem('sunmoon_vip_redirect_expire', todayStr); } catch(e){} 
         isUserVip = true; document.body.classList.add('is-vip'); closeVipModal();
-        showToast("⏱️ 體驗授權成功！(今晚自動失效)", "safe");
+        showToast(t('toastTrialSuccess'), "safe");
         if (pendingFeatureCallback) { pendingFeatureCallback(); pendingFeatureCallback = null; }
         return;
     }
     
-    errorMsg.textContent = "❌ 授權碼錯誤，請確認輸入是否正確。"; 
+    errorMsg.textContent = t('vipErrPwd'); 
 }
 function closeVipModal() { document.getElementById('vipModal').classList.remove('show'); pendingFeatureCallback = null;}
 
@@ -947,7 +1066,7 @@ async function toggleFlashlight() {
   } catch(e) { showToast("⚠️ 手電筒切換失敗：" + e.message, "bad"); }
 }
 
-function handleImageUploadClick(e) { if (!isUserVip) { e.preventDefault(); attemptFeature('📁 場勘照片疊圖', () => document.getElementById('upload-image').click()); } }
+function handleImageUploadClick(e) { if (!isUserVip) { e.preventDefault(); attemptFeature('featPhoto', () => document.getElementById('upload-image').click()); } }
 function loadImage(event) { 
   const file = event.target.files[0]; 
   if (file) { 
@@ -1100,7 +1219,7 @@ function setFriction(btn, mode) {
         }
         updateEngine();
     };
-    if (mode !== 'base') attemptFeature('⚙️ 動態摩擦力運算', doSet); else doSet();
+    if (mode !== 'base') attemptFeature('featFric', doSet); else doSet();
 }
 
 function setAction(btn) {
@@ -1110,7 +1229,7 @@ function setAction(btn) {
         currentAction = btn.dataset.val;
         updateEngine();
     };
-    if (btn.dataset.val !== 'static') attemptFeature('🕹️ 上拉下放引擎', doSet); else doSet();
+    if (btn.dataset.val !== 'static') attemptFeature('featAction', doSet); else doSet();
 }
 
 function renderRedirectNode() {
