@@ -1335,8 +1335,8 @@ function showToast(msg, type = 'safe') {
       <span style="color:var(--bad); font-size:12px; font-weight:bold; line-height:1.5; display:block;" data-i18n="vipDisclaimer">⚠️ 注意：本系統採單機授權，遺失密碼或更換設備請重新購買，恕無提供補發與人工客服。</span>
     </div>
 
-    <!-- 💡 對接 Gumroad 總店鋪網址 -->
-    <button class="primary-btn" style="background:var(--vip); margin-bottom:10px;" onclick="window.open('https://fang5761.gumroad.com/', '_blank')" data-i18n="vipStoreBtn">🛒 前往專業版自動販賣機</button>
+    <!-- 💡 對接 Gumroad 專屬商品網址 -->
+    <button class="primary-btn" style="background:var(--vip); margin-bottom:10px;" onclick="window.open('https://fang5761.gumroad.com/l/redirect-simulator', '_blank')" data-i18n="vipStoreBtn">🛒 前往專業版自動販賣機</button>
     
     <hr style="border:0; border-top:1px dashed var(--line); margin: 15px 0;">
     <p style="font-size:12px; color:var(--muted); margin-bottom:8px;" data-i18n="vipHasPwd">已取得密碼？請在此輸入：</p>
@@ -1645,7 +1645,7 @@ function showToast(msg, type = 'safe') {
       </details>
 
       <!-- 第四區：贊助散木團隊 -->
-      <details class="main-accordion" style="margin-top: 10px;" onclick="window.open('https://fang5761.gumroad.com/', '_blank'); event.preventDefault();">
+      <details class="main-accordion" style="margin-top: 10px;" onclick="window.open('https://fang5761.gumroad.com/l/redirect-simulator', '_blank'); event.preventDefault();">
         <summary><div style="display:flex; align-items:center; gap:8px;"><span class="menu-icon">☕</span> <span data-i18n="menuSponsor" style="color: var(--warn);">喜歡這APP嗎？歡迎請團隊喝咖啡</span></div></summary>
       </details>
 
@@ -1659,14 +1659,17 @@ function showToast(msg, type = 'safe') {
 
 <script>
 // 🚀 散木團隊：雲端金鑰外掛與核心授權系統
-const PERMANENT_KEYS = ["SMR-A7K9-X2M4", "SMR-B3Q8-P9Y1", "SMR-C5R2-W6Z7"];
+const PERMANENT_KEYS = ["SMR-T8Y3-L6P2", "SMR-B3Q8-P9Y1", "SMR-C5R2-W6Z7"];
 const MASTER_KEY = "SUNMOONBOSS"; 
 
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQlTgAJeOrQIlyQVjvjDLtZycBAgc1d2R5vZWymQUrfNrzp6F7tdt74cmPbPIbobzmrFunwvwzfOc2S/pub?output=csv";
 let REMOTE_PERMANENT_KEY = "";
 fetch(SHEET_CSV_URL).then(r => r.text()).then(d => {
-    const k = d.split(/\r?\n/)[0].split(',')[0].trim();
-    if(k) REMOTE_PERMANENT_KEY = k;
+    const rows = d.split(/\r?\n/);
+    if(rows.length > 1) {
+        const k = rows[1].split(',')[0].trim();
+        if(k) REMOTE_PERMANENT_KEY = k;
+    }
 }).catch(e => console.log("雲端連線異常"));
 
 function getDailyKey(offsetDays = 0) {
@@ -1781,7 +1784,7 @@ function openCommanderConsole() {
     document.getElementById('vipModalBox').innerHTML = 
       '<h3 style="color: var(--warn); margin-top:0;">👑 指揮官專屬控制台</h3>' +
       '<div style="background:rgba(0,0,0,0.3); padding:10px 15px; border-radius:8px; margin-bottom:10px; text-align:left; border-left: 4px solid var(--vip);">' +
-        '<span style="color:var(--muted); font-size:11px;">📡 雲端終身金鑰 (A1)</span><br>' +
+        '<span style="color:var(--muted); font-size:11px;">📡 雲端終身金鑰 (A2)</span><br>' +
         '<strong style="color:var(--vip); font-size:18px; letter-spacing:1px;">' + (REMOTE_PERMANENT_KEY || '讀取中...') + '</strong>' +
       '</div>' +
       '<div style="background:rgba(0,0,0,0.3); padding:10px 15px; border-radius:8px; margin-bottom:15px; text-align:left; border-left: 4px solid var(--safe);">' +
@@ -1859,7 +1862,7 @@ function verifyVip() {
         return;
     }
     
-    errorMsg.innerHTML = '❌ 授權碼錯誤！若需領取新密碼請 <a href="https://fang5761.gumroad.com/" target="_blank" style="color:var(--safe); text-decoration:underline;">按此前往</a>';
+    errorMsg.innerHTML = '❌ 授權碼錯誤！若需領取新密碼請 <a href="https://fang5761.gumroad.com/l/redirect-simulator" target="_blank" style="color:var(--safe); text-decoration:underline;">按此前往</a>';
 }
 
 // AR 系統
