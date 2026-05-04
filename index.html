@@ -131,9 +131,16 @@
   .edu-wrap { margin-top: 8px; padding: 12px; background: rgba(255, 216, 77, 0.1); border-radius: 8px; border: 1px solid var(--warn); text-align: justify; font-size: 13.5px; font-weight: bold; color: var(--text); line-height: 1.6; transition: background 0.3s, border 0.3s; }
   .mask-text { paint-order: stroke fill; stroke: var(--bg); stroke-width: 4px; stroke-linecap: round; stroke-linejoin: round; }
 
-  /* 💡 模態視窗與按鈕視覺放大更新 */
+  /* 💡 模態視窗與按鈕視覺放大更新 (加入 max-height 與 overflow 解決手機滑動問題) */
   .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); }
-  .modal-box { background: var(--card); border: 2px solid var(--vip); border-radius: 16px; padding: 24px; width: 85%; max-width: 400px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.8); position: relative; }
+  .modal-box { 
+    background: var(--card); border: 2px solid var(--vip); border-radius: 16px; padding: 24px; 
+    width: 85%; max-width: 400px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.8); 
+    position: relative; 
+    max-height: 80vh; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
+  }
+  .modal-box::-webkit-scrollbar { display: none; } /* 隱藏滾動條保持美觀 */
+  
   .modal-box h3 { margin: 0 0 12px 0; color: var(--warn); font-size: 18px; display: flex; align-items: center; justify-content: center; gap: 8px; }
   .modal-box p { font-size: 14px; color: var(--text); margin-bottom: 16px; line-height: 1.6; }
   .primary-btn { background: var(--vip); color: #fff; border: none; padding: 12px 20px; border-radius: 8px; font-size: 15px; font-weight: bold; width: 100%; cursor: pointer; box-shadow: 0 4px 12px rgba(192, 132, 252, 0.4); margin-bottom: 10px; transition: transform 0.2s; }
@@ -260,7 +267,7 @@ const i18n = {
     edu_haul_base: "🥵 <b>{name} (COD) 摩擦力極大！這是最累的拉法。</b><br>為了把負載往上拉，操作端必須多花 <b>{mult} 倍</b> 的力氣 ({T}kg) 才能克服摩擦力！{name}也因此承受恐怖的連帶破壞力。",
     edu_haul_cara: "🪝🤨 <b>鉤環提供中等摩擦力。</b><br>雖然比{name}滑順，但金屬摩擦力還是讓操作端要出 <b>{mult} 倍</b> 的力氣 ({T}kg) 才能往上拉。",
     edu_haul_pull: "⚙️😎 <b>高效率轉向！極度省力。</b><br>摩擦力幾乎消失，操作端只需要出 <b>{mult} 倍</b> 左右的力量 ({T}kg) 就能拉動。{name}也比較安全！",
-    edu_low_base: "🛡️ <b>下放時，{name} (COD) 反而變成救星！</b><br>巨大的摩擦力變成「天然煞車」，操作端只要輕輕握住 <b>{T}kg</b> 的力量，就能穩穩控制住系統！",
+    edu_low_base: "🛡️ <b>下放時，{name} (COD) 反меча變成救星！</b><br>巨大的摩擦力變成「天然煞車」，操作端只要輕輕握住 <b>{T}kg</b> 的力量，就能穩穩控制住系統！",
     edu_low_cara: "🪝🛡️ <b>鉤環提供適中的煞車力。</b><br>下放時，金屬摩擦力幫忙煞車，操作端需出力 <b>{T}kg</b> 即可穩穩控制。",
     edu_low_pull: "⚙️⚠️ <b>滑輪太溜了！下放請小心。</b><br>因為沒有摩擦力幫忙煞車，操作端必須死命握住將近負載 ({T}kg) 的力量，很容易失手滑掉！",
     edu_warning: "<br><br>🚨 <b>滑輪倍增效應：</b> 繩索夾角太小，讓{name}承受了超過 2 倍的合力，極易發生崩塌斷裂意外！",
@@ -1524,7 +1531,7 @@ function showToast(msg, type = 'safe') {
     </div> 
     
     <div class="menu-list" data-html2canvas-ignore="true">
-      <!-- 第一區：系統設定與操作指南 -->
+      <!-- 💡 第一區：系統設定與操作指南 -->
       <details class="main-accordion" id="settingsAccordion">
         <summary><div style="display:flex; align-items:center; gap:8px;"><span class="menu-icon">⚙️</span> <span data-i18n="menuSet" style="color: var(--warn);">系統設定與操作指南</span></div></summary>
         <div class="menu-group">
@@ -1591,7 +1598,7 @@ function showToast(msg, type = 'safe') {
         </div>
       </details>
 
-      <!-- 第二區：專業名詞與原理解析 -->
+      <!-- 💡 第二區：專業名詞與原理解析 -->
       <details class="main-accordion" style="margin-top: 10px;">
         <summary><div style="display:flex; align-items:center; gap:8px;"><span class="menu-icon">📚</span> <span data-i18n="menu1" style="color: var(--warn);">專業名詞與原理解析</span></div></summary>
         <div class="menu-group">
@@ -1604,7 +1611,7 @@ function showToast(msg, type = 'safe') {
         </div>
       </details>
 
-      <!-- 第三區：系統支援與開發資訊 -->
+      <!-- 💡 第三區：系統支援與開發資訊 -->
       <details class="main-accordion" style="margin-top: 10px;">
         <summary><div style="display:flex; align-items:center; gap:8px;"><span class="menu-icon">💬</span> <span data-i18n="menuSup" style="color: var(--warn);">系統支援與開發資訊</span></div></summary>
         <div class="menu-group">
@@ -1644,7 +1651,7 @@ function showToast(msg, type = 'safe') {
         </div>
       </details>
 
-      <!-- 第四區：贊助散木團隊 -->
+      <!-- 💡 第四區：贊助散木團隊 -->
       <details class="main-accordion" style="margin-top: 10px;" onclick="window.open('https://fang5761.gumroad.com/l/redirect-simulator', '_blank'); event.preventDefault();">
         <summary><div style="display:flex; align-items:center; gap:8px;"><span class="menu-icon">☕</span> <span data-i18n="menuSponsor" style="color: var(--warn);">喜歡這APP嗎？歡迎請團隊喝咖啡</span></div></summary>
       </details>
