@@ -41,6 +41,7 @@
     --tree: #65a30d;
   }
 
+  /* 強制防止左右溢出 */
   html, body { 
     height: 100%; width: 100%; overflow: hidden; overscroll-behavior: none; 
     position: fixed; inset: 0; background-color: var(--bg);
@@ -50,7 +51,6 @@
     margin: 0; color: var(--text); font-family: 'Noto Serif TC', serif;
     -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
     display: flex; flex-direction: column; align-items: center;
-    padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom);
     transition: background-color 0.3s ease;
   }
 
@@ -62,7 +62,12 @@
   }
   body.camera-mode #status-bar-protector { background-color: rgba(10, 20, 16, 0.7); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 
-  #scroll-wrapper { position: absolute; top: 0; left: 0; right: 0; bottom: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; display: flex; flex-direction: column; align-items: center; }
+  /* 加上 overflow-x: hidden 防止左右滑動 */
+  #scroll-wrapper { 
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0; 
+    overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; 
+    display: flex; flex-direction: column; align-items: center; 
+  }
   input, textarea { -webkit-user-select: auto; user-select: auto; box-sizing: border-box; }
   *{box-sizing:border-box}
 
@@ -70,7 +75,11 @@
   #bg-video, #bg-image { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s; }
   #grid-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 20px 20px; opacity: 0.5; pointer-events: none; transition: opacity 0.3s; }
 
-  .app-container { max-width: 500px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; position: relative; z-index: 1; padding: 10px 10px 40px 10px; }
+  /* 將 Safe Area 內縮設定移到容器上，解決動態島回彈衝突 */
+  .app-container { 
+    max-width: 500px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; position: relative; z-index: 1; 
+    padding: calc(env(safe-area-inset-top) + 10px) 10px calc(env(safe-area-inset-bottom) + 40px) 10px; 
+  }
   input[type="file"] { display: none; }
 
   .card { width:100%; background:var(--card); border:2px solid var(--line); border-radius:16px; padding: 10px; box-shadow:0 10px 30px rgba(0,0,0,.5); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); transition: border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease; }
@@ -79,20 +88,14 @@
   .capture-mode .capture-hide { display: none !important; }
   
   .topbar { display: flex; align-items: center; margin-bottom: 8px; width: 100%; justify-content: space-between; }
-  .title-left { display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; border-left: 4px solid var(--warn); padding-left: 8px; font-size: 15px; font-weight: bold; white-space: nowrap; }
+  
+  /* 移除強制不斷行，讓標題在小螢幕可自然調整 */
+  .title-left { 
+    display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; border-left: 4px solid var(--warn); 
+    padding-left: 8px; font-size: 15px; font-weight: bold; white-space: normal; line-height: 1.3; flex-wrap: wrap;
+  }
   .vip-badge { display: none; background: var(--vip); color: #fff; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 12px; letter-spacing: 0.5px; box-shadow: 0 0 8px rgba(192, 132, 252, 0.6); margin-left: 4px; }
   .is-vip .vip-badge { display: inline-block; }
-
-  #langToggleBtn {
-    background: rgba(255,255,255,0.05); border: 1px solid var(--line); color: var(--muted);
-    border-radius: 8px; padding: 4px 10px; font-size: 12px; font-weight: bold; cursor: pointer;
-    transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.3); margin-left: auto;
-    flex: 0 0 auto !important; 
-    width: fit-content !important;
-    min-width: 0 !important;
-    white-space: nowrap;
-  }
-  #langToggleBtn:active { transform: scale(0.95); background: var(--line); color: var(--text); }
 
   .icon-bar { display: flex; justify-content: space-between; align-items: center; gap: 6px; background: rgba(0,0,0,0.4); padding: 6px 8px; border-radius: 12px; margin-bottom: 8px; border: 1px solid var(--line); }
   .icon-btn { flex: 1; aspect-ratio: 1/1; max-height: 36px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid transparent; display: flex; justify-content: center; align-items: center; position: relative; cursor: pointer; transition: all 0.2s; font-size: 16px; color: var(--text); padding: 0; }
@@ -214,7 +217,8 @@ const i18n = {
     edu_low_pull: "⚙️⚠️ <b>滑輪太溜了！下放請小心。</b><br>因為沒有摩擦力幫忙煞車，操作端必須死命握住將近負載 ({T}kg) 的力量，很容易失手滑掉！",
     edu_warning: "<br><br>🚨 <b>滑輪倍增效應：</b> 繩索夾角太小，讓{name}承受了超過 2 倍的合力，極易發生崩塌斷裂意外！",
     multLabel: "(負載的 {m} 倍)",
-    langBtn: "🌐 繁中",
+    menuLang: "切換語言 (Language)",
+    langStatus: "目前：繁中",
     menu1: "專業名詞與原理解析",
     menu2: "系統工具與說明書",
     menu3: "分享系統連結",
@@ -338,7 +342,8 @@ const i18n = {
     edu_low_pull: "⚙️⚠️ <b>Very slippery! Caution when lowering.</b><br>Almost no braking help. Operator must hold <b>{T}kg</b>. Easy to lose grip!",
     edu_warning: "<br><br>🚨 <b>Pulley Multiplier Effect:</b> Angle is too sharp! {name} bears >2x load. High risk of failure!",
     multLabel: "({m}x Load)",
-    langBtn: "🌐 EN",
+    menuLang: "Change Language",
+    langStatus: "Current: EN",
     menu1: "Theory & Principles",
     menu2: "Manual & Tools",
     menu3: "Share Link",
@@ -462,7 +467,8 @@ const i18n = {
     edu_low_pull: "⚙️⚠️ <b>滑りやすい！ロワリング注意。</b><br>摩擦ブレーキがないため、操作側は負荷に近い力({T}kg)を保持する必要があり、手を滑らせる危険大！",
     edu_warning: "<br><br>🚨 <b>プーリー倍増効果：</b> 角度が鋭すぎます！{name}が2倍以上の合力を受け、崩壊のリスク大！",
     multLabel: "(負荷の {m} 倍)",
-    langBtn: "🌐 日本語",
+    menuLang: "言語切替 (Language)",
+    langStatus: "現在：日本語",
     menu1: "原理と専門用語",
     menu2: "ツールと操作",
     menu3: "リンク共有",
@@ -571,9 +577,6 @@ function applyTranslations() {
         }
     });
 
-    const langBtn = document.getElementById('langToggleBtn');
-    if (langBtn) langBtn.innerHTML = t('langBtn');
-
     if (typeof updateEngine === 'function' && typeof els !== 'undefined' && els.lblBranchName) {
         els.lblBranchName.textContent = getSceneName();
         els.btnFrictionBase.innerHTML = `${scenes[currentScene].icon} ${getSceneName()}${t('directPull')}`;
@@ -594,7 +597,7 @@ function toggleLang() {
 <div id="grid-overlay"></div>
 <div id="toastMessage"></div>
 
-<!-- 💡 技術支援視窗套用多語系翻譯 -->
+<!-- 💡 技術支援視窗 -->
 <div id="supportModal" class="modal-overlay">
   <div class="modal-box">
     <h3 style="color:var(--warn); margin-top:0;" data-i18n="supTitle">💬 技術支援與問題回報</h3>
@@ -611,7 +614,7 @@ function toggleLang() {
   </div>
 </div>
 
-<!-- 💡 付費解鎖視窗套用多語系翻譯 -->
+<!-- 💡 付費解鎖視窗 -->
 <div id="vipModal" class="modal-overlay">
   <div class="modal-box" id="vipModalBox">
     <h3><span data-i18n="vipTitle">🔒 專業版功能解鎖</span> <span class="vip-badge" style="display:inline-block;">PRO</span></h3>
@@ -668,8 +671,8 @@ function toggleLang() {
           <div class="title-left" id="mainTitleText">
             <span data-i18n="appTitle">下方固定點架設儀 (全地形)</span> <span class="vip-badge">PRO</span>
           </div>
+          <!-- 已將語言切換按鈕移除，並將右側預留給散木團隊的 LOGO -->
           <div style="display:flex; align-items:center; gap:8px;">
-            <button id="langToggleBtn" onclick="toggleLang()">🌐 繁中</button>
             <img src="./sunmoon_logo.png" alt="散木團隊" style="width: 26px; height: 26px; border-radius: 4px; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.5);" onerror="this.style.display='none'">
           </div>
       </div>
@@ -821,6 +824,13 @@ function toggleLang() {
       <details class="main-accordion">
         <summary><div style="display:flex; align-items:center; gap:8px;"><span class="menu-icon">⚙️</span> <span data-i18n="menu2">系統工具與說明書</span></div></summary>
         <div class="menu-group">
+          
+          <!-- 語言切換按鈕已被移至此處 -->
+          <div class="menu-action-btn" onclick="toggleLang()" style="border-bottom: 1px solid var(--line);">
+            <div class="menu-header-left"><span class="menu-icon">🌐</span><span data-i18n="menuLang">切換語言 (Language)</span></div>
+            <span data-i18n="langStatus" style="color:var(--safe); font-weight:bold; font-size:13px;">目前：繁中</span>
+          </div>
+
           <details class="menu-item">
             <summary>
               <div class="menu-header-left"><span class="menu-icon">📖</span><span data-i18n="menuOp">系統操作說明</span></div>
@@ -1030,9 +1040,6 @@ function verifyVip() {
     errorMsg.textContent = t('vipErrPwd'); 
 }
 function closeVipModal() { document.getElementById('vipModal').classList.remove('show'); pendingFeatureCallback = null;}
-
-const supportBtnAction = document.getElementById('supportBtnAction');
-if(supportBtnAction) { supportBtnAction.addEventListener('click', () => document.getElementById('supportModal').classList.add('show')); }
 
 // AR 系統
 let stream = null, videoTrack = null, torchOn = false; 
@@ -1431,7 +1438,17 @@ window.addEventListener('beforeinstallprompt', (e) => {
     }
 });
 
-if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').then(reg => { reg.update(); }).catch(err => console.error(err)); }); }
+if ('serviceWorker' in navigator && ['http:', 'https:'].includes(window.location.protocol)) {
+  window.addEventListener('load', () => {
+    try {
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => { reg.update(); })
+        .catch(err => console.warn('Service Worker 註冊失敗:', err));
+    } catch(err) {
+      console.error('Service Worker 錯誤:', err);
+    }
+  });
+}
 
 function checkForUpdates() {
   showToast("🔄 正在清除快取並載入最新版本...", "warn");
