@@ -72,8 +72,12 @@
   input, textarea { -webkit-user-select: auto; user-select: auto; box-sizing: border-box; }
   *{box-sizing:border-box}
 
-  #bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background-color: var(--bg); overflow: hidden; }
+  /* 💡 背景層與調光層設計 */
+  #bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background-color: var(--bg); overflow: hidden; display: flex; align-items: center; justify-content: center; }
+  #media-container { width: 100%; height: 100%; position: absolute; transition: transform 0.2s ease-out; transform-origin: center center; }
   #bg-video, #bg-image { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s; }
+  #dim-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+  
   #grid-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 20px 20px; opacity: 0.5; pointer-events: none; transition: opacity 0.3s; }
 
   .app-container { 
@@ -115,13 +119,13 @@
   .draggable-anchor { cursor: grab; touch-action: none; }
   .draggable-anchor:active { cursor: grabbing; }
 
-  /* 💡 新增拖曳視覺導引動畫 */
   @keyframes pulse-drag {
       0% { transform: scale(0.9); opacity: 0.3; }
       50% { transform: scale(1.1); opacity: 0.8; }
       100% { transform: scale(0.9); opacity: 0.3; }
   }
   .drag-cue { animation: pulse-drag 2s infinite; stroke: rgba(255, 255, 255, 0.5); fill: none; stroke-width: 1.5; stroke-dasharray: 4 4; pointer-events: none; }
+  .drag-hint-text { animation: pulse-drag 2.5s infinite; pointer-events: none; font-family: monospace; letter-spacing: 1px; }
 
   .dashboard { display: flex; justify-content: space-between; gap: 6px; margin-bottom: 8px; }
   .dash-box { flex: 1; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; text-align: center; }
@@ -133,7 +137,6 @@
   .control-row { display: flex; flex-direction: column; gap: 6px; }
   .btn-group-lbl { font-size: 12px; color: var(--safe); font-weight: bold; }
   
-  /* 💡 更新 toggle-group 支援自動換行與網格排版 */
   .toggle-group { display: flex; gap: 6px; width: 100%; justify-content: center; flex-wrap: wrap; }
   .toggle-btn { flex: 1 1 auto; background: rgba(0,0,0,0.4); border: 1px solid var(--line); color: var(--muted); border-radius: 6px; padding: 8px 2px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.2s; position: relative; display: flex; align-items: center; justify-content: center;}
   
@@ -144,6 +147,12 @@
 
   .edu-wrap { margin-top: 8px; padding: 12px; background: rgba(255, 216, 77, 0.1); border-radius: 8px; border: 1px solid var(--warn); text-align: justify; font-size: 13.5px; font-weight: bold; color: var(--text); line-height: 1.6; transition: background 0.3s, border 0.3s; }
   .mask-text { paint-order: stroke fill; stroke: var(--bg); stroke-width: 4px; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* 💡 AR 控制台面板 */
+  #cameraControls { display: none; position: absolute; bottom: 10px; right: 10px; flex-direction: column; gap: 10px; background: rgba(0,0,0,0.7); padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); z-index: 10; backdrop-filter: blur(4px); box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+  .control-slider-wrap { display: flex; align-items: center; gap: 8px; }
+  .control-slider-wrap span { font-size: 12px; color: var(--text); font-weight: bold; width: 35px; }
+  .control-slider-wrap input[type=range] { width: 80px; accent-color: var(--safe); }
 
   .modal-overlay { 
     display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
@@ -291,9 +300,9 @@ const i18n = {
     edu_haul_base: "🥵 <b>{name} (COD) 摩擦力極大！這是最累的拉法。</b><br>為了把負載往上拉，操作端必須多花力氣才能克服摩擦力！搭配 MA {ma}:1 省力系統，手部實際只需拉 <b>{T}kg</b>。但{name}仍承受恐怖的連帶破壞力。",
     edu_haul_cara: "🪝🤨 <b>{name}提供中等摩擦力。</b><br>雖然比粗糙表面滑順，但摩擦力仍不小。搭配 MA {ma}:1 系統，手部實際只需拉 <b>{T}kg</b>。",
     edu_haul_pull: "⚙️😎 <b>{name}高效率轉向！極度省力。</b><br>摩擦阻力較低，搭配 MA {ma}:1 系統，操作端只需要出 <b>{T}kg</b> 的力量就能拉動。轉向點也比較安全！",
-    edu_low_base: "🛡️ <b>下放時，{name} (COD) 反而變成救星！</b><br>巨大的摩擦力變成「天然煞車」，操作端只要輕輕握住 <b>{T}kg</b> 的力量，就能穩穩控制住系統！",
-    edu_low_cara: "🪝🛡️ <b>{name}提供適中的煞車力。</b><br>下放時摩擦力幫忙煞車，操作端需出力 <b>{T}kg</b> 即可穩穩控制。",
-    edu_low_pull: "⚙️⚠️ <b>{name}太溜了！下放請小心。</b><br>因為沒有足夠的摩擦力幫忙煞車，操作端必須死命握住將近負載 ({T}kg) 的力量，很容易失手滑掉！",
+    edu_low_base: "🛡️ <b>下放時，{name} 反而變成救星！</b><br>巨大的摩擦力變成「天然煞車」，若搭配 MA {ma}:1 系統，操作端只要輕輕握住 <b>{T}kg</b> 的力量即可穩穩控制！",
+    edu_low_cara: "🪝🛡️ <b>{name}提供適中的煞車力。</b><br>下放時摩擦力幫忙煞車，若搭配 MA {ma}:1 系統，操作端需出力 <b>{T}kg</b> 即可控制。",
+    edu_low_pull: "⚙️⚠️ <b>{name}太溜了！下放請小心。</b><br>因為沒有足夠的摩擦力幫忙煞車，若搭配 MA {ma}:1 系統，操作端仍需握住 <b>{T}kg</b> 的力量。",
     edu_warning: "<br><br>🚨 <b>滑輪倍增效應：</b> 繩索夾角太小，讓轉向點承受了超過 2 倍的合力，極易發生崩塌斷裂意外！",
     multLabel: "(負載的 {m} 倍)",
     menuSet: "系統設定與操作指南",
@@ -422,9 +431,9 @@ const i18n = {
     edu_haul_base: "🥵 <b>High friction on {name}! Most exhausting.</b><br>Operator needs <b>{T}kg</b> force to haul with MA {ma}:1!",
     edu_haul_cara: "🪝🤨 <b>Medium friction on {name}.</b><br>Requires <b>{T}kg</b> force to haul with MA {ma}:1.",
     edu_haul_pull: "⚙️😎 <b>High efficiency! Effortless.</b><br>Operator only needs <b>{T}kg</b> force with MA {ma}:1.",
-    edu_low_base: "🛡️ <b>High friction acts as a natural brake!</b><br>Operator controls the load holding just <b>{T}kg</b>.",
-    edu_low_cara: "🪝🛡️ <b>Medium braking force.</b><br>Operator holds <b>{T}kg</b> to lower safely.",
-    edu_low_pull: "⚙️⚠️ <b>Very slippery! Caution when lowering.</b><br>Operator must hold <b>{T}kg</b>.",
+    edu_low_base: "🛡️ <b>High friction acts as a natural brake!</b><br>With MA {ma}:1, operator controls the load holding just <b>{T}kg</b>.",
+    edu_low_cara: "🪝🛡️ <b>Medium braking force.</b><br>With MA {ma}:1, operator holds <b>{T}kg</b> to lower safely.",
+    edu_low_pull: "⚙️⚠️ <b>Very slippery! Caution when lowering.</b><br>With MA {ma}:1, operator must hold <b>{T}kg</b>.",
     edu_warning: "<br><br>🚨 <b>Pulley Multiplier Effect:</b> Angle is too sharp! The anchor bears >2x load.",
     multLabel: "({m}x Load)",
     menuSet: "Settings & Guide",
@@ -553,9 +562,9 @@ const i18n = {
     edu_haul_base: "🥵 <b>{name}の摩擦大！最もしんどい。</b><br>引き上げには MA {ma}:1 で<b>{T}kg</b>の力が必要！",
     edu_haul_cara: "🪝🤨 <b>{name}の中程度摩擦。</b><br>引き上げに MA {ma}:1 で<b>{T}kg</b>の力が必要です。",
     edu_haul_pull: "⚙️😎 <b>{name}は高効率！超省力。</b><br>操作側は MA {ma}:1 で<b>{T}kg</b>の力で済みます。",
-    edu_low_base: "🛡️ <b>ロワリング時、{name}の摩擦がブレーキに！</b><br>操作側はわずか<b>{T}kg</b>の力で下降できます。",
-    edu_low_cara: "🪝🛡️ <b>適度なブレーキ力。</b><br>操作側は<b>{T}kg</b>の力でコントロールできます。",
-    edu_low_pull: "⚙️⚠️ <b>滑りやすい！ロワリング注意。</b><br>摩擦ブレーキがないため、操作側は負荷({T}kg)を保持する必要があります！",
+    edu_low_base: "🛡️ <b>ロワリング時、{name}の摩擦がブレーキに！</b><br>MA {ma}:1 で、操作側はわずか<b>{T}kg</b>の力で下降できます。",
+    edu_low_cara: "🪝🛡️ <b>適度なブレーキ力。</b><br>MA {ma}:1 で、操作側は<b>{T}kg</b>の力でコントロールできます。",
+    edu_low_pull: "⚙️⚠️ <b>滑りやすい！ロワリング注意。</b><br>MA {ma}:1 で、操作側は負荷({T}kg)を保持する必要があります！",
     edu_warning: "<br><br>🚨 <b>プーリー倍増効果：</b> 角度が鋭すぎます！崩壊のリスク大！",
     multLabel: "(負荷の {m} 倍)",
     menuSet: "設定とガイド",
@@ -684,9 +693,9 @@ const i18n = {
     edu_haul_base: "🥵 <b>{name} 마찰력이 매우 큽니다!</b><br>조작단이 MA {ma}:1 로 <b>{T}kg</b>의 힘을 내야 합니다!",
     edu_haul_cara: "🪝🤨 <b>카라비너는 중간 마찰력을 제공합니다.</b><br>조작단이 MA {ma}:1 로 <b>{T}kg</b>의 힘을 내야 합니다.",
     edu_haul_pull: "⚙️😎 <b>고효율! 매우 힘이 덜 듭니다.</b><br>조작단은 MA {ma}:1 로 약 <b>{T}kg</b>의 힘만으로 당길 수 있습니다.",
-    edu_low_base: "🛡️ <b>내릴 때는 마찰력이 브레이크 역할을 합니다!</b><br>조작단은 <b>{T}kg</b>의 힘만으로 통제할 수 있습니다.",
-    edu_low_cara: "🪝🛡️ <b>적절한 제동력을 제공합니다.</b><br>조작단은 <b>{T}kg</b>의 힘을 내면 통제할 수 있습니다.",
-    edu_low_pull: "⚙️⚠️ <b>매우 미끄럽습니다! 내릴 때 주의하세요.</b><br>조작단은 하중에 가까운 힘({T}kg)을 필사적으로 버텨야 합니다!",
+    edu_low_base: "🛡️ <b>내릴 때는 마찰력이 브레이크 역할을 합니다!</b><br>MA {ma}:1 로 조작단은 <b>{T}kg</b>의 힘만으로 통제할 수 있습니다.",
+    edu_low_cara: "🪝🛡️ <b>적절한 제동력을 제공합니다.</b><br>MA {ma}:1 로 조작단은 <b>{T}kg</b>의 힘을 내면 통제할 수 있습니다.",
+    edu_low_pull: "⚙️⚠️ <b>매우 미끄럽습니다! 내릴 때 주의하세요.</b><br>MA {ma}:1 로 조작단은 하중에 가까운 힘({T}kg)을 필사적으로 버텨야 합니다!",
     edu_warning: "<br><br>🚨 <b>도르래 증폭 효과:</b> 각도가 너무 작아서 붕괴 위험이 큽니다!",
     multLabel: "(하중의 {m}배)",
     menuSet: "설정 및 가이드",
@@ -815,9 +824,9 @@ const i18n = {
     edu_haul_base: "🥵 <b>Forte friction ! Très fatigant.</b><br>Il faut exercer <b>{T}kg</b> la force pour hisser (MA {ma}:1) !",
     edu_haul_cara: "🪝🤨 <b>Friction moyenne sur {name}.</b><br>Il faut exercer <b>{T}kg</b> la force (MA {ma}:1).",
     edu_haul_pull: "⚙️😎 <b>Haute efficacité !</b><br>L'opérateur n'exerce que <b>{T}kg</b> la force (MA {ma}:1).",
-    edu_low_base: "🛡️ <b>Friction utile pour freiner !</b><br>L'opérateur contrôle avec seulement <b>{T}kg</b>.",
-    edu_low_cara: "🪝🛡️ <b>Freinage moyen.</b><br>L'opérateur retient <b>{T}kg</b> en sécurité.",
-    edu_low_pull: "⚙️⚠️ <b>Très glissant ! Prudence.</b><br>Aucun freinage. L'opérateur retient la charge ({T}kg).",
+    edu_low_base: "🛡️ <b>Friction utile pour freiner !</b><br>L'opérateur contrôle avec seulement <b>{T}kg</b> (MA {ma}:1).",
+    edu_low_cara: "🪝🛡️ <b>Freinage moyen.</b><br>L'opérateur retient <b>{T}kg</b> en sécurité (MA {ma}:1).",
+    edu_low_pull: "⚙️⚠️ <b>Très glissant ! Prudence.</b><br>Aucun freinage. L'opérateur retient la charge ({T}kg) (MA {ma}:1).",
     edu_warning: "<br><br>🚨 <b>Effet Multiplicateur :</b> Angle trop fermé ! Risque de rupture !",
     multLabel: "({m}x Charge)",
     menuSet: "Paramètres et Guide",
@@ -944,8 +953,8 @@ const i18n = {
     edu_haul_base: "🥵 <b>Hohe Reibung! Sehr anstrengend.</b><br>Bediener benötigt <b>{T}kg</b> Kraft (MA {ma}:1)!",
     edu_haul_cara: "🪝🤨 <b>Mittlere Reibung ({name}).</b><br>Erfordert <b>{T}kg</b> Kraft (MA {ma}:1).",
     edu_haul_pull: "⚙️😎 <b>Hohe Effizienz! Mühelos.</b><br>Bediener benötigt nur <b>{T}kg</b> Kraft (MA {ma}:1).",
-    edu_low_base: "🛡️ <b>Reibung fungiert als natürliche Bremse!</b><br>Kontrolle mit <b>{T}kg</b>.",
-    edu_low_cara: "🪝🛡️ <b>Mittlere Bremskraft.</b><br>Hält <b>{T}kg</b> zum sicheren Ablassen.",
+    edu_low_base: "🛡️ <b>Reibung fungiert als natürliche Bremse!</b><br>Kontrolle mit <b>{T}kg</b> (MA {ma}:1).",
+    edu_low_cara: "🪝🛡️ <b>Mittlere Bremskraft.</b><br>Hält <b>{T}kg</b> zum sicheren Ablassen (MA {ma}:1).",
     edu_low_pull: "⚙️⚠️ <b>Sehr rutschig! Vorsicht.</b><br>Keine Bremswirkung. Fast die gesamte Last ({T}kg) halten.",
     edu_warning: "<br><br>🚨 <b>Rollen-Multiplikatoreffekt:</b> Bruchgefahr bei spitzem Winkel!",
     multLabel: "({m}x Last)",
@@ -1075,8 +1084,8 @@ const i18n = {
     edu_haul_base: "🥵 <b>¡Alta fricción! Muy agotador.</b><br>¡Necesita <b>{T}kg</b> fuerza con MA {ma}:1!",
     edu_haul_cara: "🪝🤨 <b>Fricción media en {name}.</b><br>Requiere <b>{T}kg</b> fuerza con MA {ma}:1.",
     edu_haul_pull: "⚙️😎 <b>¡Alta eficiencia!</b><br>Solo necesita <b>{T}kg</b> fuerza con MA {ma}:1.",
-    edu_low_base: "🛡️ <b>¡La fricción actúa como freno!</b><br>Controla con solo <b>{T}kg</b>.",
-    edu_low_cara: "🪝🛡️ <b>Fuerza de frenado media.</b><br>Sostiene <b>{T}kg</b> para bajar.",
+    edu_low_base: "🛡️ <b>¡La fricción actúa como freno!</b><br>Controla con solo <b>{T}kg</b> con MA {ma}:1.",
+    edu_low_cara: "🪝🛡️ <b>Fuerza de frenado media.</b><br>Sostiene <b>{T}kg</b> para bajar con MA {ma}:1.",
     edu_low_pull: "⚙️⚠️ <b>¡Muy resbaladizo! Precaución.</b><br>Debe sostener casi toda la carga ({T}kg).",
     edu_warning: "<br><br>🚨 <b>Efecto Multiplicador:</b> ¡Ángulo muy agudo! ¡Riesgo de falla!",
     multLabel: "({m}x Carga)",
@@ -1206,8 +1215,8 @@ const i18n = {
     edu_haul_base: "🥵 <b>Alto atrito! Muito cansativo.</b><br>Precisa de <b>{T}kg</b> força com MA {ma}:1!",
     edu_haul_cara: "🪝🤨 <b>Atrito médio em {name}.</b><br>Requer <b>{T}kg</b> força com MA {ma}:1.",
     edu_haul_pull: "⚙️😎 <b>Alta eficiência!</b><br>Requer apenas <b>{T}kg</b> força com MA {ma}:1.",
-    edu_low_base: "🛡️ <b>Atrito atua como freio!</b><br>Controla com apenas <b>{T}kg</b>.",
-    edu_low_cara: "🪝🛡️ <b>Força de frenagem média.</b><br>Segura <b>{T}kg</b> para descer.",
+    edu_low_base: "🛡️ <b>Atrito atua como freio!</b><br>Controla com apenas <b>{T}kg</b> com MA {ma}:1.",
+    edu_low_cara: "🪝🛡️ <b>Força de frenagem média.</b><br>Segura <b>{T}kg</b> para descer com MA {ma}:1.",
     edu_low_pull: "⚙️⚠️ <b>Muito escorregadio! Cuidado.</b><br>Segura quase toda a carga ({T}kg).",
     edu_warning: "<br><br>🚨 <b>Efeito Multiplicador:</b> Ângulo muito agudo! Risco de falha!",
     multLabel: "({m}x Carga)",
@@ -1381,7 +1390,14 @@ window.copyBankAccount = function() {
 </script>
 
 <div id="status-bar-protector" data-html2canvas-ignore="true"></div>
-<div id="bg-layer"><video id="bg-video" autoplay playsinline muted></video><img id="bg-image" src="" alt="背景圖片"></div>
+<!-- 💡 更新背景層：加入媒體容器與暗度遮罩層 -->
+<div id="bg-layer">
+  <div id="media-container">
+      <video id="bg-video" autoplay playsinline muted></video>
+      <img id="bg-image" src="" alt="背景圖片">
+  </div>
+  <div id="dim-layer"></div>
+</div>
 <div id="grid-overlay"></div>
 <div id="toastMessage" data-html2canvas-ignore="true"></div>
 
@@ -1462,7 +1478,7 @@ window.copyBankAccount = function() {
 
     <div class="card" id="mainCard">
       <!-- 💡 將 topbar 標記為截圖時隱藏 -->
-      <div class="topbar" data-html2canvas-ignore="true">
+      <div class="topbar capture-hide">
           <div class="title-left" id="mainTitleText">
             <span data-i18n="appTitle">下方固定點架設儀 (全地形)</span> <span class="vip-badge">PRO</span>
           </div>
@@ -1471,7 +1487,7 @@ window.copyBankAccount = function() {
           </div>
       </div>
 
-      <div class="icon-bar" data-html2canvas-ignore="true">
+      <div class="icon-bar capture-hide">
         <button class="icon-btn" id="btn-camera" onclick="attemptFeature('featCam', toggleCamera)" title="實境相機">📷<span class="lock-icon">🔒</span></button>
         <button class="icon-btn" id="btn-flashlight" onclick="toggleFlashlight()" title="手電筒">🔦</button>
         <label class="icon-btn" id="btn-photo" onclick="handleImageUploadClick(event)" title="載入照片" style="margin:0;">📁<span class="lock-icon">🔒</span></label>
@@ -1482,6 +1498,18 @@ window.copyBankAccount = function() {
       </div>
 
       <div class="svgWrap" id="svgWrap">
+        <!-- 💡 AR 專屬控制台 (暗度與縮放) -->
+        <div id="cameraControls" class="capture-hide">
+            <div class="control-slider-wrap">
+                <span>🌓暗度</span>
+                <input type="range" id="sliderDim" min="0" max="0.9" step="0.1" value="0.3">
+            </div>
+            <div class="control-slider-wrap">
+                <span>🔍縮放</span>
+                <input type="range" id="sliderZoom" min="1" max="3" step="0.1" value="1">
+            </div>
+        </div>
+
         <svg id="canvas" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet">
           
           <g class="env-bg">
@@ -1529,12 +1557,13 @@ window.copyBankAccount = function() {
                 <text id="distText" x="0" y="0" fill="var(--tagline)" font-size="11" font-weight="bold" text-anchor="middle" class="mask-text" data-i18n="distExt">長距離延伸至地面</text>
              </g>
 
-             <!-- 💡 增大感應區，並加入拖曳動畫虛線圈 -->
+             <!-- 💡 增大感應區，並加入拖曳動畫虛線圈與引導文字 -->
              <circle cx="0" cy="0" r="60" fill="transparent" /> 
              <circle cx="0" cy="0" r="35" class="drag-cue" />
              <rect x="-14" y="-20" width="28" height="40" fill="#475569" rx="4" id="anchorBox" />
              <path d="M -15 -5 L 15 5 M -15 5 L 15 15" stroke="var(--tagline)" stroke-width="4" stroke-linecap="round" />
              <text y="-25" fill="var(--tagline)" font-size="13" font-weight="bold" text-anchor="middle" pointer-events="none" id="anchorLabel" class="mask-text" data-i18n="groundOp">地面操作</text>
+             <text class="drag-hint-text capture-hide" y="40" font-size="11" fill="rgba(255,255,255,0.7)" text-anchor="middle">⇿ 自由拖曳</text>
           </g>
         </svg>
       </div>
@@ -1559,14 +1588,14 @@ window.copyBankAccount = function() {
           <div class="dash-box" id="dashBranch" style="border-top: 3px solid var(--bad);">
               <span class="lbl" style="display:flex; align-items:center; gap:4px;">
                   <span id="lblBranchName">樹幹</span><span data-i18n="codForce">(COD)受力</span>
-                  <button onclick="customName()" style="background:transparent; border:1px solid var(--muted); color:var(--muted); border-radius:4px; padding:0px 4px; font-size:10px; cursor:pointer;" title="點擊自訂介質名稱" data-i18n="btnCustom">✏️自訂</button>
+                  <button class="capture-hide" onclick="customName()" style="background:transparent; border:1px solid var(--muted); color:var(--muted); border-radius:4px; padding:0px 4px; font-size:10px; cursor:pointer;" title="點擊自訂介質名稱" data-i18n="btnCustom">✏️自訂</button>
               </span>
               <span class="val" id="txtBranchForce" style="color:var(--bad);">-- kg</span>
               <span class="sub" id="txtBranchMult">--</span>
           </div>
       </div>
       
-      <div class="control-deck">
+      <div class="control-deck capture-hide">
          <div class="control-row">
             <div class="btn-group-lbl" style="color:var(--muted);" data-i18n="terrainLabel">🏕️ 模擬地形與環境</div>
             <div class="toggle-group">
@@ -1604,8 +1633,8 @@ window.copyBankAccount = function() {
             </div>
          </div>
 
-         <!-- 💡 新增：MA 系統操作比切換列 (預設隱藏) -->
-         <div class="control-row capture-hide" id="maRow" style="display:none; margin-top:4px;">
+         <!-- 💡 新增：MA 系統操作比切換列 (預設隱藏，上拉與下放時開啟) -->
+         <div class="control-row" id="maRow" style="display:none; margin-top:4px;">
             <div class="btn-group-lbl" style="color:var(--safe);" data-i18n="maLabel">⚙️ 系統省力比 (MA)</div>
             <div class="toggle-group">
                <button class="toggle-btn active" data-type="ma" data-val="1" onclick="setMA(this)">1:1</button>
@@ -1616,13 +1645,13 @@ window.copyBankAccount = function() {
          </div>
       </div>
       
-      <!-- 💡 將說明文字列入截圖，移除 ignore 標籤 -->
+      <!-- 💡 說明文字保留，讓它順利被截圖拍攝進去 -->
       <div class="edu-wrap" id="eduPanel" data-i18n="eduDefault">
          📍 試著在沙盤中任意拖曳「轉向點」或「地面操作」，對齊照片角度來觀察力量變化。
       </div>
     </div> 
     
-    <div class="menu-list" data-html2canvas-ignore="true">
+    <div class="menu-list capture-hide">
       <!-- 💡 第一區：系統設定與操作指南 -->
       <details class="main-accordion" id="settingsAccordion">
         <summary><div style="display:flex; align-items:center; gap:8px;"><span class="menu-icon">⚙️</span> <span data-i18n="menuSet" style="color: var(--warn);">系統設定與操作指南</span></div></summary>
@@ -1990,10 +2019,27 @@ function verifyVip() {
     errorMsg.innerHTML = '❌ 授權碼錯誤！若需領取新密碼請 <a href="https://fang5761.gumroad.com/l/redirect-simulator" target="_blank" style="color:var(--safe); text-decoration:underline;">按此前往</a>';
 }
 
-// AR 系統
+// AR 系統與媒體控制引擎
 let stream = null, videoTrack = null, torchOn = false; 
-const video = document.getElementById('bg-video'), image = document.getElementById('bg-image'), btnCamera = document.getElementById('btn-camera'), btnFlashlight = document.getElementById('btn-flashlight'), gridOverlay = document.getElementById('grid-overlay'); 
+const mediaContainer = document.getElementById('media-container');
+const video = document.getElementById('bg-video');
+const image = document.getElementById('bg-image');
+const dimLayer = document.getElementById('dim-layer');
+const cameraControls = document.getElementById('cameraControls');
+const btnCamera = document.getElementById('btn-camera'), btnFlashlight = document.getElementById('btn-flashlight'), gridOverlay = document.getElementById('grid-overlay'); 
 let gridVisible = true;
+
+// 💡 綁定暗度與縮放滑桿
+document.getElementById('sliderDim').addEventListener('input', (e) => { dimLayer.style.opacity = e.target.value; });
+document.getElementById('sliderZoom').addEventListener('input', (e) => { mediaContainer.style.transform = `scale(${e.target.value})`; });
+
+function resetCameraControls() {
+    document.getElementById('sliderDim').value = 0.3;
+    document.getElementById('sliderZoom').value = 1;
+    dimLayer.style.opacity = 0.3;
+    mediaContainer.style.transform = 'scale(1)';
+    cameraControls.style.display = 'none';
+}
 
 async function toggleCamera() { 
   if (stream) { 
@@ -2001,6 +2047,7 @@ async function toggleCamera() {
     video.style.opacity = "0"; btnCamera.classList.remove('active'); 
     torchOn = false; btnFlashlight.classList.remove('active');
     mainCard.classList.remove('camera-mode'); document.body.classList.remove('camera-mode');
+    resetCameraControls();
   } else { 
     try { 
       clearPhotoOverlay();
@@ -2009,6 +2056,12 @@ async function toggleCamera() {
       videoTrack = stream.getVideoTracks()[0];
       video.srcObject = stream; video.style.opacity = "1"; btnCamera.classList.add('active'); 
       mainCard.classList.add('camera-mode'); document.body.classList.add('camera-mode');
+      
+      // 開啟 AR 控制台並重置
+      document.getElementById('sliderDim').value = 0.3;
+      dimLayer.style.opacity = 0.3;
+      cameraControls.style.display = 'flex';
+      
     } catch (err) { showToast("⚠️ 鏡頭啟動失敗：" + err.message, "bad"); } 
   } 
 }
@@ -2050,6 +2103,7 @@ function clearPhotoOverlay() {
     if (!stream) {
         mainCard.classList.remove('camera-mode');
         document.body.classList.remove('camera-mode');
+        resetCameraControls();
     }
 }
 
@@ -2062,6 +2116,11 @@ function loadImage(event) {
       image.src = e.target.result; image.style.opacity = "1"; 
       mainCard.classList.add('camera-mode'); document.body.classList.add('camera-mode');
       document.querySelector('label[title="載入照片"]').classList.add('active');
+      
+      // 開啟 AR 控制台並重置
+      document.getElementById('sliderDim').value = 0.3;
+      dimLayer.style.opacity = 0.3;
+      cameraControls.style.display = 'flex';
     }; reader.readAsDataURL(file); 
   } 
 }
@@ -2112,9 +2171,15 @@ async function takeScreenshot() {
       tempCanvas.style.height = '100%';
       tempCanvas.style.objectFit = 'cover';
       tempCanvas.style.zIndex = '-1';
+      // 💡 保留相應的縮放比例，讓截圖與肉眼所見一致
+      const zoomVal = document.getElementById('sliderZoom').value;
       const ctx = tempCanvas.getContext('2d');
+      // 將畫布中心移至中心點並進行縮放
+      ctx.translate(tempCanvas.width/2, tempCanvas.height/2);
+      ctx.scale(zoomVal, zoomVal);
+      ctx.translate(-tempCanvas.width/2, -tempCanvas.height/2);
       ctx.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
-      document.getElementById('bg-layer').appendChild(tempCanvas);
+      document.getElementById('media-container').appendChild(tempCanvas);
       video.style.opacity = '0';
   }
 
@@ -2260,6 +2325,13 @@ function setFriction(btn, mode) {
         currentE = parseFloat(btn.dataset.val);
         currentMode = mode;
         
+        // 💡 選擇五大新介質時自動淨空場景背景
+        const specialMediums = ['concrete', 'mud', 'roller', 'pipe', 'vehicle'];
+        if (specialMediums.includes(mode)) {
+            const noneBtn = document.querySelector('.toggle-btn[data-type="scene"][data-val="none"]');
+            if (noneBtn) setScene(noneBtn, 'none');
+        }
+        
         if (currentAction === 'static') {
             const haulBtn = document.querySelector('.toggle-btn[data-type="action"][data-val="haul"]');
             document.querySelectorAll('.toggle-btn[data-type="action"]').forEach(b => b.classList.remove('active'));
@@ -2279,8 +2351,8 @@ function setAction(btn) {
         btn.classList.add('active');
         currentAction = btn.dataset.val;
         
-        // 💡 只有在上拉狀態，才顯示 MA 選單
-        if (currentAction === 'haul') {
+        // 💡 在上拉與下放狀態，都顯示 MA 選單
+        if (currentAction === 'haul' || currentAction === 'lower') {
             document.getElementById('maRow').style.display = 'flex';
         } else {
             document.getElementById('maRow').style.display = 'none';
@@ -2305,7 +2377,7 @@ function renderRedirectNode() {
     if (lastShapeData === currentShapeData) return; 
     lastShapeData = currentShapeData;
     
-    // 💡 增大感應區，並加入會呼吸的虛線拖曳圈
+    // 💡 增大感應區，並加入會呼吸的虛線拖曳圈與引導文字
     let html = `<circle cx="0" cy="0" r="60" fill="transparent" />`;
     html += `<circle cx="0" cy="0" r="28" class="drag-cue" />`;
     
@@ -2329,6 +2401,8 @@ function renderRedirectNode() {
     } else if (currentMode === 'vehicle') {
         html += `<path d="M-20,-5 L20,-5 L15,10 L-15,10 Z" fill="#ef4444" /><circle cx="0" cy="0" r="4" fill="#0a1410" />`;
     }
+    
+    html += `<text class="drag-hint-text capture-hide" y="45" font-size="11" fill="rgba(255,255,255,0.7)" text-anchor="middle">⇿ 自由拖曳</text>`;
     els.redirectNode.innerHTML = html;
 }
 
@@ -2353,8 +2427,8 @@ function updateEngine() {
         els.lblMA.textContent = `(MA ${currentMA}:1)`; 
     } else if (currentAction === 'lower') {
         T_rope_to_anchor = W * currentE; 
-        T_operator_pull = T_rope_to_anchor; // 下放通常不需要用到省力拉動系統
-        els.lblMA.textContent = ``;
+        T_operator_pull = T_rope_to_anchor / currentMA; 
+        els.lblMA.textContent = `(MA ${currentMA}:1)`;
     } else {
         els.lblMA.textContent = ``;
     }
@@ -2454,11 +2528,11 @@ function updateEngine() {
         }
     } else if (currentAction === 'lower') {
         if (currentE < 0.6) {
-            eduText = `${mIcon}` + t('edu_low_base').replace(/{name}/g, mName).replace('{T}', T_operator_pull.toFixed(0));
+            eduText = `${mIcon}` + t('edu_low_base').replace(/{name}/g, mName).replace('{ma}', currentMA).replace('{T}', T_operator_pull.toFixed(0));
         } else if (currentE >= 0.6 && currentE < 0.9) {
-            eduText = `${mIcon}` + t('edu_low_cara').replace(/{name}/g, mName).replace('{T}', T_operator_pull.toFixed(0));
+            eduText = `${mIcon}` + t('edu_low_cara').replace(/{name}/g, mName).replace('{ma}', currentMA).replace('{T}', T_operator_pull.toFixed(0));
         } else {
-            eduText = `${mIcon}` + t('edu_low_pull').replace(/{name}/g, mName).replace('{T}', T_operator_pull.toFixed(0));
+            eduText = `${mIcon}` + t('edu_low_pull').replace(/{name}/g, mName).replace('{ma}', currentMA).replace('{T}', T_operator_pull.toFixed(0));
             eduColor = "var(--bad)"; eduBg = "rgba(239, 68, 68, 0.15)";
         }
     }
