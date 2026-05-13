@@ -54,6 +54,10 @@
   }
 
   body.camera-mode { background-color: transparent !important; }
+  
+  /* 💡 AR/相機模式自動隱藏環境背景與格線 */
+  body.camera-mode .env-bg { display: none !important; }
+  body.camera-mode #grid-overlay { display: none !important; }
 
   #status-bar-protector {
     position: fixed; top: 0; left: 0; width: 100%; height: env(safe-area-inset-top);
@@ -81,7 +85,6 @@
 
   .card { width:100%; background:var(--card); border:2px solid var(--line); border-radius:16px; padding: 10px; box-shadow:0 10px 30px rgba(0,0,0,.5); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); transition: border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease; }
   .card.camera-mode { background: transparent !important; border-color: rgba(255,255,255,0.2) !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; box-shadow: none !important; }
-  .card.capture-mode { background-color: var(--bg) !important; background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px) !important; background-size: 20px 20px !important; border-color: var(--line) !important; box-shadow: none !important; border-radius: 0 !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
   .capture-mode .capture-hide { display: none !important; }
   
   .topbar { display: flex; align-items: center; margin-bottom: 8px; width: 100%; justify-content: space-between; }
@@ -250,7 +253,6 @@ const i18n = {
     codForce: "(COD)受力",
     terrainLabel: "🏕️ 模擬地形與環境",
     btnTree: "🌳 攀樹",
-    btnRock: "🪨 攀岩",
     btnSteel: "🏗️ 鋼架空橋",
     btnNone: "⬛ 淨空",
     frictionLabel: "🛡️ 轉向點 (COD) 摩擦力介質",
@@ -262,9 +264,8 @@ const i18n = {
     btnStat: "⏸️ 靜止鎖定",
     btnHaul: "⬆️ 系統上拉",
     btnLow: "⬇️ 系統下放",
-    eduDefault: "📍 請在上方沙盤中自由拖曳「地面操作」，觀察轉向點承受的力量變化。",
+    eduDefault: "📍 試著在沙盤中任意拖曳「轉向點」或「地面操作」，對齊照片角度來觀察力量變化。",
     sceneTree: "樹幹",
-    sceneRock: "岩壁",
     sceneSteel: "鋼架",
     sceneNone: "轉向點",
     nameUpdated: "介質已更名為：",
@@ -290,8 +291,8 @@ const i18n = {
     menuOp: "系統操作說明",
     menuInfo: "版本與開發資訊",
     menuPWA: "加入主畫面說明",
-    op1: "滑動下方沙盤中的 <b>地面操作</b>，即時推演不同角度下的力量變化。",
-    op2: "點擊上方 <b>模擬地形與環境</b>，一鍵切換攀樹、攀岩或鋼架場景。",
+    op1: "滑動沙盤中的 <b>轉向點</b> 與 <b>地面操作</b>，可自由拖曳對齊 AR 畫面進行推演。",
+    op2: "點擊上方 <b>模擬地形與環境</b>，一鍵切換攀樹、鋼架場景或乾淨畫布。",
     op3: "切換 <b>轉向點 (COD) 摩擦力介質</b>，觀察直拉、鉤環、滑輪對操作者負擔的影響。",
     op4: "點擊 <b>✏️自訂</b>，可手動設定轉向介質名稱與摩擦係數。",
     op5: "切換 <b>🕹️系統操作動作</b>，比對靜止、上拉與下放時，摩擦力帶來的截然不同效應。",
@@ -377,7 +378,6 @@ const i18n = {
     codForce: "COD Force",
     terrainLabel: "🏕️ Terrain & Environment",
     btnTree: "🌳 Tree",
-    btnRock: "🪨 Rock",
     btnSteel: "🏗️ Truss",
     btnNone: "⬛ Blank",
     frictionLabel: "🛡️ COD Friction Type",
@@ -389,9 +389,8 @@ const i18n = {
     btnStat: "⏸️ Static",
     btnHaul: "⬆️ Hauling",
     btnLow: "⬇️ Lowering",
-    eduDefault: "📍 Drag the 'Ground OP' above to observe COD force changes.",
+    eduDefault: "📍 Drag the 'Redirect' or 'Ground OP' to align with AR/Photo backgrounds.",
     sceneTree: "Tree",
-    sceneRock: "Rock",
     sceneSteel: "Truss",
     sceneNone: "Redirect",
     nameUpdated: "COD named to: ",
@@ -417,8 +416,8 @@ const i18n = {
     menuOp: "System Manual",
     menuInfo: "Version Info",
     menuPWA: "Add to Home Screen",
-    op1: "Drag the <b>Ground OP</b> in the sandbox to simulate force changes dynamically.",
-    op2: "Click <b>Terrain & Environment</b> to switch between Tree, Rock, or Truss.",
+    op1: "Drag the <b>Redirect Node</b> or <b>Ground OP</b> to simulate force changes dynamically.",
+    op2: "Click <b>Terrain & Environment</b> to switch between scenes.",
     op3: "Change <b>COD Friction Type</b> to observe how direct pull, carabiners, or pulleys affect the load.",
     op4: "Click <b>✏️Custom</b> to manually set the object name and friction coefficient.",
     op5: "Toggle <b>System Action</b> to compare the effects of friction during Static, Hauling, and Lowering.",
@@ -504,7 +503,6 @@ const i18n = {
     codForce: "(COD) 荷重",
     terrainLabel: "🏕️ 地形と環境",
     btnTree: "🌳 ツリー",
-    btnRock: "🪨 ロック",
     btnSteel: "🏗️ 鉄骨",
     btnNone: "⬛ 空白",
     frictionLabel: "🛡️ COD 摩擦タイプ",
@@ -516,9 +514,8 @@ const i18n = {
     btnStat: "⏸️ 静止",
     btnHaul: "⬆️ 引き上げ",
     btnLow: "⬇️ ロワリング",
-    eduDefault: "📍 上の「操作側」をドラッグして、COD荷重変化を観察してください。",
+    eduDefault: "📍 砂盤の「支点」や「操作側」をドラッグして、写真に合わせ荷重変化を観察してください。",
     sceneTree: "樹木",
-    sceneRock: "岩壁",
     sceneSteel: "鉄骨",
     sceneNone: "支点",
     nameUpdated: "COD名を変更：",
@@ -544,8 +541,8 @@ const i18n = {
     menuOp: "操作マニュアル",
     menuInfo: "バージョン情報",
     menuPWA: "ホーム画面に追加",
-    op1: "サンドボックス内の <b>操作側</b> をドラッグして荷重変化をシミュレーションします。",
-    op2: "<b>地形と環境</b> をクリックし、ツリー、ロック、鉄骨を切り替えます。",
+    op1: "サンドボックス内の <b>支点</b> と <b>操作側</b> をドラッグしてシミュレーションします。",
+    op2: "<b>地形と環境</b> をクリックし、環境を切り替えます。",
     op3: "<b>COD摩擦タイプ</b> を変更し、負担にどう影響するか観察します。",
     op4: "<b>✏️カスタム</b> をクリックして、名称と摩擦係数を手動設定できます。",
     op5: "<b>システム動作</b> を切り替えて、静止、引き上げ、ロワリング時の摩擦を比較します。",
@@ -631,7 +628,6 @@ const i18n = {
     codForce: "(COD) 하중",
     terrainLabel: "🏕️ 지형 및 환경",
     btnTree: "🌳 나무",
-    btnRock: "🪨 암벽",
     btnSteel: "🏗️ 철골",
     btnNone: "⬛ 빈 공간",
     frictionLabel: "🛡️ COD 마찰 매질",
@@ -643,13 +639,12 @@ const i18n = {
     btnStat: "⏸️ 정지",
     btnHaul: "⬆️ 끌어올리기",
     btnLow: "⬇️ 내리기",
-    eduDefault: "📍 위 샌드박스에서 '지면 조작'을 드래그하여 하중 변화를 관찰하세요.",
+    eduDefault: "📍 샌드박스의 '방향 전환점' 또는 '지면 조작'을 자유롭게 드래그하여 각도를 맞추세요.",
     sceneTree: "나무",
-    sceneRock: "암벽",
     sceneSteel: "철골",
     sceneNone: "방향 전환점",
     nameUpdated: "매질 이름 변경:",
-    fricUpdated: "COD 마찰 계수 설정:",
+    fricUpdated: "COD 마찰 계 설정:",
     fricInvalid: "❌ 0에서 1 사이의 유효한 숫자를 입력하세요.",
     edu_static: "⏸️ <b>정지 상태에서는 마찰 저항이 없습니다.</b><br>조작단은 하중({T}kg)과 같은 힘만 내면 유지됩니다.",
     edu_haul_base: "🥵 <b>{name} 마찰력이 매우 큽니다!</b><br>조작단이 <b>{mult}배</b>의 힘({T}kg)을 내야 합니다!",
@@ -671,8 +666,8 @@ const i18n = {
     menuOp: "시스템 작동 설명",
     menuInfo: "버전 정보",
     menuPWA: "홈 화면에 추가",
-    op1: "샌드박스의 <b>지면 조작</b>을 드래그하여 실시간 시뮬레이션합니다.",
-    op2: "<b>지형 및 환경</b>을 클릭하여 나무, 암벽 등을 전환합니다.",
+    op1: "샌드박스의 <b>방향 전환점</b>과 <b>지면 조작</b>을 드래그하여 시뮬레이션합니다.",
+    op2: "<b>지형 및 환경</b>을 클릭하여 나무, 철골 등을 전환합니다.",
     op3: "<b>COD 마찰 매질</b>을 전환하여 당기기 영향을 관찰합니다.",
     op4: "<b>✏️사용자 지정</b>을 클릭하여 마찰 계수를 수동 설정합니다.",
     op5: "<b>🕹️시스템 동작</b>을 전환하여 정지, 올리기, 내리기를 비교합니다.",
@@ -715,7 +710,7 @@ const i18n = {
     vipProOnly: "이 기능은 PRO 전용입니다.<br>영구적으로 잠금 해제하세요!",
     vipDisclaimer: "⚠️ 주의: 본 앱은 1기기 라이선스입니다. 기기 변경 시 고객 지원이 제공되지 않으니 재구매 바랍니다.",
     vipStoreBtn: "🛒 PRO 스토어로 이동",
-    vipHint: "💡 참고: 키 획득 방법은 하단 설명란을 참조하세요",
+    vipHint: "💡 참고: 키 획득 방법은 하단 설명란 참조하세요",
     vipHasPwd: "비밀번호가 있으신가요?",
     vipPwdPlh: "VIP 비밀번호 입력",
     vipCancel: "나중에",
@@ -758,7 +753,6 @@ const i18n = {
     codForce: "Force COD",
     terrainLabel: "🏕️ Terrain & Environnement",
     btnTree: "🌳 Arbre",
-    btnRock: "🪨 Roche",
     btnSteel: "🏗️ Acier",
     btnNone: "⬛ Vide",
     frictionLabel: "🛡️ Type de friction (COD)",
@@ -770,9 +764,8 @@ const i18n = {
     btnStat: "⏸️ Statique",
     btnHaul: "⬆️ Hissage",
     btnLow: "⬇️ Descente",
-    eduDefault: "📍 Glissez l'« Op. au sol » dans le bac à sable pour observer les forces.",
+    eduDefault: "📍 Glissez la « Déviation » ou l'« Op. au sol » pour aligner les forces.",
     sceneTree: "Arbre",
-    sceneRock: "Roche",
     sceneSteel: "Acier",
     sceneNone: "Déviation",
     nameUpdated: "Nom modifié en :",
@@ -883,7 +876,6 @@ const i18n = {
     codForce: "COD Kraft",
     terrainLabel: "🏕️ Gelände & Umgebung",
     btnTree: "🌳 Baum",
-    btnRock: "🪨 Felsen",
     btnSteel: "🏗️ Stahl",
     btnNone: "⬛ Leer",
     frictionLabel: "🛡️ COD Reibungstyp",
@@ -897,7 +889,6 @@ const i18n = {
     btnLow: "⬇️ Ablassen",
     eduDefault: "📍 Ziehen Sie die 'Boden Op.', um die Kraftänderungen zu beobachten.",
     sceneTree: "Baum",
-    sceneRock: "Felsen",
     sceneSteel: "Stahl",
     sceneNone: "Umlenkung",
     nameUpdated: "Name geändert zu:",
@@ -1010,7 +1001,6 @@ const i18n = {
     codForce: "Fuerza COD",
     terrainLabel: "🏕️ Terreno y Entorno",
     btnTree: "🌳 Árbol",
-    btnRock: "🪨 Roca",
     btnSteel: "🏗️ Acero",
     btnNone: "⬛ Vacío",
     frictionLabel: "🛡️ Tipo de fricción (COD)",
@@ -1024,7 +1014,6 @@ const i18n = {
     btnLow: "⬇️ Descenso",
     eduDefault: "📍 Arrastre 'Op. al suelo' en la caja de arena para observar fuerzas.",
     sceneTree: "Árbol",
-    sceneRock: "Roca",
     sceneSteel: "Acero",
     sceneNone: "Desviación",
     nameUpdated: "Nombre cambiado a:",
@@ -1137,7 +1126,6 @@ const i18n = {
     codForce: "Força COD",
     terrainLabel: "🏕️ Terreno e Ambiente",
     btnTree: "🌳 Árvore",
-    btnRock: "🪨 Rocha",
     btnSteel: "🏗️ Aço",
     btnNone: "⬛ Vazio",
     frictionLabel: "🛡️ Tipo de atrito (COD)",
@@ -1151,7 +1139,6 @@ const i18n = {
     btnLow: "⬇️ Descida",
     eduDefault: "📍 Arraste 'Op. Solo' para observar as forças.",
     sceneTree: "Árvore",
-    sceneRock: "Rocha",
     sceneSteel: "Aço",
     sceneNone: "Desvio",
     nameUpdated: "Nome alterado para:",
@@ -1338,10 +1325,10 @@ window.copyBankAccount = function() {
 <div id="status-bar-protector" data-html2canvas-ignore="true"></div>
 <div id="bg-layer"><video id="bg-video" autoplay playsinline muted></video><img id="bg-image" src="" alt="背景圖片"></div>
 <div id="grid-overlay"></div>
-<div id="toastMessage"></div>
+<div id="toastMessage" data-html2canvas-ignore="true"></div>
 
 <!-- 💡 技術支援視窗 -->
-<div id="supportModal" class="modal-overlay">
+<div id="supportModal" class="modal-overlay" data-html2canvas-ignore="true">
   <div class="modal-box">
     <h3 style="color:var(--warn); margin-top:0;" data-i18n="supTitle">💬 系統問題回報</h3>
     <p style="text-align:left; font-size:13px; line-height:1.7; margin-bottom:15px; color:var(--text);" data-i18n="supDesc">
@@ -1355,7 +1342,7 @@ window.copyBankAccount = function() {
 </div>
 
 <!-- 💡 付費解鎖視窗 -->
-<div id="vipModal" class="modal-overlay">
+<div id="vipModal" class="modal-overlay" data-html2canvas-ignore="true">
   <div class="modal-box" id="vipModalBox">
     <h3><span data-i18n="vipTitle">🔒 專業版功能解鎖</span> <span class="vip-badge" style="display:inline-block; margin-left:8px;">PRO</span></h3>
     <p><span data-i18n="vipEnable1">您即將啟用「</span><span id="vipFeatureName" style="color:var(--vip); font-weight:bold; font-size:16px;"></span><span data-i18n="vipEnable2">」！</span></p>
@@ -1383,7 +1370,7 @@ window.copyBankAccount = function() {
 </div>
 
 <!-- 自訂名稱專屬視窗 -->
-<div id="nameModal" class="modal-overlay">
+<div id="nameModal" class="modal-overlay" data-html2canvas-ignore="true">
   <div class="modal-box">
     <h3 style="color:var(--safe); margin-top:0;" data-i18n="customNameTitle">✏️ 自訂介質名稱</h3>
     <p style="font-size:13px; color:var(--muted); margin-bottom:12px;" data-i18n="customNameDesc">請輸入您要模擬的轉向地形或介質：</p>
@@ -1396,7 +1383,7 @@ window.copyBankAccount = function() {
 </div>
 
 <!-- 自訂摩擦力專屬視窗 -->
-<div id="frictionModal" class="modal-overlay">
+<div id="frictionModal" class="modal-overlay" data-html2canvas-ignore="true">
   <div class="modal-box">
     <h3 style="color:var(--warn); margin-top:0;" data-i18n="customFricTitle">⚙️ 自訂摩擦係數</h3>
     <p style="font-size:13px; color:var(--muted); margin-bottom:12px; text-align:left; background:rgba(0,0,0,0.3); padding:10px; border-radius:8px;" data-i18n="fricTip">
@@ -1438,20 +1425,17 @@ window.copyBankAccount = function() {
       <div class="svgWrap" id="svgWrap">
         <svg id="canvas" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet">
           
-          <line x1="0" y1="360" x2="400" y2="360" stroke="rgba(255,255,255,0.15)" stroke-width="2" stroke-dasharray="10 5" />
-          <text x="390" y="375" fill="rgba(255,255,255,0.2)" font-size="12" font-weight="bold" text-anchor="end" data-i18n="ground">地面 Ground</text>
+          <g class="env-bg">
+            <line x1="0" y1="360" x2="400" y2="360" stroke="rgba(255,255,255,0.15)" stroke-width="2" stroke-dasharray="10 5" />
+            <text x="390" y="375" fill="rgba(255,255,255,0.2)" font-size="12" font-weight="bold" text-anchor="end" data-i18n="ground">地面 Ground</text>
+          </g>
 
-          <g id="bgTree" stroke="none" fill="rgba(139, 90, 43, 0.25)">
+          <g id="bgTree" class="env-bg" stroke="none" fill="rgba(139, 90, 43, 0.25)">
              <path d="M 10 400 C 10 300 30 200 30 100 C 30 50 10 0 10 0 L 80 0 C 80 50 90 120 80 180 C 70 250 80 400 80 400 Z" />
              <path d="M 75 100 C 100 90 110 80 140 70 L 180 55 L 180 80 C 140 90 100 110 75 140 Z" />
           </g>
 
-          <g id="bgRock" stroke="none" fill="rgba(148, 163, 184, 0.2)" style="display:none;">
-             <path d="M 0 0 L 120 0 L 120 360 L 400 360 L 400 400 L 0 400 Z" />
-             <path d="M 0 110 Q 50 130 120 100 M 0 210 Q 60 240 120 180 M 120 360 Q 200 380 250 360 M 280 360 Q 320 380 400 360" stroke="rgba(148, 163, 184, 0.3)" stroke-width="2" fill="none" />
-          </g>
-
-          <g id="bgSteel" stroke="none" fill="rgba(245, 158, 11, 0.15)" style="display:none;">
+          <g id="bgSteel" class="env-bg" stroke="none" fill="rgba(245, 158, 11, 0.15)" style="display:none;">
              <rect x="0" y="40" width="400" height="40" fill="rgba(245, 158, 11, 0.15)" />
              <rect x="0" y="40" width="400" height="4" fill="rgba(245, 158, 11, 0.4)" />
              <rect x="0" y="76" width="400" height="4" fill="rgba(245, 158, 11, 0.4)" />
@@ -1467,7 +1451,7 @@ window.copyBankAccount = function() {
           <path id="angleArc" fill="rgba(255, 216, 77, 0.1)" stroke="var(--warn)" stroke-width="2" />
           <text id="angleText" class="mask-text" fill="var(--warn)" font-size="16" font-weight="bold" text-anchor="middle"></text>
 
-          <g id="redirectNode"></g>
+          <g id="redirectNode" class="draggable-anchor"></g>
 
           <g id="forceArrowGroup">
              <line id="forceArrowLine" x1="0" y1="0" x2="0" y2="0" stroke="var(--bad)" stroke-width="6" stroke-linecap="round" />
@@ -1504,7 +1488,10 @@ window.copyBankAccount = function() {
               <span class="sub" data-i18n="always1x">永遠 = 1 倍</span>
           </div>
           <div class="dash-box" id="dashAnchor" style="border-top: 3px solid var(--tagline);">
-              <span class="lbl" data-i18n="anchorTension">地面操作拉力</span>
+              <span class="lbl">
+                  <span data-i18n="anchorTension">地面操作拉力</span>
+                  <span id="lblMA" style="color:var(--warn); font-size:10.5px; margin-left:2px;"></span>
+              </span>
               <span class="val" id="txtAnchorTension" style="color:var(--tagline);">-- kg</span>
               <span class="sub" id="txtAnchorMult">--</span>
           </div>
@@ -1523,7 +1510,6 @@ window.copyBankAccount = function() {
             <div class="btn-group-lbl" style="color:var(--muted);" data-i18n="terrainLabel">🏕️ 模擬地形與環境</div>
             <div class="toggle-group">
                <button class="toggle-btn active" data-type="scene" data-val="tree" onclick="setScene(this, 'tree')" data-i18n="btnTree">🌳 攀樹</button>
-               <button class="toggle-btn" data-type="scene" data-val="rock" onclick="setScene(this, 'rock')" data-i18n="btnRock">🪨 攀岩</button>
                <button class="toggle-btn" data-type="scene" data-val="steel" onclick="setScene(this, 'steel')" data-i18n="btnSteel">🏗️ 鋼架空橋</button>
                <button class="toggle-btn" data-type="scene" data-val="none" onclick="setScene(this, 'none')" data-i18n="btnNone">⬛ 淨空</button>
             </div>
@@ -1552,7 +1538,7 @@ window.copyBankAccount = function() {
       </div>
       
       <div class="edu-wrap" id="eduPanel" data-i18n="eduDefault">
-         📍 請在上方沙盤中自由拖曳「地面操作」，觀察轉向點承受的力量變化。
+         📍 試著在沙盤中任意拖曳「轉向點」或「地面操作」，對齊照片角度來觀察力量變化。
       </div>
     </div> 
     
@@ -1583,8 +1569,8 @@ window.copyBankAccount = function() {
             </summary>
             <div class="menu-content">
               <ul style="margin-top: 0; padding-left: 20px;">
-                <li style="margin-bottom: 6px;" data-i18n="op1">滑動下方沙盤中的 <b>地面操作</b>，即時推演不同角度下的力量變化。</li>
-                <li style="margin-bottom: 6px;" data-i18n="op2">點擊上方 <b>模擬地形與環境</b>，一鍵切換攀樹、攀岩或鋼架場景。</li>
+                <li style="margin-bottom: 6px;" data-i18n="op1">滑動沙盤中的 <b>轉向點</b> 與 <b>地面操作</b>，可自由拖曳對齊 AR 畫面進行推演。</li>
+                <li style="margin-bottom: 6px;" data-i18n="op2">點擊上方 <b>模擬地形與環境</b>，一鍵切換攀樹、鋼架場景或乾淨畫布。</li>
                 <li style="margin-bottom: 6px;" data-i18n="op3">切換 <b>轉向點 (COD) 摩擦力介質</b>，觀察直拉、鉤環、滑輪對操作者負擔的影響。</li>
                 <li style="margin-bottom: 6px;" data-i18n="op4">點擊 <b>✏️自訂</b>，可手動設定轉向介質名稱與摩擦係數。</li>
                 <li style="margin-bottom: 6px;" data-i18n="op5">切換 <b>🕹️系統操作動作</b>，比對靜止、上拉與下放時，摩擦力帶來的截然不同效應。</li>
@@ -2002,21 +1988,61 @@ function loadImage(event) {
 function toggleGrid() { gridVisible = !gridVisible; gridOverlay.style.opacity = gridVisible ? "0.5" : "0"; }
 
 async function takeScreenshot() {
-  const target = document.getElementById('mainCard'); target.classList.add('capture-mode');
-  const inputs = target.querySelectorAll('input[type="number"]'); const placeholders = [];
+  const target = document.body;
+  target.classList.add('capture-mode');
+  
+  const inputs = target.querySelectorAll('input[type="number"]'); 
+  const placeholders = [];
+  
   inputs.forEach(inp => {
-      if(inp.closest('.capture-hide')) return;
+      if(inp.closest('.capture-hide') || inp.closest('[data-html2canvas-ignore]')) return;
       const span = document.createElement('span');
       span.textContent = inp.value;
       span.style.color = 'var(--text)'; span.style.fontSize = '18px'; span.style.fontWeight = 'bold'; span.style.fontFamily = 'monospace'; span.style.margin = '0 2px';
       inp.style.display = 'none'; inp.parentNode.insertBefore(span, inp); placeholders.push({ span, inp });
   });
-  window.scrollTo(0, 0); await new Promise(r => setTimeout(r, 100));
+  
+  window.scrollTo(0, 0); 
+  await new Promise(r => setTimeout(r, 100));
+  
+  // 💡 解決 html2canvas 無法截取 WebRTC 實境相機的問題：先將相機畫面畫入臨時隱藏畫布
+  let tempCanvas = null;
+  if (stream && videoTrack && video.style.opacity === "1") {
+      tempCanvas = document.createElement('canvas');
+      tempCanvas.width = video.videoWidth;
+      tempCanvas.height = video.videoHeight;
+      tempCanvas.style.position = 'absolute';
+      tempCanvas.style.top = '0';
+      tempCanvas.style.left = '0';
+      tempCanvas.style.width = '100%';
+      tempCanvas.style.height = '100%';
+      tempCanvas.style.objectFit = 'cover';
+      tempCanvas.style.zIndex = '-1';
+      const ctx = tempCanvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
+      document.getElementById('bg-layer').appendChild(tempCanvas);
+      video.style.opacity = '0';
+  }
+
   try {
-    const canvas = await html2canvas(target, { backgroundColor: '#0a1410', scale: 2, useCORS: true, ignoreElements: (el) => el.hasAttribute('data-html2canvas-ignore') || el.classList.contains('capture-hide') });
-    const link = document.createElement('a'); link.download = `轉向點戰術報告_${new Date().getTime()}.png`; link.href = canvas.toDataURL('image/png'); link.click();
-  } catch(e) { showToast("❌ 截圖失敗，請稍後再試！", "bad"); }
-  placeholders.forEach(p => { p.inp.style.display = ''; p.span.remove(); }); target.classList.remove('capture-mode');
+    const canvas = await html2canvas(target, { 
+        backgroundColor: document.body.classList.contains('camera-mode') ? '#0a1410' : '#0a1410', 
+        scale: 2, 
+        useCORS: true, 
+        ignoreElements: (el) => el.hasAttribute('data-html2canvas-ignore') || el.classList.contains('capture-hide') 
+    });
+    const link = document.createElement('a'); 
+    link.download = `轉向點戰術報告_${new Date().getTime()}.png`; 
+    link.href = canvas.toDataURL('image/png'); 
+    link.click();
+  } catch(e) { 
+      showToast("❌ 截圖失敗，請稍後再試！", "bad"); 
+  }
+  
+  // 💡 截圖完成後復原所有隱藏或修改過的元素
+  if (tempCanvas) { tempCanvas.remove(); video.style.opacity = '1'; }
+  placeholders.forEach(p => { p.inp.style.display = ''; p.span.remove(); }); 
+  target.classList.remove('capture-mode');
 }
 
 // 💡 核心變更：全地形場景與自訂介質引擎
@@ -2032,18 +2058,17 @@ const els = {
   dashBranch: document.getElementById('dashBranch'), dashAnchor: document.getElementById('dashAnchor'),
   txtAnchorTension: document.getElementById('txtAnchorTension'), txtAnchorMult: document.getElementById('txtAnchorMult'),
   eduPanel: document.getElementById('eduPanel'), lblBranchName: document.getElementById('lblBranchName'),
-  btnFrictionBase: document.getElementById('btnFrictionBase'),
+  btnFrictionBase: document.getElementById('btnFrictionBase'), lblMA: document.getElementById('lblMA'),
   distanceIndicator: document.getElementById('distanceIndicator'), distLine: document.getElementById('distLine'), distText: document.getElementById('distText')
 };
 
-const P = { x: 120, y: 80 }; 
+let P = { x: 120, y: 80 }; 
 const L_dist = 200;           
 let A = { x: 340, y: 360 };   
 
 // 場景資料庫
 const scenes = {
     'tree': { i18nKey: 'sceneTree', icon: '🌳', color: 'var(--tree)', friction: 0.4, bg: 'bgTree', customName: null },
-    'rock': { i18nKey: 'sceneRock', icon: '🪨', color: '#94a3b8', friction: 0.5, bg: 'bgRock', customName: null },
     'steel': { i18nKey: 'sceneSteel', icon: '🏗️', color: '#f59e0b', friction: 0.3, bg: 'bgSteel', customName: null },
     'none': { i18nKey: 'sceneNone', icon: '📍', color: '#cbd5e1', friction: 0.4, bg: 'none', customName: null }
 };
@@ -2063,7 +2088,7 @@ function setScene(btn, sceneKey) {
     btn.classList.add('active');
     currentScene = sceneKey;
     
-    ['bgTree', 'bgRock', 'bgSteel'].forEach(id => {
+    ['bgTree', 'bgSteel'].forEach(id => {
         if(document.getElementById(id)) document.getElementById(id).style.display = 'none';
     });
     if(scenes[sceneKey].bg !== 'none') {
@@ -2154,17 +2179,17 @@ function setAction(btn) {
 }
 
 function renderRedirectNode() {
-    let html = '';
+    // 💡 增加一個大半徑透明圓，讓手機更容易抓取移動
+    let html = `<circle cx="0" cy="0" r="35" fill="transparent" />`;
     let c = scenes[currentScene].color;
     if (currentMode === 'base') {
-        if(currentScene === 'tree') html = `<path d="M-25,-5 Q0,-20 25,-5 Q0,-15 -25,-5" fill="none" stroke="${c}" stroke-width="8" stroke-linecap="round"/><circle cx="0" cy="0" r="6" fill="#0a1410" />`;
-        else if(currentScene === 'rock') html = `<path d="M-15,-10 L0,-15 L10,-5 L15,10 L-15,5 Z" fill="${c}"/><circle cx="0" cy="0" r="4" fill="#0a1410" />`;
-        else if(currentScene === 'steel') html = `<rect x="-20" y="-10" width="40" height="15" fill="${c}" rx="4"/><circle cx="0" cy="0" r="6" fill="#0a1410" />`;
-        else html = `<circle cx="0" cy="0" r="10" fill="${c}"/><circle cx="0" cy="0" r="4" fill="#0a1410" />`;
+        if(currentScene === 'tree') html += `<path d="M-25,-5 Q0,-20 25,-5 Q0,-15 -25,-5" fill="none" stroke="${c}" stroke-width="8" stroke-linecap="round"/><circle cx="0" cy="0" r="6" fill="#0a1410" />`;
+        else if(currentScene === 'steel') html += `<rect x="-20" y="-10" width="40" height="15" fill="${c}" rx="4"/><circle cx="0" cy="0" r="6" fill="#0a1410" />`;
+        else html += `<circle cx="0" cy="0" r="10" fill="${c}"/><circle cx="0" cy="0" r="4" fill="#0a1410" />`;
     } else if (currentMode === 'carabiner') {
-        html = `<path d="M-15,0 A15,15 0 1,1 15,0 A15,15 0 0,1 -15,0" fill="none" stroke="#cbd5e1" stroke-width="6"/><line x1="12" y1="-10" x2="12" y2="10" stroke="#f1f5f9" stroke-width="4" stroke-linecap="round"/>`;
+        html += `<path d="M-15,0 A15,15 0 1,1 15,0 A15,15 0 0,1 -15,0" fill="none" stroke="#cbd5e1" stroke-width="6"/><line x1="12" y1="-10" x2="12" y2="10" stroke="#f1f5f9" stroke-width="4" stroke-linecap="round"/>`;
     } else {
-        html = `<circle cx="0" cy="0" r="18" fill="var(--warn)" stroke="#0a1410" stroke-width="3" /><circle cx="0" cy="0" r="6" fill="#0a1410" /><line x1="0" y1="0" x2="10" y2="10" stroke="#000" stroke-width="2"/>`;
+        html += `<circle cx="0" cy="0" r="18" fill="var(--warn)" stroke="#0a1410" stroke-width="3" /><circle cx="0" cy="0" r="6" fill="#0a1410" /><line x1="0" y1="0" x2="10" y2="10" stroke="#000" stroke-width="2"/>`;
     }
     els.redirectNode.innerHTML = html;
 }
@@ -2184,8 +2209,12 @@ function updateEngine() {
 
     if (currentAction === 'haul') {
         T_A = W / currentE; 
+        els.lblMA.textContent = `(MA ${currentE.toFixed(2)} : 1)`; // 💡 顯示實際省力比 (MA)
     } else if (currentAction === 'lower') {
         T_A = W * currentE; 
+        els.lblMA.textContent = ``;
+    } else {
+        els.lblMA.textContent = ``;
     }
     
     let vecL = { x: 0, y: 1 }; 
@@ -2314,16 +2343,30 @@ let pt = svgEl.createSVGPoint();
 function getSVGPos(e) { pt.x = e.touches ? e.touches[0].clientX : e.clientX; pt.y = e.touches ? e.touches[0].clientY : e.clientY; return pt.matrixTransform(svgEl.getScreenCTM().inverse()); }
 
 let isDragging = false;
-function startDrag(e) { isDragging = true; if(e.type === 'touchstart' && e.cancelable) { e.preventDefault(); } }
-els.anchorGroup.addEventListener('mousedown', startDrag);
-els.anchorGroup.addEventListener('touchstart', startDrag, {passive: false});
+let draggingNode = null; // 紀錄目前拖曳的是 'A'(地面操作) 還是 'P'(轉向點)
+
+// 綁定地面操作拖曳
+function startDragA(e) { draggingNode = 'A'; isDragging = true; if(e.type === 'touchstart' && e.cancelable) { e.preventDefault(); } }
+els.anchorGroup.addEventListener('mousedown', startDragA);
+els.anchorGroup.addEventListener('touchstart', startDragA, {passive: false});
+
+// 綁定轉向點 (COD) 拖曳
+function startDragP(e) { draggingNode = 'P'; isDragging = true; if(e.type === 'touchstart' && e.cancelable) { e.preventDefault(); } }
+els.redirectNode.addEventListener('mousedown', startDragP);
+els.redirectNode.addEventListener('touchstart', startDragP, {passive: false});
 
 function processDrag(e) {
   if(!isDragging) return;
   if(e.cancelable) e.preventDefault(); 
   let pos = getSVGPos(e);
-  A.x = Math.max(20, Math.min(380, pos.x));
-  A.y = Math.max(20, Math.min(380, pos.y));
+  
+  if (draggingNode === 'A') {
+      A.x = Math.max(20, Math.min(380, pos.x));
+      A.y = Math.max(20, Math.min(380, pos.y));
+  } else if (draggingNode === 'P') {
+      P.x = Math.max(20, Math.min(380, pos.x));
+      P.y = Math.max(20, Math.min(380, pos.y));
+  }
   updateEngine();
 }
 
@@ -2333,7 +2376,9 @@ window.addEventListener('touchend', () => isDragging = false);
 window.addEventListener('mouseup', () => isDragging = false);
 
 function resetEngine() {
-  A = { x: 340, y: 360 }; inLoad.value = 100;
+  P = { x: 120, y: 80 }; 
+  A = { x: 340, y: 360 }; 
+  inLoad.value = 100;
   setScene(document.querySelector('.toggle-btn[data-type="scene"][data-val="tree"]'), 'tree');
   document.querySelector('.toggle-btn[data-type="action"][data-val="static"]').click();
 }
