@@ -132,8 +132,11 @@
   .control-deck { background: rgba(0,0,0,0.3); border: 1px solid var(--line); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
   .control-row { display: flex; flex-direction: column; gap: 6px; }
   .btn-group-lbl { font-size: 12px; color: var(--safe); font-weight: bold; }
-  .toggle-group { display: flex; gap: 6px; width: 100%; justify-content: center; }
-  .toggle-btn { flex: 1; background: rgba(0,0,0,0.4); border: 1px solid var(--line); color: var(--muted); border-radius: 6px; padding: 8px 2px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.2s; position: relative;}
+  
+  /* 💡 更新 toggle-group 支援自動換行與網格排版 */
+  .toggle-group { display: flex; gap: 6px; width: 100%; justify-content: center; flex-wrap: wrap; }
+  .toggle-btn { flex: 1 1 auto; background: rgba(0,0,0,0.4); border: 1px solid var(--line); color: var(--muted); border-radius: 6px; padding: 8px 2px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.2s; position: relative; display: flex; align-items: center; justify-content: center;}
+  
   .toggle-btn.active { background: var(--safe); color: var(--bg); border-color: var(--safe); }
   .toggle-btn[data-type="action"].active { background: var(--tagline); color: var(--bg); border-color: var(--tagline); }
   .toggle-btn[data-type="scene"].active { background: var(--muted); color: var(--bg); border-color: var(--muted); }
@@ -267,6 +270,11 @@ const i18n = {
     directPull: "直拉",
     btnFricCara: "🪝 鉤環",
     btnFricPull: "⚙️ 滑輪",
+    btnFricConc: "🧱 水泥",
+    btnFricMud: "🌱 泥土坡",
+    btnFricRoller: "🛞 護角滾輪",
+    btnFricPipe: "🪈 圓柱鐵管",
+    btnFricVeh: "🚒 救援車體",
     actionLabel: "🕹️ 系統操作動作",
     btnStat: "⏸️ 靜止鎖定",
     btnHaul: "⬆️ 系統上拉",
@@ -281,12 +289,12 @@ const i18n = {
     fricInvalid: "❌ 請輸入 0 到 1 之間的有效數字",
     edu_static: "⏸️ <b>靜止鎖定時，沒有摩擦阻力產生。</b><br>此時不管你掛在哪裡，系統操作端只要付出相等於負載 ({T}kg) 的力量就能維持平衡。",
     edu_haul_base: "🥵 <b>{name} (COD) 摩擦力極大！這是最累的拉法。</b><br>為了把負載往上拉，操作端必須多花力氣才能克服摩擦力！搭配 MA {ma}:1 省力系統，手部實際只需拉 <b>{T}kg</b>。但{name}仍承受恐怖的連帶破壞力。",
-    edu_haul_cara: "🪝🤨 <b>鉤環提供中等摩擦力。</b><br>雖然比{name}滑順，但金屬摩擦力仍不小。搭配 MA {ma}:1 系統，手部實際只需拉 <b>{T}kg</b>。",
-    edu_haul_pull: "⚙️😎 <b>高效率轉向！極度省力。</b><br>摩擦力幾乎消失，搭配 MA {ma}:1 系統，操作端只需要出 <b>{T}kg</b> 的力量就能拉動。{name}也比較安全！",
+    edu_haul_cara: "🪝🤨 <b>{name}提供中等摩擦力。</b><br>雖然比粗糙表面滑順，但摩擦力仍不小。搭配 MA {ma}:1 系統，手部實際只需拉 <b>{T}kg</b>。",
+    edu_haul_pull: "⚙️😎 <b>{name}高效率轉向！極度省力。</b><br>摩擦阻力較低，搭配 MA {ma}:1 系統，操作端只需要出 <b>{T}kg</b> 的力量就能拉動。轉向點也比較安全！",
     edu_low_base: "🛡️ <b>下放時，{name} (COD) 反而變成救星！</b><br>巨大的摩擦力變成「天然煞車」，操作端只要輕輕握住 <b>{T}kg</b> 的力量，就能穩穩控制住系統！",
-    edu_low_cara: "🪝🛡️ <b>鉤環提供適中的煞車力。</b><br>下放時，金屬摩擦力幫忙煞車，操作端需出力 <b>{T}kg</b> 即可穩穩控制。",
-    edu_low_pull: "⚙️⚠️ <b>滑輪太溜了！下放請小心。</b><br>因為沒有摩擦力幫忙煞車，操作端必須死命握住將近負載 ({T}kg) 的力量，很容易失手滑掉！",
-    edu_warning: "<br><br>🚨 <b>滑輪倍增效應：</b> 繩索夾角太小，讓{name}承受了超過 2 倍的合力，極易發生崩塌斷裂意外！",
+    edu_low_cara: "🪝🛡️ <b>{name}提供適中的煞車力。</b><br>下放時摩擦力幫忙煞車，操作端需出力 <b>{T}kg</b> 即可穩穩控制。",
+    edu_low_pull: "⚙️⚠️ <b>{name}太溜了！下放請小心。</b><br>因為沒有足夠的摩擦力幫忙煞車，操作端必須死命握住將近負載 ({T}kg) 的力量，很容易失手滑掉！",
+    edu_warning: "<br><br>🚨 <b>滑輪倍增效應：</b> 繩索夾角太小，讓轉向點承受了超過 2 倍的合力，極易發生崩塌斷裂意外！",
     multLabel: "(負載的 {m} 倍)",
     menuSet: "系統設定與操作指南",
     menuSup: "系統支援與開發資訊",
@@ -301,7 +309,7 @@ const i18n = {
     menuPWA: "加入主畫面說明",
     op1: "滑動沙盤中的 <b>轉向點</b> 與 <b>地面操作</b>，可自由拖曳對齊 AR 畫面進行推演。",
     op2: "點擊上方 <b>模擬地形與環境</b>，一鍵切換攀樹、鋼架場景或乾淨畫布。",
-    op3: "切換 <b>轉向點 (COD) 摩擦力介質</b>，觀察直拉、鉤環、滑輪對操作者負擔的影響。",
+    op3: "切換 <b>轉向點 (COD) 摩擦力介質</b>，觀察各種實戰介質對操作者負擔的影響。",
     op4: "點擊 <b>✏️自訂</b>，可手動設定轉向介質名稱與摩擦係數。",
     op5: "切換 <b>🕹️系統操作動作</b>，比對靜止、上拉與下放時，摩擦力帶來的截然不同效應。",
     devTitle: "下方固定點架設儀 專業正式版",
@@ -371,7 +379,7 @@ const i18n = {
     featShot: "📸 戰術純淨截圖",
     featShotDesc: "自動濾除雜訊，一鍵匯出無浮水印、最高解析度的專業戰術報告圖紙！",
     featFric: "⚙️ 動態摩擦力運算",
-    featFricDesc: "解鎖鉤環與滑輪摩擦係數！精準推演不同轉向介質對系統的受力影響。",
+    featFricDesc: "解鎖所有實戰介質的摩擦係數！精準推演不同地形對系統的受力影響。",
     featAction: "🕹️ 上拉下放引擎",
     featActionDesc: "解鎖動態操作！真實模擬上拉與下放時，摩擦力造成的恐怖張力翻倍效應！"
   },
@@ -393,6 +401,11 @@ const i18n = {
     directPull: " Pull",
     btnFricCara: "🪝 Carabiner",
     btnFricPull: "⚙️ Pulley",
+    btnFricConc: "🧱 Concrete",
+    btnFricMud: "🌱 Mud",
+    btnFricRoller: "🛞 Roller",
+    btnFricPipe: "🪈 Pipe",
+    btnFricVeh: "🚒 Vehicle",
     actionLabel: "🕹️ System Action",
     btnStat: "⏸️ Static",
     btnHaul: "⬆️ Hauling",
@@ -407,12 +420,12 @@ const i18n = {
     fricInvalid: "❌ Enter a valid number between 0 and 1",
     edu_static: "⏸️ <b>Zero friction in static lock.</b><br>Operator holds force equal to load ({T}kg).",
     edu_haul_base: "🥵 <b>High friction on {name}! Most exhausting.</b><br>Operator needs <b>{T}kg</b> force to haul with MA {ma}:1!",
-    edu_haul_cara: "🪝🤨 <b>Medium friction on carabiner.</b><br>Requires <b>{T}kg</b> force to haul with MA {ma}:1.",
+    edu_haul_cara: "🪝🤨 <b>Medium friction on {name}.</b><br>Requires <b>{T}kg</b> force to haul with MA {ma}:1.",
     edu_haul_pull: "⚙️😎 <b>High efficiency! Effortless.</b><br>Operator only needs <b>{T}kg</b> force with MA {ma}:1.",
     edu_low_base: "🛡️ <b>High friction acts as a natural brake!</b><br>Operator controls the load holding just <b>{T}kg</b>.",
     edu_low_cara: "🪝🛡️ <b>Medium braking force.</b><br>Operator holds <b>{T}kg</b> to lower safely.",
     edu_low_pull: "⚙️⚠️ <b>Very slippery! Caution when lowering.</b><br>Operator must hold <b>{T}kg</b>.",
-    edu_warning: "<br><br>🚨 <b>Pulley Multiplier Effect:</b> Angle is too sharp! {name} bears >2x load.",
+    edu_warning: "<br><br>🚨 <b>Pulley Multiplier Effect:</b> Angle is too sharp! The anchor bears >2x load.",
     multLabel: "({m}x Load)",
     menuSet: "Settings & Guide",
     menuSup: "Support & Dev Info",
@@ -427,7 +440,7 @@ const i18n = {
     menuPWA: "Add to Home Screen",
     op1: "Drag the <b>Redirect Node</b> or <b>Ground OP</b> to simulate force changes dynamically.",
     op2: "Click <b>Terrain & Environment</b> to switch between scenes.",
-    op3: "Change <b>COD Friction Type</b> to observe how direct pull, carabiners, or pulleys affect the load.",
+    op3: "Change <b>COD Friction Type</b> to observe how different mediums affect the load.",
     op4: "Click <b>✏️Custom</b> to manually set the object name and friction coefficient.",
     op5: "Toggle <b>System Action</b> to compare the effects of friction during Static, Hauling, and Lowering.",
     devTitle: "Redirect Sandbox PRO",
@@ -497,7 +510,7 @@ const i18n = {
     featShot: "📸 Tactical Screenshot",
     featShotDesc: "Export watermark-free, hi-res tactical report!",
     featFric: "⚙️ Dynamic Friction",
-    featFricDesc: "Unlock carabiner & pulley friction!",
+    featFricDesc: "Unlock all advanced friction settings!",
     featAction: "🕹️ Haul & Lower Engine",
     featActionDesc: "Simulate massive tension spikes from friction!"
   },
@@ -519,6 +532,11 @@ const i18n = {
     directPull: " 直引き",
     btnFricCara: "🪝 カラビナ",
     btnFricPull: "⚙️ プーリー",
+    btnFricConc: "🧱 コンクリ",
+    btnFricMud: "🌱 泥地",
+    btnFricRoller: "🛞 ローラー",
+    btnFricPipe: "🪈 パイプ",
+    btnFricVeh: "🚒 車両",
     actionLabel: "🕹️ システム動作",
     btnStat: "⏸️ 静止",
     btnHaul: "⬆️ 引き上げ",
@@ -533,8 +551,8 @@ const i18n = {
     fricInvalid: "❌ 0から1の間の数値を入力してください",
     edu_static: "⏸️ <b>静止ロック時、摩擦抵抗ゼロ。</b><br>操作側は負荷({T}kg)と同等の力でバランスを維持できます。",
     edu_haul_base: "🥵 <b>{name}の摩擦大！最もしんどい。</b><br>引き上げには MA {ma}:1 で<b>{T}kg</b>の力が必要！",
-    edu_haul_cara: "🪝🤨 <b>カラビナの中程度摩擦。</b><br>引き上げに MA {ma}:1 で<b>{T}kg</b>の力が必要です。",
-    edu_haul_pull: "⚙️😎 <b>高効率！超省力。</b><br>操作側は MA {ma}:1 で<b>{T}kg</b>の力で済みます。",
+    edu_haul_cara: "🪝🤨 <b>{name}の中程度摩擦。</b><br>引き上げに MA {ma}:1 で<b>{T}kg</b>の力が必要です。",
+    edu_haul_pull: "⚙️😎 <b>{name}は高効率！超省力。</b><br>操作側は MA {ma}:1 で<b>{T}kg</b>の力で済みます。",
     edu_low_base: "🛡️ <b>ロワリング時、{name}の摩擦がブレーキに！</b><br>操作側はわずか<b>{T}kg</b>の力で下降できます。",
     edu_low_cara: "🪝🛡️ <b>適度なブレーキ力。</b><br>操作側は<b>{T}kg</b>の力でコントロールできます。",
     edu_low_pull: "⚙️⚠️ <b>滑りやすい！ロワリング注意。</b><br>摩擦ブレーキがないため、操作側は負荷({T}kg)を保持する必要があります！",
@@ -623,7 +641,7 @@ const i18n = {
     featShot: "📸 戦術スクリーンショット",
     featShotDesc: "透かしのない高解像度の戦術レポートを出力！",
     featFric: "⚙️ 動的摩擦力計算",
-    featFricDesc: "カラビナとプーリーの摩擦係数を解放！",
+    featFricDesc: "すべての摩擦係数を解放します！",
     featAction: "🕹️ 引き上げ・ロワリングエンジン",
     featActionDesc: "摩擦による張力倍増効果をリアルにシミュレーション！"
   },
@@ -645,6 +663,11 @@ const i18n = {
     directPull: " 직접 당기기",
     btnFricCara: "🪝 카라비너",
     btnFricPull: "⚙️ 도르래",
+    btnFricConc: "🧱 콘크리트",
+    btnFricMud: "🌱 진흙",
+    btnFricRoller: "🛞 롤러",
+    btnFricPipe: "🪈 파이프",
+    btnFricVeh: "🚒 차량",
     actionLabel: "🕹️ 시스템 동작",
     btnStat: "⏸️ 정지",
     btnHaul: "⬆️ 끌어올리기",
@@ -749,7 +772,7 @@ const i18n = {
     featShot: "📸 전술 스크린샷",
     featShotDesc: "워터마크 없는 고해상도 리포트를 저장하세요!",
     featFric: "⚙️ 동적 마찰력 연산",
-    featFricDesc: "카라비너와 도르래 마찰력을 잠금 해제하세요!",
+    featFricDesc: "모든 마찰력을 잠금 해제하세요!",
     featAction: "🕹️ 올리기/내리기 엔진",
     featActionDesc: "장력 2배 효과를 실제처럼 시뮬레이션하세요!"
   },
@@ -771,6 +794,11 @@ const i18n = {
     directPull: " Direct",
     btnFricCara: "🪝 Mousqueton",
     btnFricPull: "⚙️ Poulie",
+    btnFricConc: "🧱 Béton",
+    btnFricMud: "🌱 Boue",
+    btnFricRoller: "🛞 Rouleau",
+    btnFricPipe: "🪈 Tuyau",
+    btnFricVeh: "🚒 Véhicule",
     actionLabel: "🕹️ Action du Système",
     btnStat: "⏸️ Statique",
     btnHaul: "⬆️ Hissage",
@@ -785,7 +813,7 @@ const i18n = {
     fricInvalid: "❌ Entrez un nombre valide entre 0 et 1",
     edu_static: "⏸️ <b>Aucune friction en statique.</b><br>L'opérateur maintient une force égale à la charge ({T}kg).",
     edu_haul_base: "🥵 <b>Forte friction ! Très fatigant.</b><br>Il faut exercer <b>{T}kg</b> la force pour hisser (MA {ma}:1) !",
-    edu_haul_cara: "🪝🤨 <b>Friction moyenne (Mousqueton).</b><br>Il faut exercer <b>{T}kg</b> la force (MA {ma}:1).",
+    edu_haul_cara: "🪝🤨 <b>Friction moyenne sur {name}.</b><br>Il faut exercer <b>{T}kg</b> la force (MA {ma}:1).",
     edu_haul_pull: "⚙️😎 <b>Haute efficacité !</b><br>L'opérateur n'exerce que <b>{T}kg</b> la force (MA {ma}:1).",
     edu_low_base: "🛡️ <b>Friction utile pour freiner !</b><br>L'opérateur contrôle avec seulement <b>{T}kg</b>.",
     edu_low_cara: "🪝🛡️ <b>Freinage moyen.</b><br>L'opérateur retient <b>{T}kg</b> en sécurité.",
@@ -873,7 +901,7 @@ const i18n = {
     featPhoto: "📁 Superposition Photo",
     featPhotoDesc: "Importez des photos pour simuler sur site !",
     featFric: "⚙️ Friction Dynamique",
-    featFricDesc: "Débloquez les frictions poulie et mousqueton !",
+    featFricDesc: "Débloquez toutes les frictions !",
     featAction: "🕹️ Moteur Hissage/Descente",
     featActionDesc: "Simulez les pics extrêmes liés aux frictions !"
   },
@@ -895,6 +923,11 @@ const i18n = {
     directPull: " Direkt",
     btnFricCara: "🪝 Karabiner",
     btnFricPull: "⚙️ Rolle",
+    btnFricConc: "🧱 Beton",
+    btnFricMud: "🌱 Schlamm",
+    btnFricRoller: "🛞 Rolle",
+    btnFricPipe: "🪈 Rohr",
+    btnFricVeh: "🚒 Fzg",
     actionLabel: "🕹️ Systemaktion",
     btnStat: "⏸️ Statisch",
     btnHaul: "⬆️ Heben",
@@ -909,7 +942,7 @@ const i18n = {
     fricInvalid: "❌ Gültige Zahl zwischen 0 und 1 eingeben",
     edu_static: "⏸️ <b>Keine Reibung bei statischer Verriegelung.</b><br>Kraft ist gleich der Last ({T}kg).",
     edu_haul_base: "🥵 <b>Hohe Reibung! Sehr anstrengend.</b><br>Bediener benötigt <b>{T}kg</b> Kraft (MA {ma}:1)!",
-    edu_haul_cara: "🪝🤨 <b>Mittlere Reibung (Karabiner).</b><br>Erfordert <b>{T}kg</b> Kraft (MA {ma}:1).",
+    edu_haul_cara: "🪝🤨 <b>Mittlere Reibung ({name}).</b><br>Erfordert <b>{T}kg</b> Kraft (MA {ma}:1).",
     edu_haul_pull: "⚙️😎 <b>Hohe Effizienz! Mühelos.</b><br>Bediener benötigt nur <b>{T}kg</b> Kraft (MA {ma}:1).",
     edu_low_base: "🛡️ <b>Reibung fungiert als natürliche Bremse!</b><br>Kontrolle mit <b>{T}kg</b>.",
     edu_low_cara: "🪝🛡️ <b>Mittlere Bremskraft.</b><br>Hält <b>{T}kg</b> zum sicheren Ablassen.",
@@ -997,7 +1030,7 @@ const i18n = {
     featPhoto: "📁 Foto Überlagerung",
     featPhotoDesc: "Importieren Sie Standortfotos für die Simulation!",
     featFric: "⚙️ Dynamische Reibung",
-    featFricDesc: "Schalten Sie Karabiner- & Rollenreibung frei!",
+    featFricDesc: "Schalten Sie alle Reibungstypen frei!",
     featAction: "🕹️ Hebe- & Ablass-Engine",
     featActionDesc: "Simulieren Sie extreme Spannungsspitzen!",
     featShot: "📸 Taktischer Screenshot",
@@ -1021,6 +1054,11 @@ const i18n = {
     directPull: " Directo",
     btnFricCara: "🪝 Mosquetón",
     btnFricPull: "⚙️ Polea",
+    btnFricConc: "🧱 Hormigón",
+    btnFricMud: "🌱 Barro",
+    btnFricRoller: "🛞 Rodillo",
+    btnFricPipe: "🪈 Tubo",
+    btnFricVeh: "🚒 Vehículo",
     actionLabel: "🕹️ Acción del Sistema",
     btnStat: "⏸️ Estático",
     btnHaul: "⬆️ Izado",
@@ -1035,7 +1073,7 @@ const i18n = {
     fricInvalid: "❌ Ingrese un número válido entre 0 y 1",
     edu_static: "⏸️ <b>Cero fricción en estático.</b><br>Fuerza igual a la carga ({T}kg).",
     edu_haul_base: "🥵 <b>¡Alta fricción! Muy agotador.</b><br>¡Necesita <b>{T}kg</b> fuerza con MA {ma}:1!",
-    edu_haul_cara: "🪝🤨 <b>Fricción media (Mosquetón).</b><br>Requiere <b>{T}kg</b> fuerza con MA {ma}:1.",
+    edu_haul_cara: "🪝🤨 <b>Fricción media en {name}.</b><br>Requiere <b>{T}kg</b> fuerza con MA {ma}:1.",
     edu_haul_pull: "⚙️😎 <b>¡Alta eficiencia!</b><br>Solo necesita <b>{T}kg</b> fuerza con MA {ma}:1.",
     edu_low_base: "🛡️ <b>¡La fricción actúa como freno!</b><br>Controla con solo <b>{T}kg</b>.",
     edu_low_cara: "🪝🛡️ <b>Fuerza de frenado media.</b><br>Sostiene <b>{T}kg</b> para bajar.",
@@ -1123,7 +1161,7 @@ const i18n = {
     featPhoto: "📁 Foto Superpuesta",
     featPhotoDesc: "¡Importe fotos del sitio para simulación realista!",
     featFric: "⚙️ Fricción Dinámica",
-    featFricDesc: "¡Desbloquea fricción de mosquetón y polea!",
+    featFricDesc: "¡Desbloquea fricción de todos!",
     featAction: "🕹️ Motor de Izado/Descenso",
     featActionDesc: "¡Simula picos extremos de fuerza!",
     featShot: "📸 Captura Táctica",
@@ -1147,6 +1185,11 @@ const i18n = {
     directPull: " Direto",
     btnFricCara: "🪝 Mosquetão",
     btnFricPull: "⚙️ Polia",
+    btnFricConc: "🧱 Concreto",
+    btnFricMud: "🌱 Lama",
+    btnFricRoller: "🛞 Rolo",
+    btnFricPipe: "🪈 Tubo",
+    btnFricVeh: "🚒 Veículo",
     actionLabel: "🕹️ Ação do Sistema",
     btnStat: "⏸️ Estático",
     btnHaul: "⬆️ Içamento",
@@ -1161,7 +1204,7 @@ const i18n = {
     fricInvalid: "❌ Insira um número válido entre 0 e 1",
     edu_static: "⏸️ <b>Zero atrito em estático.</b><br>Força igual à carga ({T}kg).",
     edu_haul_base: "🥵 <b>Alto atrito! Muito cansativo.</b><br>Precisa de <b>{T}kg</b> força com MA {ma}:1!",
-    edu_haul_cara: "🪝🤨 <b>Atrito médio (Mosquetão).</b><br>Requer <b>{T}kg</b> força com MA {ma}:1.",
+    edu_haul_cara: "🪝🤨 <b>Atrito médio em {name}.</b><br>Requer <b>{T}kg</b> força com MA {ma}:1.",
     edu_haul_pull: "⚙️😎 <b>Alta eficiência!</b><br>Requer apenas <b>{T}kg</b> força com MA {ma}:1.",
     edu_low_base: "🛡️ <b>Atrito atua como freio!</b><br>Controla com apenas <b>{T}kg</b>.",
     edu_low_cara: "🪝🛡️ <b>Força de frenagem média.</b><br>Segura <b>{T}kg</b> para descer.",
@@ -1249,7 +1292,7 @@ const i18n = {
     featPhoto: "📁 Foto Sobreposta",
     featPhotoDesc: "Importe fotos do local para simulação realista!",
     featFric: "⚙️ Atrito Dinâmico",
-    featFricDesc: "Desbloqueie o atrito de mosquetão e polia!",
+    featFricDesc: "Desbloqueie todos os atritos!",
     featAction: "🕹️ Motor de Içamento/Descida",
     featActionDesc: "Simule picos extremos de força da vida real!",
     featShot: "📸 Captura Táctica",
@@ -1538,10 +1581,17 @@ window.copyBankAccount = function() {
                <span data-i18n="frictionLabel">🛡️ 轉向點 (COD) 摩擦力介質</span>
                <button onclick="customFriction()" style="background:var(--card); border:1px solid var(--warn); color:var(--warn); border-radius:4px; padding:2px 6px; font-size:11px; cursor:pointer;" data-i18n="btnCustom">✏️ 自訂</button>
             </div>
-            <div class="toggle-group">
-               <button class="toggle-btn active" id="btnFrictionBase" data-type="friction" data-val="0.4" onclick="setFriction(this, 'base')">🌳 樹幹直拉</button>
-               <button class="toggle-btn" data-type="friction" data-val="0.6" onclick="setFriction(this, 'carabiner')"><span data-i18n="btnFricCara">🪝 鉤環</span><span class="lock-icon">🔒</span></button>
-               <button class="toggle-btn" data-type="friction" data-val="0.95" onclick="setFriction(this, 'pulley')"><span data-i18n="btnFricPull">⚙️ 滑輪</span><span class="lock-icon">🔒</span></button>
+            <!-- 💡 更新 toggle-group 支援自動換行與五大進階介質 -->
+            <div class="toggle-group" style="flex-wrap: wrap;">
+               <button class="toggle-btn active" id="btnFrictionBase" data-type="friction" data-val="0.4" onclick="setFriction(this, 'base')" style="flex: 1 1 calc(33% - 6px);">🌳 樹幹直拉</button>
+               <button class="toggle-btn" data-type="friction" data-val="0.6" onclick="setFriction(this, 'carabiner')" style="flex: 1 1 calc(33% - 6px);"><span data-i18n="btnFricCara">🪝 鉤環</span><span class="lock-icon">🔒</span></button>
+               <button class="toggle-btn" data-type="friction" data-val="0.95" onclick="setFriction(this, 'pulley')" style="flex: 1 1 calc(33% - 6px);"><span data-i18n="btnFricPull">⚙️ 滑輪</span><span class="lock-icon">🔒</span></button>
+               
+               <button class="toggle-btn" data-type="friction" data-val="0.25" onclick="setFriction(this, 'concrete')" style="flex: 1 1 calc(19% - 6px); padding: 6px 2px;"><span data-i18n="btnFricConc">🧱 水泥</span><span class="lock-icon">🔒</span></button>
+               <button class="toggle-btn" data-type="friction" data-val="0.15" onclick="setFriction(this, 'mud')" style="flex: 1 1 calc(19% - 6px); padding: 6px 2px;"><span data-i18n="btnFricMud">🌱 泥土</span><span class="lock-icon">🔒</span></button>
+               <button class="toggle-btn" data-type="friction" data-val="0.8" onclick="setFriction(this, 'roller')" style="flex: 1 1 calc(19% - 6px); padding: 6px 2px;"><span data-i18n="btnFricRoller">🛞 滾輪</span><span class="lock-icon">🔒</span></button>
+               <button class="toggle-btn" data-type="friction" data-val="0.55" onclick="setFriction(this, 'pipe')" style="flex: 1 1 calc(19% - 6px); padding: 6px 2px;"><span data-i18n="btnFricPipe">🪈 鐵管</span><span class="lock-icon">🔒</span></button>
+               <button class="toggle-btn" data-type="friction" data-val="0.45" onclick="setFriction(this, 'vehicle')" style="flex: 1 1 calc(19% - 6px); padding: 6px 2px;"><span data-i18n="btnFricVeh">🚒 車體</span><span class="lock-icon">🔒</span></button>
             </div>
          </div>
 
@@ -1601,7 +1651,7 @@ window.copyBankAccount = function() {
               <ul style="margin-top: 0; padding-left: 20px;">
                 <li style="margin-bottom: 6px;" data-i18n="op1">滑動沙盤中的 <b>轉向點</b> 與 <b>地面操作</b>，可自由拖曳對齊 AR 畫面進行推演。</li>
                 <li style="margin-bottom: 6px;" data-i18n="op2">點擊上方 <b>模擬地形與環境</b>，一鍵切換攀樹、鋼架場景或乾淨畫布。</li>
-                <li style="margin-bottom: 6px;" data-i18n="op3">切換 <b>轉向點 (COD) 摩擦力介質</b>，觀察直拉、鉤環、滑輪對操作者負擔的影響。</li>
+                <li style="margin-bottom: 6px;" data-i18n="op3">切換 <b>轉向點 (COD) 摩擦力介質</b>，觀察各種實戰介質對操作者負擔的影響。</li>
                 <li style="margin-bottom: 6px;" data-i18n="op4">點擊 <b>✏️自訂</b>，可手動設定轉向介質名稱與摩擦係數。</li>
                 <li style="margin-bottom: 6px;" data-i18n="op5">切換 <b>🕹️系統操作動作</b>，比對靜止、上拉與下放時，摩擦力帶來的截然不同效應。</li>
               </ul>
@@ -1666,7 +1716,7 @@ window.copyBankAccount = function() {
             <div class="menu-content">
               <div style="text-align: center; margin-bottom: 15px;">
                 <span data-i18n="devTitle" style="display:inline-block; background:var(--safe); color:#0a1410; font-weight:bold; padding:4px 14px; border-radius:20px; font-size:13px; letter-spacing:0.5px; box-shadow: 0 2px 6px rgba(74,222,128,0.3);">下方固定點架設儀 專業正式版</span>
-                <div style="font-size: 11px; color: var(--muted); margin-top: 8px; font-family: monospace;">Version 6.2.4</div>
+                <div style="font-size: 11px; color: var(--muted); margin-top: 8px; font-family: monospace;">Version 6.3.0</div>
               </div>
               <p style="margin-top: 0; margin-bottom: 6px; font-weight: bold; color: var(--text); text-align: center;" data-i18n="devTeam">本工具由 <span style="color:var(--warn);">散木團隊</span> 開發製作</p>
               <p style="margin-top: 0; margin-bottom: 4px; font-size: 13px; text-align: center;" data-i18n="devT1">教學架構與工程判斷／徐世豐</p>
@@ -2125,7 +2175,7 @@ const scenes = {
 
 let currentScene = 'tree';
 let currentE = 0.4; 
-let currentMode = 'base'; // base = 使用場景預設介質, carabiner, pulley
+let currentMode = 'base'; // base = 使用場景預設介質, carabiner, pulley... 等等
 let currentAction = 'static';
 let currentMA = 1; // 💡 系統省力比預設為 1:1
 
@@ -2248,7 +2298,7 @@ function setMA(btn) {
     updateEngine();
 }
 
-// 💡 優化：只有切換場景或介質時才重新繪製，大幅提升拖拉順暢度
+// 💡 優化：只有切換場景或介質時才重新繪製，大幅提升拖拉順暢度，並繪製五大新增介質的視覺幾何圖形
 let lastShapeData = '';
 function renderRedirectNode() {
     let currentShapeData = currentScene + '-' + currentMode;
@@ -2266,8 +2316,18 @@ function renderRedirectNode() {
         else html += `<circle cx="0" cy="0" r="10" fill="${c}"/><circle cx="0" cy="0" r="4" fill="#0a1410" />`;
     } else if (currentMode === 'carabiner') {
         html += `<path d="M-15,0 A15,15 0 1,1 15,0 A15,15 0 0,1 -15,0" fill="none" stroke="#cbd5e1" stroke-width="6"/><line x1="12" y1="-10" x2="12" y2="10" stroke="#f1f5f9" stroke-width="4" stroke-linecap="round"/>`;
-    } else {
+    } else if (currentMode === 'pulley') {
         html += `<circle cx="0" cy="0" r="18" fill="var(--warn)" stroke="#0a1410" stroke-width="3" /><circle cx="0" cy="0" r="6" fill="#0a1410" /><line x1="0" y1="0" x2="10" y2="10" stroke="#000" stroke-width="2"/>`;
+    } else if (currentMode === 'concrete') {
+        html += `<rect x="-15" y="-15" width="30" height="30" fill="#94a3b8" rx="2" /><circle cx="0" cy="0" r="4" fill="#0a1410" />`;
+    } else if (currentMode === 'mud') {
+        html += `<path d="M-20,10 Q-10,-10 0,-5 Q10,-15 20,10 Z" fill="#78350f" /><circle cx="0" cy="0" r="4" fill="#0a1410" />`;
+    } else if (currentMode === 'roller') {
+        html += `<rect x="-15" y="-8" width="30" height="16" fill="#cbd5e1" rx="8"/><circle cx="-8" cy="0" r="5" fill="#475569"/><circle cx="8" cy="0" r="5" fill="#475569"/>`;
+    } else if (currentMode === 'pipe') {
+        html += `<circle cx="0" cy="0" r="15" fill="none" stroke="#94a3b8" stroke-width="6" /><circle cx="0" cy="0" r="4" fill="#0a1410" />`;
+    } else if (currentMode === 'vehicle') {
+        html += `<path d="M-20,-5 L20,-5 L15,10 L-15,10 Z" fill="#ef4444" /><circle cx="0" cy="0" r="4" fill="#0a1410" />`;
     }
     els.redirectNode.innerHTML = html;
 }
@@ -2362,35 +2422,43 @@ function updateEngine() {
         els.distanceIndicator.style.opacity = '0';
     }
 
-    // 💡 動態白話文教學邏輯 (使用 i18n，並加入 MA 變數)
+    // 💡 動態白話文教學邏輯 (自動判讀介質名稱與圖示)
     let eduText = "";
     let eduColor = "var(--safe)";
     let eduBg = "rgba(74, 222, 128, 0.1)";
-    let aMult = T_rope_to_anchor / W;
+    
     let mName = getSceneName();
     let mIcon = scenes[currentScene].icon;
+
+    if (currentMode === 'carabiner') { mName = t('btnFricCara').replace(/🪝\s*/, ''); mIcon = '🪝'; }
+    else if (currentMode === 'pulley') { mName = t('btnFricPull').replace(/⚙️\s*/, ''); mIcon = '⚙️'; }
+    else if (currentMode === 'concrete') { mName = t('btnFricConc').replace(/🧱\s*/, ''); mIcon = '🧱'; }
+    else if (currentMode === 'mud') { mName = t('btnFricMud').replace(/🌱\s*/, ''); mIcon = '🌱'; }
+    else if (currentMode === 'roller') { mName = t('btnFricRoller').replace(/🛞\s*/, ''); mIcon = '🛞'; }
+    else if (currentMode === 'pipe') { mName = t('btnFricPipe').replace(/🪈\s*/, ''); mIcon = '🪈'; }
+    else if (currentMode === 'vehicle') { mName = t('btnFricVeh').replace(/🚒\s*/, ''); mIcon = '🚒'; }
     
     if (currentAction === 'static') {
         eduText = t('edu_static').replace('{T}', T_operator_pull.toFixed(0));
         eduColor = "var(--text)"; eduBg = "rgba(255,255,255,0.05)";
     } else if (currentAction === 'haul') {
-        if (currentMode === 'base' || (currentE < 0.6)) {
+        if (currentE < 0.6) {
             eduText = `${mIcon}` + t('edu_haul_base').replace(/{name}/g, mName).replace('{ma}', currentMA).replace('{T}', T_operator_pull.toFixed(0));
             eduColor = "var(--bad)"; eduBg = "rgba(239, 68, 68, 0.15)";
-        } else if (currentMode === 'carabiner' || (currentE >= 0.6 && currentE < 0.9)) {
-            eduText = t('edu_haul_cara').replace(/{name}/g, mName).replace('{ma}', currentMA).replace('{T}', T_operator_pull.toFixed(0));
+        } else if (currentE >= 0.6 && currentE < 0.9) {
+            eduText = `${mIcon}` + t('edu_haul_cara').replace(/{name}/g, mName).replace('{ma}', currentMA).replace('{T}', T_operator_pull.toFixed(0));
             eduColor = "var(--warn)"; eduBg = "rgba(251, 191, 36, 0.15)";
         } else {
-            eduText = t('edu_haul_pull').replace(/{name}/g, mName).replace('{ma}', currentMA).replace('{T}', T_operator_pull.toFixed(0));
+            eduText = `${mIcon}` + t('edu_haul_pull').replace(/{name}/g, mName).replace('{ma}', currentMA).replace('{T}', T_operator_pull.toFixed(0));
             eduColor = "var(--safe)"; eduBg = "rgba(74, 222, 128, 0.15)";
         }
     } else if (currentAction === 'lower') {
-        if (currentMode === 'base' || (currentE < 0.6)) {
+        if (currentE < 0.6) {
             eduText = `${mIcon}` + t('edu_low_base').replace(/{name}/g, mName).replace('{T}', T_operator_pull.toFixed(0));
-        } else if (currentMode === 'carabiner' || (currentE >= 0.6 && currentE < 0.9)) {
-            eduText = t('edu_low_cara').replace(/{name}/g, mName).replace('{T}', T_operator_pull.toFixed(0));
+        } else if (currentE >= 0.6 && currentE < 0.9) {
+            eduText = `${mIcon}` + t('edu_low_cara').replace(/{name}/g, mName).replace('{T}', T_operator_pull.toFixed(0));
         } else {
-            eduText = t('edu_low_pull').replace(/{name}/g, mName).replace('{T}', T_operator_pull.toFixed(0));
+            eduText = `${mIcon}` + t('edu_low_pull').replace(/{name}/g, mName).replace('{T}', T_operator_pull.toFixed(0));
             eduColor = "var(--bad)"; eduBg = "rgba(239, 68, 68, 0.15)";
         }
     }
