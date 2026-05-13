@@ -16,7 +16,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 
 <meta property="og:title" content="下方固定點架設儀 (全地形) | 散木團隊">
-<meta property="og:description" content="全地形模擬！結合實境 AR 與動態摩擦力引擎，精準推演樹幹、攀岩岩壁、鋼架空橋等轉向點的極限受力變化。">
+<meta property="og:description" content="全地形模擬！結合實境 AR 與動態摩擦力引擎，精準推演樹幹、鋼架空橋等轉向點的極限受力變化。">
 <meta property="og:image" content="https://fang5761-source.github.io/redirect-simulator/icon-512.png">
 <meta property="og:type" content="website">
 
@@ -55,9 +55,8 @@
 
   body.camera-mode { background-color: transparent !important; }
   
-  /* 💡 AR/相機模式自動隱藏環境背景與格線 */
+  /* 💡 AR/相機模式自動隱藏環境背景，但不隱藏格線 */
   body.camera-mode .env-bg { display: none !important; }
-  body.camera-mode #grid-overlay { display: none !important; }
 
   #status-bar-protector {
     position: fixed; top: 0; left: 0; width: 100%; height: env(safe-area-inset-top);
@@ -75,7 +74,7 @@
 
   #bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background-color: var(--bg); overflow: hidden; }
   #bg-video, #bg-image { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s; }
-  #grid-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 20px 20px; opacity: 0.5; pointer-events: none; transition: opacity 0.3s; }
+  #grid-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 20px 20px; opacity: 0.5; pointer-events: none; transition: opacity 0.3s; }
 
   .app-container { 
     max-width: 500px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; position: relative; z-index: 1; 
@@ -116,6 +115,14 @@
   .draggable-anchor { cursor: grab; touch-action: none; }
   .draggable-anchor:active { cursor: grabbing; }
 
+  /* 💡 新增拖曳視覺導引動畫 */
+  @keyframes pulse-drag {
+      0% { transform: scale(0.9); opacity: 0.3; }
+      50% { transform: scale(1.1); opacity: 0.8; }
+      100% { transform: scale(0.9); opacity: 0.3; }
+  }
+  .drag-cue { animation: pulse-drag 2s infinite; stroke: rgba(255, 255, 255, 0.5); fill: none; stroke-width: 1.5; stroke-dasharray: 4 4; pointer-events: none; }
+
   .dashboard { display: flex; justify-content: space-between; gap: 6px; margin-bottom: 8px; }
   .dash-box { flex: 1; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; text-align: center; }
   .dash-box .lbl { font-size: 11px; color: var(--muted); font-weight: bold; margin-bottom: 4px; }
@@ -130,11 +137,11 @@
   .toggle-btn.active { background: var(--safe); color: var(--bg); border-color: var(--safe); }
   .toggle-btn[data-type="action"].active { background: var(--tagline); color: var(--bg); border-color: var(--tagline); }
   .toggle-btn[data-type="scene"].active { background: var(--muted); color: var(--bg); border-color: var(--muted); }
+  .toggle-btn[data-type="ma"].active { background: var(--safe); color: var(--bg); border-color: var(--safe); }
 
   .edu-wrap { margin-top: 8px; padding: 12px; background: rgba(255, 216, 77, 0.1); border-radius: 8px; border: 1px solid var(--warn); text-align: justify; font-size: 13.5px; font-weight: bold; color: var(--text); line-height: 1.6; transition: background 0.3s, border 0.3s; }
   .mask-text { paint-order: stroke fill; stroke: var(--bg); stroke-width: 4px; stroke-linecap: round; stroke-linejoin: round; }
 
-  /* 💡 模態視窗與按鈕視覺放大更新 */
   .modal-overlay { 
     display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
     background: rgba(0,0,0,0.85); z-index: 9999; 
@@ -264,6 +271,7 @@ const i18n = {
     btnStat: "⏸️ 靜止鎖定",
     btnHaul: "⬆️ 系統上拉",
     btnLow: "⬇️ 系統下放",
+    maLabel: "⚙️ 系統省力比 (MA)",
     eduDefault: "📍 試著在沙盤中任意拖曳「轉向點」或「地面操作」，對齊照片角度來觀察力量變化。",
     sceneTree: "樹幹",
     sceneSteel: "鋼架",
@@ -272,9 +280,9 @@ const i18n = {
     fricUpdated: "COD 摩擦係數已自訂為：",
     fricInvalid: "❌ 請輸入 0 到 1 之間的有效數字",
     edu_static: "⏸️ <b>靜止鎖定時，沒有摩擦阻力產生。</b><br>此時不管你掛在哪裡，系統操作端只要付出相等於負載 ({T}kg) 的力量就能維持平衡。",
-    edu_haul_base: "🥵 <b>{name} (COD) 摩擦力極大！這是最累的拉法。</b><br>為了把負載往上拉，操作端必須多花 <b>{mult} 倍</b> 的力氣 ({T}kg) 才能克服摩擦力！{name}也因此承受恐怖的連帶破壞力。",
-    edu_haul_cara: "🪝🤨 <b>鉤環提供中等摩擦力。</b><br>雖然比{name}滑順，但金屬摩擦力還是讓操作端要出 <b>{mult} 倍</b> 的力氣 ({T}kg) 才能往上拉。",
-    edu_haul_pull: "⚙️😎 <b>高效率轉向！極度省力。</b><br>摩擦力幾乎消失，操作端只需要出 <b>{mult} 倍</b> 左右的力量 ({T}kg) 就能拉動。{name}也比較安全！",
+    edu_haul_base: "🥵 <b>{name} (COD) 摩擦力極大！這是最累的拉法。</b><br>為了把負載往上拉，操作端必須多花力氣才能克服摩擦力！搭配 MA {ma}:1 省力系統，手部實際只需拉 <b>{T}kg</b>。但{name}仍承受恐怖的連帶破壞力。",
+    edu_haul_cara: "🪝🤨 <b>鉤環提供中等摩擦力。</b><br>雖然比{name}滑順，但金屬摩擦力仍不小。搭配 MA {ma}:1 系統，手部實際只需拉 <b>{T}kg</b>。",
+    edu_haul_pull: "⚙️😎 <b>高效率轉向！極度省力。</b><br>摩擦力幾乎消失，搭配 MA {ma}:1 系統，操作端只需要出 <b>{T}kg</b> 的力量就能拉動。{name}也比較安全！",
     edu_low_base: "🛡️ <b>下放時，{name} (COD) 反而變成救星！</b><br>巨大的摩擦力變成「天然煞車」，操作端只要輕輕握住 <b>{T}kg</b> 的力量，就能穩穩控制住系統！",
     edu_low_cara: "🪝🛡️ <b>鉤環提供適中的煞車力。</b><br>下放時，金屬摩擦力幫忙煞車，操作端需出力 <b>{T}kg</b> 即可穩穩控制。",
     edu_low_pull: "⚙️⚠️ <b>滑輪太溜了！下放請小心。</b><br>因為沒有摩擦力幫忙煞車，操作端必須死命握住將近負載 ({T}kg) 的力量，很容易失手滑掉！",
@@ -389,6 +397,7 @@ const i18n = {
     btnStat: "⏸️ Static",
     btnHaul: "⬆️ Hauling",
     btnLow: "⬇️ Lowering",
+    maLabel: "⚙️ Mechanical Advantage (MA)",
     eduDefault: "📍 Drag the 'Redirect' or 'Ground OP' to align with AR/Photo backgrounds.",
     sceneTree: "Tree",
     sceneSteel: "Truss",
@@ -397,9 +406,9 @@ const i18n = {
     fricUpdated: "Friction custom set to: ",
     fricInvalid: "❌ Enter a valid number between 0 and 1",
     edu_static: "⏸️ <b>Zero friction in static lock.</b><br>Operator holds force equal to load ({T}kg).",
-    edu_haul_base: "🥵 <b>High friction on {name}! Most exhausting.</b><br>Operator needs <b>{mult}x</b> force ({T}kg) to haul!",
-    edu_haul_cara: "🪝🤨 <b>Medium friction on carabiner.</b><br>Requires <b>{mult}x</b> force ({T}kg) to haul.",
-    edu_haul_pull: "⚙️😎 <b>High efficiency! Effortless.</b><br>Operator only needs <b>{mult}x</b> force ({T}kg).",
+    edu_haul_base: "🥵 <b>High friction on {name}! Most exhausting.</b><br>Operator needs <b>{T}kg</b> force to haul with MA {ma}:1!",
+    edu_haul_cara: "🪝🤨 <b>Medium friction on carabiner.</b><br>Requires <b>{T}kg</b> force to haul with MA {ma}:1.",
+    edu_haul_pull: "⚙️😎 <b>High efficiency! Effortless.</b><br>Operator only needs <b>{T}kg</b> force with MA {ma}:1.",
     edu_low_base: "🛡️ <b>High friction acts as a natural brake!</b><br>Operator controls the load holding just <b>{T}kg</b>.",
     edu_low_cara: "🪝🛡️ <b>Medium braking force.</b><br>Operator holds <b>{T}kg</b> to lower safely.",
     edu_low_pull: "⚙️⚠️ <b>Very slippery! Caution when lowering.</b><br>Operator must hold <b>{T}kg</b>.",
@@ -514,6 +523,7 @@ const i18n = {
     btnStat: "⏸️ 静止",
     btnHaul: "⬆️ 引き上げ",
     btnLow: "⬇️ ロワリング",
+    maLabel: "⚙️ システム倍力比 (MA)",
     eduDefault: "📍 砂盤の「支点」や「操作側」をドラッグして、写真に合わせ荷重変化を観察してください。",
     sceneTree: "樹木",
     sceneSteel: "鉄骨",
@@ -522,9 +532,9 @@ const i18n = {
     fricUpdated: "摩擦係数を変更：",
     fricInvalid: "❌ 0から1の間の数値を入力してください",
     edu_static: "⏸️ <b>静止ロック時、摩擦抵抗ゼロ。</b><br>操作側は負荷({T}kg)と同等の力でバランスを維持できます。",
-    edu_haul_base: "🥵 <b>{name}の摩擦大！最もしんどい。</b><br>引き上げには<b>{mult}倍</b>の力({T}kg)が必要！",
-    edu_haul_cara: "🪝🤨 <b>カラビナの中程度摩擦。</b><br>引き上げに<b>{mult}倍</b>の力({T}kg)が必要です。",
-    edu_haul_pull: "⚙️😎 <b>高効率！超省力。</b><br>操作側は<b>{mult}倍</b>の力({T}kg)で済みます。",
+    edu_haul_base: "🥵 <b>{name}の摩擦大！最もしんどい。</b><br>引き上げには MA {ma}:1 で<b>{T}kg</b>の力が必要！",
+    edu_haul_cara: "🪝🤨 <b>カラビナの中程度摩擦。</b><br>引き上げに MA {ma}:1 で<b>{T}kg</b>の力が必要です。",
+    edu_haul_pull: "⚙️😎 <b>高効率！超省力。</b><br>操作側は MA {ma}:1 で<b>{T}kg</b>の力で済みます。",
     edu_low_base: "🛡️ <b>ロワリング時、{name}の摩擦がブレーキに！</b><br>操作側はわずか<b>{T}kg</b>の力で下降できます。",
     edu_low_cara: "🪝🛡️ <b>適度なブレーキ力。</b><br>操作側は<b>{T}kg</b>の力でコントロールできます。",
     edu_low_pull: "⚙️⚠️ <b>滑りやすい！ロワリング注意。</b><br>摩擦ブレーキがないため、操作側は負荷({T}kg)を保持する必要があります！",
@@ -639,6 +649,7 @@ const i18n = {
     btnStat: "⏸️ 정지",
     btnHaul: "⬆️ 끌어올리기",
     btnLow: "⬇️ 내리기",
+    maLabel: "⚙️ 기계적 이점 (MA)",
     eduDefault: "📍 샌드박스의 '방향 전환점' 또는 '지면 조작'을 자유롭게 드래그하여 각도를 맞추세요.",
     sceneTree: "나무",
     sceneSteel: "철골",
@@ -647,9 +658,9 @@ const i18n = {
     fricUpdated: "COD 마찰 계 설정:",
     fricInvalid: "❌ 0에서 1 사이의 유효한 숫자를 입력하세요.",
     edu_static: "⏸️ <b>정지 상태에서는 마찰 저항이 없습니다.</b><br>조작단은 하중({T}kg)과 같은 힘만 내면 유지됩니다.",
-    edu_haul_base: "🥵 <b>{name} 마찰력이 매우 큽니다!</b><br>조작단이 <b>{mult}배</b>의 힘({T}kg)을 내야 합니다!",
-    edu_haul_cara: "🪝🤨 <b>카라비너는 중간 마찰력을 제공합니다.</b><br>조작단이 <b>{mult}배</b>의 힘({T}kg)을 내야 합니다.",
-    edu_haul_pull: "⚙️😎 <b>고효율! 매우 힘이 덜 듭니다.</b><br>조작단은 약 <b>{mult}배</b>의 힘({T}kg)만으로 당길 수 있습니다.",
+    edu_haul_base: "🥵 <b>{name} 마찰력이 매우 큽니다!</b><br>조작단이 MA {ma}:1 로 <b>{T}kg</b>의 힘을 내야 합니다!",
+    edu_haul_cara: "🪝🤨 <b>카라비너는 중간 마찰력을 제공합니다.</b><br>조작단이 MA {ma}:1 로 <b>{T}kg</b>의 힘을 내야 합니다.",
+    edu_haul_pull: "⚙️😎 <b>고효율! 매우 힘이 덜 듭니다.</b><br>조작단은 MA {ma}:1 로 약 <b>{T}kg</b>의 힘만으로 당길 수 있습니다.",
     edu_low_base: "🛡️ <b>내릴 때는 마찰력이 브레이크 역할을 합니다!</b><br>조작단은 <b>{T}kg</b>의 힘만으로 통제할 수 있습니다.",
     edu_low_cara: "🪝🛡️ <b>적절한 제동력을 제공합니다.</b><br>조작단은 <b>{T}kg</b>의 힘을 내면 통제할 수 있습니다.",
     edu_low_pull: "⚙️⚠️ <b>매우 미끄럽습니다! 내릴 때 주의하세요.</b><br>조작단은 하중에 가까운 힘({T}kg)을 필사적으로 버텨야 합니다!",
@@ -764,6 +775,7 @@ const i18n = {
     btnStat: "⏸️ Statique",
     btnHaul: "⬆️ Hissage",
     btnLow: "⬇️ Descente",
+    maLabel: "⚙️ Avantage Mécanique (MA)",
     eduDefault: "📍 Glissez la « Déviation » ou l'« Op. au sol » pour aligner les forces.",
     sceneTree: "Arbre",
     sceneSteel: "Acier",
@@ -772,9 +784,9 @@ const i18n = {
     fricUpdated: "Friction définie sur :",
     fricInvalid: "❌ Entrez un nombre valide entre 0 et 1",
     edu_static: "⏸️ <b>Aucune friction en statique.</b><br>L'opérateur maintient une force égale à la charge ({T}kg).",
-    edu_haul_base: "🥵 <b>Forte friction ! Très fatigant.</b><br>Il faut exercer <b>{mult}x</b> la force ({T}kg) pour hisser !",
-    edu_haul_cara: "🪝🤨 <b>Friction moyenne (Mousqueton).</b><br>Il faut exercer <b>{mult}x</b> la force ({T}kg).",
-    edu_haul_pull: "⚙️😎 <b>Haute efficacité !</b><br>L'opérateur n'exerce que <b>{mult}x</b> la force ({T}kg).",
+    edu_haul_base: "🥵 <b>Forte friction ! Très fatigant.</b><br>Il faut exercer <b>{T}kg</b> la force pour hisser (MA {ma}:1) !",
+    edu_haul_cara: "🪝🤨 <b>Friction moyenne (Mousqueton).</b><br>Il faut exercer <b>{T}kg</b> la force (MA {ma}:1).",
+    edu_haul_pull: "⚙️😎 <b>Haute efficacité !</b><br>L'opérateur n'exerce que <b>{T}kg</b> la force (MA {ma}:1).",
     edu_low_base: "🛡️ <b>Friction utile pour freiner !</b><br>L'opérateur contrôle avec seulement <b>{T}kg</b>.",
     edu_low_cara: "🪝🛡️ <b>Freinage moyen.</b><br>L'opérateur retient <b>{T}kg</b> en sécurité.",
     edu_low_pull: "⚙️⚠️ <b>Très glissant ! Prudence.</b><br>Aucun freinage. L'opérateur retient la charge ({T}kg).",
@@ -887,6 +899,7 @@ const i18n = {
     btnStat: "⏸️ Statisch",
     btnHaul: "⬆️ Heben",
     btnLow: "⬇️ Ablassen",
+    maLabel: "⚙️ Mechanischer Vorteil (MA)",
     eduDefault: "📍 Ziehen Sie die 'Boden Op.', um die Kraftänderungen zu beobachten.",
     sceneTree: "Baum",
     sceneSteel: "Stahl",
@@ -895,9 +908,9 @@ const i18n = {
     fricUpdated: "Reibung eingestellt auf:",
     fricInvalid: "❌ Gültige Zahl zwischen 0 und 1 eingeben",
     edu_static: "⏸️ <b>Keine Reibung bei statischer Verriegelung.</b><br>Kraft ist gleich der Last ({T}kg).",
-    edu_haul_base: "🥵 <b>Hohe Reibung! Sehr anstrengend.</b><br>Bediener benötigt <b>{mult}x</b> die Kraft ({T}kg)!",
-    edu_haul_cara: "🪝🤨 <b>Mittlere Reibung (Karabiner).</b><br>Erfordert <b>{mult}x</b> Kraft ({T}kg).",
-    edu_haul_pull: "⚙️😎 <b>Hohe Effizienz! Mühelos.</b><br>Bediener benötigt nur <b>{mult}x</b> Kraft ({T}kg).",
+    edu_haul_base: "🥵 <b>Hohe Reibung! Sehr anstrengend.</b><br>Bediener benötigt <b>{T}kg</b> Kraft (MA {ma}:1)!",
+    edu_haul_cara: "🪝🤨 <b>Mittlere Reibung (Karabiner).</b><br>Erfordert <b>{T}kg</b> Kraft (MA {ma}:1).",
+    edu_haul_pull: "⚙️😎 <b>Hohe Effizienz! Mühelos.</b><br>Bediener benötigt nur <b>{T}kg</b> Kraft (MA {ma}:1).",
     edu_low_base: "🛡️ <b>Reibung fungiert als natürliche Bremse!</b><br>Kontrolle mit <b>{T}kg</b>.",
     edu_low_cara: "🪝🛡️ <b>Mittlere Bremskraft.</b><br>Hält <b>{T}kg</b> zum sicheren Ablassen.",
     edu_low_pull: "⚙️⚠️ <b>Sehr rutschig! Vorsicht.</b><br>Keine Bremswirkung. Fast die gesamte Last ({T}kg) halten.",
@@ -1012,6 +1025,7 @@ const i18n = {
     btnStat: "⏸️ Estático",
     btnHaul: "⬆️ Izado",
     btnLow: "⬇️ Descenso",
+    maLabel: "⚙️ Ventaja Mecánica (MA)",
     eduDefault: "📍 Arrastre 'Op. al suelo' en la caja de arena para observar fuerzas.",
     sceneTree: "Árbol",
     sceneSteel: "Acero",
@@ -1020,9 +1034,9 @@ const i18n = {
     fricUpdated: "Fricción cambiada a:",
     fricInvalid: "❌ Ingrese un número válido entre 0 y 1",
     edu_static: "⏸️ <b>Cero fricción en estático.</b><br>Fuerza igual a la carga ({T}kg).",
-    edu_haul_base: "🥵 <b>¡Alta fricción! Muy agotador.</b><br>¡Necesita <b>{mult}x</b> fuerza ({T}kg) para izar!",
-    edu_haul_cara: "🪝🤨 <b>Fricción media (Mosquetón).</b><br>Requiere <b>{mult}x</b> fuerza ({T}kg).",
-    edu_haul_pull: "⚙️😎 <b>¡Alta eficiencia!</b><br>Solo necesita <b>{mult}x</b> fuerza ({T}kg).",
+    edu_haul_base: "🥵 <b>¡Alta fricción! Muy agotador.</b><br>¡Necesita <b>{T}kg</b> fuerza con MA {ma}:1!",
+    edu_haul_cara: "🪝🤨 <b>Fricción media (Mosquetón).</b><br>Requiere <b>{T}kg</b> fuerza con MA {ma}:1.",
+    edu_haul_pull: "⚙️😎 <b>¡Alta eficiencia!</b><br>Solo necesita <b>{T}kg</b> fuerza con MA {ma}:1.",
     edu_low_base: "🛡️ <b>¡La fricción actúa como freno!</b><br>Controla con solo <b>{T}kg</b>.",
     edu_low_cara: "🪝🛡️ <b>Fuerza de frenado media.</b><br>Sostiene <b>{T}kg</b> para bajar.",
     edu_low_pull: "⚙️⚠️ <b>¡Muy resbaladizo! Precaución.</b><br>Debe sostener casi toda la carga ({T}kg).",
@@ -1137,6 +1151,7 @@ const i18n = {
     btnStat: "⏸️ Estático",
     btnHaul: "⬆️ Içamento",
     btnLow: "⬇️ Descida",
+    maLabel: "⚙️ Vantagem Mecânica (MA)",
     eduDefault: "📍 Arraste 'Op. Solo' para observar as forças.",
     sceneTree: "Árvore",
     sceneSteel: "Aço",
@@ -1145,9 +1160,9 @@ const i18n = {
     fricUpdated: "Atrito definido para:",
     fricInvalid: "❌ Insira um número válido entre 0 e 1",
     edu_static: "⏸️ <b>Zero atrito em estático.</b><br>Força igual à carga ({T}kg).",
-    edu_haul_base: "🥵 <b>Alto atrito! Muito cansativo.</b><br>Precisa de <b>{mult}x</b> força ({T}kg) para içar!",
-    edu_haul_cara: "🪝🤨 <b>Atrito médio (Mosquetão).</b><br>Requer <b>{mult}x</b> força ({T}kg).",
-    edu_haul_pull: "⚙️😎 <b>Alta eficiência!</b><br>Requer apenas <b>{mult}x</b> força ({T}kg).",
+    edu_haul_base: "🥵 <b>Alto atrito! Muito cansativo.</b><br>Precisa de <b>{T}kg</b> força com MA {ma}:1!",
+    edu_haul_cara: "🪝🤨 <b>Atrito médio (Mosquetão).</b><br>Requer <b>{T}kg</b> força com MA {ma}:1.",
+    edu_haul_pull: "⚙️😎 <b>Alta eficiência!</b><br>Requer apenas <b>{T}kg</b> força com MA {ma}:1.",
     edu_low_base: "🛡️ <b>Atrito atua como freio!</b><br>Controla com apenas <b>{T}kg</b>.",
     edu_low_cara: "🪝🛡️ <b>Força de frenagem média.</b><br>Segura <b>{T}kg</b> para descer.",
     edu_low_pull: "⚙️⚠️ <b>Muito escorregadio! Cuidado.</b><br>Segura quase toda a carga ({T}kg).",
@@ -1403,7 +1418,8 @@ window.copyBankAccount = function() {
   <div class="app-container">
 
     <div class="card" id="mainCard">
-      <div class="topbar">
+      <!-- 💡 將 topbar 標記為截圖時隱藏 -->
+      <div class="topbar" data-html2canvas-ignore="true">
           <div class="title-left" id="mainTitleText">
             <span data-i18n="appTitle">下方固定點架設儀 (全地形)</span> <span class="vip-badge">PRO</span>
           </div>
@@ -1470,7 +1486,9 @@ window.copyBankAccount = function() {
                 <text id="distText" x="0" y="0" fill="var(--tagline)" font-size="11" font-weight="bold" text-anchor="middle" class="mask-text" data-i18n="distExt">長距離延伸至地面</text>
              </g>
 
-             <circle cx="0" cy="0" r="40" fill="transparent" /> 
+             <!-- 💡 增大感應區，並加入拖曳動畫虛線圈 -->
+             <circle cx="0" cy="0" r="60" fill="transparent" /> 
+             <circle cx="0" cy="0" r="35" class="drag-cue" />
              <rect x="-14" y="-20" width="28" height="40" fill="#475569" rx="4" id="anchorBox" />
              <path d="M -15 -5 L 15 5 M -15 5 L 15 15" stroke="var(--tagline)" stroke-width="4" stroke-linecap="round" />
              <text y="-25" fill="var(--tagline)" font-size="13" font-weight="bold" text-anchor="middle" pointer-events="none" id="anchorLabel" class="mask-text" data-i18n="groundOp">地面操作</text>
@@ -1535,8 +1553,20 @@ window.copyBankAccount = function() {
                <button class="toggle-btn" data-type="action" data-val="lower" onclick="setAction(this)"><span data-i18n="btnLow">⬇️ 系統下放</span><span class="lock-icon">🔒</span></button>
             </div>
          </div>
+
+         <!-- 💡 新增：MA 系統操作比切換列 (預設隱藏) -->
+         <div class="control-row capture-hide" id="maRow" style="display:none; margin-top:4px;">
+            <div class="btn-group-lbl" style="color:var(--safe);" data-i18n="maLabel">⚙️ 系統省力比 (MA)</div>
+            <div class="toggle-group">
+               <button class="toggle-btn active" data-type="ma" data-val="1" onclick="setMA(this)">1:1</button>
+               <button class="toggle-btn" data-type="ma" data-val="2" onclick="setMA(this)">2:1</button>
+               <button class="toggle-btn" data-type="ma" data-val="3" onclick="setMA(this)">3:1</button>
+               <button class="toggle-btn" data-type="ma" data-val="5" onclick="setMA(this)">5:1</button>
+            </div>
+         </div>
       </div>
       
+      <!-- 💡 將說明文字列入截圖，移除 ignore 標籤 -->
       <div class="edu-wrap" id="eduPanel" data-i18n="eduDefault">
          📍 試著在沙盤中任意拖曳「轉向點」或「地面操作」，對齊照片角度來觀察力量變化。
       </div>
@@ -1636,7 +1666,7 @@ window.copyBankAccount = function() {
             <div class="menu-content">
               <div style="text-align: center; margin-bottom: 15px;">
                 <span data-i18n="devTitle" style="display:inline-block; background:var(--safe); color:#0a1410; font-weight:bold; padding:4px 14px; border-radius:20px; font-size:13px; letter-spacing:0.5px; box-shadow: 0 2px 6px rgba(74,222,128,0.3);">下方固定點架設儀 專業正式版</span>
-                <div style="font-size: 11px; color: var(--muted); margin-top: 8px; font-family: monospace;">Version 6.2.3</div>
+                <div style="font-size: 11px; color: var(--muted); margin-top: 8px; font-family: monospace;">Version 6.2.4</div>
               </div>
               <p style="margin-top: 0; margin-bottom: 6px; font-weight: bold; color: var(--text); text-align: center;" data-i18n="devTeam">本工具由 <span style="color:var(--warn);">散木團隊</span> 開發製作</p>
               <p style="margin-top: 0; margin-bottom: 4px; font-size: 13px; text-align: center;" data-i18n="devT1">教學架構與工程判斷／徐世豐</p>
@@ -1994,6 +2024,20 @@ async function takeScreenshot() {
   const inputs = target.querySelectorAll('input[type="number"]'); 
   const placeholders = [];
   
+  // 💡 截圖前：將有捲軸的容器撐開，確保說明文字入鏡
+  const wrapper = document.getElementById('scroll-wrapper');
+  const oldBodyH = target.style.height;
+  const oldBodyOv = target.style.overflow;
+  const oldWrapH = wrapper.style.height;
+  const oldWrapOv = wrapper.style.overflow;
+  const oldWrapPos = wrapper.style.position;
+
+  target.style.height = 'auto';
+  target.style.overflow = 'visible';
+  wrapper.style.height = 'auto';
+  wrapper.style.overflow = 'visible';
+  wrapper.style.position = 'relative';
+
   inputs.forEach(inp => {
       if(inp.closest('.capture-hide') || inp.closest('[data-html2canvas-ignore]')) return;
       const span = document.createElement('span');
@@ -2005,7 +2049,7 @@ async function takeScreenshot() {
   window.scrollTo(0, 0); 
   await new Promise(r => setTimeout(r, 100));
   
-  // 💡 解決 html2canvas 無法截取 WebRTC 實境相機的問題：先將相機畫面畫入臨時隱藏畫布
+  // 解決 html2canvas 無法截取 WebRTC 實境相機的問題：先將相機畫面畫入臨時隱藏畫布
   let tempCanvas = null;
   if (stream && videoTrack && video.style.opacity === "1") {
       tempCanvas = document.createElement('canvas');
@@ -2043,6 +2087,12 @@ async function takeScreenshot() {
   if (tempCanvas) { tempCanvas.remove(); video.style.opacity = '1'; }
   placeholders.forEach(p => { p.inp.style.display = ''; p.span.remove(); }); 
   target.classList.remove('capture-mode');
+  
+  target.style.height = oldBodyH;
+  target.style.overflow = oldBodyOv;
+  wrapper.style.height = oldWrapH;
+  wrapper.style.overflow = oldWrapOv;
+  wrapper.style.position = oldWrapPos;
 }
 
 // 💡 核心變更：全地形場景與自訂介質引擎
@@ -2077,6 +2127,7 @@ let currentScene = 'tree';
 let currentE = 0.4; 
 let currentMode = 'base'; // base = 使用場景預設介質, carabiner, pulley
 let currentAction = 'static';
+let currentMA = 1; // 💡 系統省力比預設為 1:1
 
 function getSceneName() {
     if (scenes[currentScene].customName) return scenes[currentScene].customName;
@@ -2103,6 +2154,7 @@ function setScene(btn, sceneKey) {
         currentE = scenes[sceneKey].friction;
     }
     
+    lastShapeData = ''; // 重置形狀標記
     updateEngine();
 }
 
@@ -2142,6 +2194,7 @@ function confirmCustomFriction() {
             document.querySelectorAll('.toggle-btn[data-type="action"]').forEach(b => b.classList.remove('active'));
             haulBtn.classList.add('active');
             currentAction = 'haul';
+            document.getElementById('maRow').style.display = 'flex';
         }
         updateEngine();
         document.getElementById('frictionModal').style.display = 'none';
@@ -2162,7 +2215,9 @@ function setFriction(btn, mode) {
             document.querySelectorAll('.toggle-btn[data-type="action"]').forEach(b => b.classList.remove('active'));
             haulBtn.classList.add('active');
             currentAction = 'haul';
+            document.getElementById('maRow').style.display = 'flex';
         }
+        lastShapeData = ''; // 重置形狀標記
         updateEngine();
     };
     if (mode !== 'base') attemptFeature('featFric', doSet); else doSet();
@@ -2173,14 +2228,37 @@ function setAction(btn) {
         document.querySelectorAll('.toggle-btn[data-type="action"]').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         currentAction = btn.dataset.val;
+        
+        // 💡 只有在上拉狀態，才顯示 MA 選單
+        if (currentAction === 'haul') {
+            document.getElementById('maRow').style.display = 'flex';
+        } else {
+            document.getElementById('maRow').style.display = 'none';
+        }
+        
         updateEngine();
     };
     if (btn.dataset.val !== 'static') attemptFeature('featAction', doSet); else doSet();
 }
 
+function setMA(btn) {
+    document.querySelectorAll('.toggle-btn[data-type="ma"]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentMA = parseInt(btn.dataset.val);
+    updateEngine();
+}
+
+// 💡 優化：只有切換場景或介質時才重新繪製，大幅提升拖拉順暢度
+let lastShapeData = '';
 function renderRedirectNode() {
-    // 💡 增加一個大半徑透明圓，讓手機更容易抓取移動
-    let html = `<circle cx="0" cy="0" r="35" fill="transparent" />`;
+    let currentShapeData = currentScene + '-' + currentMode;
+    if (lastShapeData === currentShapeData) return; 
+    lastShapeData = currentShapeData;
+    
+    // 💡 增大感應區，並加入會呼吸的虛線拖曳圈
+    let html = `<circle cx="0" cy="0" r="60" fill="transparent" />`;
+    html += `<circle cx="0" cy="0" r="28" class="drag-cue" />`;
+    
     let c = scenes[currentScene].color;
     if (currentMode === 'base') {
         if(currentScene === 'tree') html += `<path d="M-25,-5 Q0,-20 25,-5 Q0,-15 -25,-5" fill="none" stroke="${c}" stroke-width="8" stroke-linecap="round"/><circle cx="0" cy="0" r="6" fill="#0a1410" />`;
@@ -2204,14 +2282,18 @@ function describeArc(x, y, r, startAngle, endAngle) {
 function updateEngine() {
     let W = parseFloat(inLoad.value) || 100;
     
-    let T_L = W; 
-    let T_A = W; 
+    // 💡 T_rope_to_anchor 代表「通過 COD 後的繩索張力」
+    // T_operator_pull 代表「經過省力比 (MA) 系統後，操作者手部實際承受的拉力」
+    let T_rope_to_anchor = W; 
+    let T_operator_pull = W; 
 
     if (currentAction === 'haul') {
-        T_A = W / currentE; 
-        els.lblMA.textContent = `(MA ${currentE.toFixed(2)} : 1)`; // 💡 顯示實際省力比 (MA)
+        T_rope_to_anchor = W / currentE; 
+        T_operator_pull = T_rope_to_anchor / currentMA;
+        els.lblMA.textContent = `(MA ${currentMA}:1)`; 
     } else if (currentAction === 'lower') {
-        T_A = W * currentE; 
+        T_rope_to_anchor = W * currentE; 
+        T_operator_pull = T_rope_to_anchor; // 下放通常不需要用到省力拉動系統
         els.lblMA.textContent = ``;
     } else {
         els.lblMA.textContent = ``;
@@ -2225,8 +2307,9 @@ function updateEngine() {
     let thetaRad = Math.acos(Math.max(-1, Math.min(1, dot)));
     let thetaDeg = thetaRad * 180 / Math.PI;
     
-    let vForceL = { x: vecL.x * T_L, y: vecL.y * T_L };
-    let vForceA = { x: vecA.x * T_A, y: vecA.y * T_A };
+    // 💡 向量計算基準為繩索離開 COD 的張力
+    let vForceL = { x: vecL.x * W, y: vecL.y * W };
+    let vForceA = { x: vecA.x * T_rope_to_anchor, y: vecA.y * T_rope_to_anchor };
     
     let vecForce = { x: vForceL.x + vForceA.x, y: vForceL.y + vForceA.y };
     let Force = Math.hypot(vecForce.x, vecForce.y);
@@ -2279,35 +2362,35 @@ function updateEngine() {
         els.distanceIndicator.style.opacity = '0';
     }
 
-    // 💡 動態白話文教學邏輯 (使用 i18n)
+    // 💡 動態白話文教學邏輯 (使用 i18n，並加入 MA 變數)
     let eduText = "";
     let eduColor = "var(--safe)";
     let eduBg = "rgba(74, 222, 128, 0.1)";
-    let aMult = T_A / W;
+    let aMult = T_rope_to_anchor / W;
     let mName = getSceneName();
     let mIcon = scenes[currentScene].icon;
     
     if (currentAction === 'static') {
-        eduText = t('edu_static').replace('{T}', T_A.toFixed(0));
+        eduText = t('edu_static').replace('{T}', T_operator_pull.toFixed(0));
         eduColor = "var(--text)"; eduBg = "rgba(255,255,255,0.05)";
     } else if (currentAction === 'haul') {
         if (currentMode === 'base' || (currentE < 0.6)) {
-            eduText = `${mIcon}` + t('edu_haul_base').replace(/{name}/g, mName).replace('{mult}', aMult.toFixed(1)).replace('{T}', T_A.toFixed(0));
+            eduText = `${mIcon}` + t('edu_haul_base').replace(/{name}/g, mName).replace('{ma}', currentMA).replace('{T}', T_operator_pull.toFixed(0));
             eduColor = "var(--bad)"; eduBg = "rgba(239, 68, 68, 0.15)";
         } else if (currentMode === 'carabiner' || (currentE >= 0.6 && currentE < 0.9)) {
-            eduText = t('edu_haul_cara').replace(/{name}/g, mName).replace('{mult}', aMult.toFixed(1)).replace('{T}', T_A.toFixed(0));
+            eduText = t('edu_haul_cara').replace(/{name}/g, mName).replace('{ma}', currentMA).replace('{T}', T_operator_pull.toFixed(0));
             eduColor = "var(--warn)"; eduBg = "rgba(251, 191, 36, 0.15)";
         } else {
-            eduText = t('edu_haul_pull').replace(/{name}/g, mName).replace('{mult}', aMult.toFixed(1)).replace('{T}', T_A.toFixed(0));
+            eduText = t('edu_haul_pull').replace(/{name}/g, mName).replace('{ma}', currentMA).replace('{T}', T_operator_pull.toFixed(0));
             eduColor = "var(--safe)"; eduBg = "rgba(74, 222, 128, 0.15)";
         }
     } else if (currentAction === 'lower') {
         if (currentMode === 'base' || (currentE < 0.6)) {
-            eduText = `${mIcon}` + t('edu_low_base').replace(/{name}/g, mName).replace('{T}', T_A.toFixed(0));
+            eduText = `${mIcon}` + t('edu_low_base').replace(/{name}/g, mName).replace('{T}', T_operator_pull.toFixed(0));
         } else if (currentMode === 'carabiner' || (currentE >= 0.6 && currentE < 0.9)) {
-            eduText = t('edu_low_cara').replace(/{name}/g, mName).replace('{T}', T_A.toFixed(0));
+            eduText = t('edu_low_cara').replace(/{name}/g, mName).replace('{T}', T_operator_pull.toFixed(0));
         } else {
-            eduText = t('edu_low_pull').replace(/{name}/g, mName).replace('{T}', T_A.toFixed(0));
+            eduText = t('edu_low_pull').replace(/{name}/g, mName).replace('{T}', T_operator_pull.toFixed(0));
             eduColor = "var(--bad)"; eduBg = "rgba(239, 68, 68, 0.15)";
         }
     }
@@ -2328,8 +2411,9 @@ function updateEngine() {
     els.forceArrowLine.setAttribute('stroke', forceColor);
     els.forceArrowHead.setAttribute('fill', forceColor);
     
-    els.txtAnchorTension.textContent = `${T_A.toFixed(0)} kg`;
-    els.txtAnchorMult.textContent = t('multLabel').replace('{m}', aMult.toFixed(1));
+    // 💡 儀表板顯示的是最後端操作者手部感知的力量
+    els.txtAnchorTension.textContent = `${T_operator_pull.toFixed(0)} kg`;
+    els.txtAnchorMult.textContent = t('multLabel').replace('{m}', (T_operator_pull/W).toFixed(1));
     
     els.txtBranchForce.textContent = `${Force.toFixed(0)} kg`;
     els.txtBranchForce.style.color = forceColor;
