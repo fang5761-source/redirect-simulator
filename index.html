@@ -78,8 +78,8 @@
   #media-container { width: 100%; height: 100%; position: absolute; transition: transform 0.2s ease-out; transform-origin: center center; }
   #bg-video, #bg-image { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s; }
   
-  /* 💡 白紙層，蓋在畫面之上，由滑桿控制透明度 */
-  #white-paper-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; opacity: 0; pointer-events: none; transition: opacity 0.2s; z-index: -1; }
+  /* 💡 修正白紙層的高度(z-index: 1)，確保它蓋在照片與鏡頭上！ */
+  #white-paper-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; opacity: 0; pointer-events: none; transition: opacity 0.2s; z-index: 1; }
 
   #grid-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 20px 20px; opacity: 0.5; pointer-events: none; transition: opacity 0.3s; }
 
@@ -1589,7 +1589,6 @@ window.copyAccount = function(elementId) {
                 <text id="distText" x="0" y="0" fill="var(--tagline)" font-size="11" font-weight="bold" text-anchor="middle" class="mask-text" data-i18n="distExt">長距離延伸至地面</text>
              </g>
 
-             <!-- 💡 移除閃爍文字，只保留拖曳感應區與不干擾視覺的隱形圈 -->
              <circle cx="0" cy="0" r="60" fill="transparent" /> 
              <rect x="-14" y="-20" width="28" height="40" fill="#475569" rx="4" id="anchorBox" />
              <path d="M -15 -5 L 15 5 M -15 5 L 15 15" stroke="var(--tagline)" stroke-width="4" stroke-linecap="round" />
@@ -2085,11 +2084,12 @@ document.getElementById('camCtrlToggle').addEventListener('click', (e) => {
     }
 });
 
-// 💡 控制台拖曳邏輯
+// 💡 控制台拖曳邏輯：排除點擊收合按鈕的干擾！
 let isDraggingCtrl = false, ctrlStartX, ctrlStartY, ctrlInitialLeft, ctrlInitialTop;
 const ctrlHeader = document.getElementById('camCtrlHeader');
 
 const startCtrlDrag = (e) => {
+    if (e.target.id === 'camCtrlToggle') return; // 💡 讓收合按鈕可以正常被點擊
     isDraggingCtrl = true;
     ctrlStartX = e.touches ? e.touches[0].clientX : e.clientX;
     ctrlStartY = e.touches ? e.touches[0].clientY : e.clientY;
