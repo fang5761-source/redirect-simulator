@@ -73,10 +73,14 @@
   input, textarea { -webkit-user-select: auto; user-select: auto; box-sizing: border-box; }
   *{box-sizing:border-box}
 
+  /* 💡 重新定義背景層，加入獨立的「白紙透寫層 (white-paper-overlay)」 */
   #bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background-color: var(--bg); overflow: hidden; display: flex; align-items: center; justify-content: center; }
-  #media-container { width: 100%; height: 100%; position: absolute; transition: transform 0.2s ease-out, opacity 0.2s; transform-origin: center center; }
+  #media-container { width: 100%; height: 100%; position: absolute; transition: transform 0.2s ease-out; transform-origin: center center; }
   #bg-video, #bg-image { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s; }
   
+  /* 💡 白紙層，蓋在畫面之上，由滑桿控制透明度 */
+  #white-paper-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; opacity: 0; pointer-events: none; transition: opacity 0.2s; z-index: -1; }
+
   #grid-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 20px 20px; opacity: 0.5; pointer-events: none; transition: opacity 0.3s; }
 
   .app-container { 
@@ -115,15 +119,14 @@
 
   .svgWrap { position:relative; width:100%; height: 35vh; min-height: 280px; max-height: 380px; background: transparent; border-radius: 12px; border: 1px dashed var(--line); overflow: hidden; margin-bottom: 8px; }
   svg { display: block; width: 100%; height: 100%; }
+  
+  /* 💡 全域 SVG 陰影：確保白紙模式下繩索依然清晰可見 */
+  #ropeLoad, #ropeAnchor, #forceArrowLine, #forceArrowHead, #angleText, .mask-text {
+      filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.9));
+  }
+
   .draggable-anchor { cursor: grab; touch-action: none; }
   .draggable-anchor:active { cursor: grabbing; }
-
-  @keyframes pulse-drag {
-      0% { transform: scale(0.9); opacity: 0.3; }
-      50% { transform: scale(1.1); opacity: 0.8; }
-      100% { transform: scale(0.9); opacity: 0.3; }
-  }
-  .drag-cue { animation: pulse-drag 2s infinite; stroke: rgba(255, 255, 255, 0.5); fill: none; stroke-width: 1.5; stroke-dasharray: 4 4; pointer-events: none; }
 
   .dashboard { display: flex; justify-content: space-between; gap: 6px; margin-bottom: 8px; }
   .dash-box { flex: 1; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; text-align: center; }
@@ -146,9 +149,10 @@
   .edu-wrap { margin-top: 8px; padding: 12px; background: rgba(255, 216, 77, 0.1); border-radius: 8px; border: 1px solid var(--warn); text-align: justify; font-size: 13.5px; font-weight: bold; color: var(--text); line-height: 1.6; transition: background 0.3s, border 0.3s; }
   .mask-text { paint-order: stroke fill; stroke: var(--bg); stroke-width: 4px; stroke-linecap: round; stroke-linejoin: round; }
 
-  #cameraControls { display: none; position: absolute; top: 10px; right: 10px; flex-direction: column; gap: 10px; background: rgba(0,0,0,0.6); padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); z-index: 10; backdrop-filter: blur(4px); box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+  /* 💡 優化 AR 控制台面板：支援收合與拖曳 */
+  #cameraControls { display: none; position: absolute; top: 10px; left: 10px; flex-direction: column; background: rgba(0,0,0,0.75); padding: 8px 12px; border-radius: 10px; border: 1px solid var(--warn); z-index: 100; backdrop-filter: blur(8px); box-shadow: 0 4px 15px rgba(0,0,0,0.7); min-width: 140px; }
   .control-slider-wrap { display: flex; align-items: center; gap: 8px; }
-  .control-slider-wrap span { font-size: 12px; color: var(--text); font-weight: bold; width: 35px; }
+  .control-slider-wrap span { font-size: 12px; color: var(--text); font-weight: bold; width: 45px; }
   .control-slider-wrap input[type=range] { width: 80px; accent-color: var(--safe); }
 
   .modal-overlay { 
@@ -1373,26 +1377,28 @@ function showToast(msg, type = 'safe') {
     }, 3000);
 }
 
-// 💡 散木專屬：一鍵複製銀行帳號引擎 (全域綁定)
-window.copyBankAccount = function() {
-  const account = document.getElementById('bankAccount').innerText;
+// 💡 散木專屬：通用一鍵複製帳號引擎
+window.copyAccount = function(elementId) {
+  const account = document.getElementById(elementId).innerText;
   const dummy = document.createElement('input');
   document.body.appendChild(dummy);
   dummy.value = account;
   dummy.select();
   document.execCommand('copy');
   document.body.removeChild(dummy);
-  showToast('📋 銀行帳號已複製！感謝您的心意！', 'safe');
+  showToast('📋 帳號已複製！感謝您的心意！', 'safe');
 };
 </script>
 
 <div id="status-bar-protector" data-html2canvas-ignore="true"></div>
-<!-- 💡 更新背景層：加入媒體容器與全域透明度控制 (不再變黑！) -->
+
+<!-- 💡 更新背景層：加入獨立白紙透寫層 (white-paper-overlay) -->
 <div id="bg-layer">
   <div id="media-container">
       <video id="bg-video" autoplay playsinline muted></video>
       <img id="bg-image" src="" alt="背景圖片">
   </div>
+  <div id="white-paper-overlay"></div>
 </div>
 <div id="grid-overlay"></div>
 <div id="toastMessage" data-html2canvas-ignore="true"></div>
@@ -1494,15 +1500,21 @@ window.copyBankAccount = function() {
       </div>
 
       <div class="svgWrap" id="svgWrap">
-        <!-- 💡 AR 控制台面板移至 svgWrap 右上方內部，不再阻擋拖曳。將暗度改為透明度！ -->
-        <div id="cameraControls" class="capture-hide">
-            <div class="control-slider-wrap">
-                <span>🌓透明</span>
-                <input type="range" id="sliderOpacity" min="0.1" max="1" step="0.1" value="0.6">
+        <!-- 💡 AR 控制台面板：支援拖曳移動與展開/縮放，不會擋住下方操作 -->
+        <div id="cameraControls" class="capture-hide" style="display:none; position: absolute; top: 10px; left: 10px; flex-direction: column; background: rgba(0,0,0,0.75); padding: 8px 12px; border-radius: 10px; border: 1px solid var(--warn); z-index: 100; backdrop-filter: blur(8px); box-shadow: 0 8px 25px rgba(0,0,0,0.6); min-width: 140px;">
+            <div id="camCtrlHeader" style="display:flex; justify-content:space-between; align-items:center; cursor:move; margin-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:4px; user-select:none;">
+                <span style="font-size:12px; font-weight:bold; color:var(--warn);">🎛️ 疊圖控制台</span>
+                <span id="camCtrlToggle" style="cursor:pointer; font-size:12px; padding:2px 6px;">▼</span>
             </div>
-            <div class="control-slider-wrap">
-                <span>🔍縮放</span>
-                <input type="range" id="sliderZoom" min="1" max="3" step="0.1" value="1">
+            <div id="camCtrlBody" style="display:flex; flex-direction:column; gap:10px;">
+                <div class="control-slider-wrap">
+                    <span>📄白紙</span>
+                    <input type="range" id="sliderWhite" min="0" max="0.9" step="0.1" value="0.2">
+                </div>
+                <div class="control-slider-wrap">
+                    <span>🔍縮放</span>
+                    <input type="range" id="sliderZoom" min="1" max="3" step="0.1" value="1">
+                </div>
             </div>
         </div>
 
@@ -1526,6 +1538,30 @@ window.copyBankAccount = function() {
              <path d="M 0 80 L 40 40 M 40 80 L 80 40 M 80 80 L 120 40 M 120 80 L 160 40 M 160 80 L 200 40 M 200 80 L 240 40 M 240 80 L 280 40 M 280 80 L 320 40 M 320 80 L 360 40 M 360 80 L 400 40" stroke="rgba(245, 158, 11, 0.3)" stroke-width="3" fill="none"/>
              <rect x="10" y="80" width="20" height="320" fill="rgba(245, 158, 11, 0.1)" />
              <rect x="370" y="80" width="20" height="320" fill="rgba(245, 158, 11, 0.1)" />
+          </g>
+
+          <!-- 💡 為 5 個進階介質新增情境圖（相機模式下自動隱藏） -->
+          <g id="bgConcrete" class="env-bg special-bg" style="display:none;">
+             <rect x="0" y="200" width="150" height="200" fill="rgba(148, 163, 184, 0.2)" />
+             <rect x="150" y="200" width="250" height="200" fill="rgba(148, 163, 184, 0.05)" />
+             <line x1="150" y1="200" x2="150" y2="400" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
+          </g>
+          <g id="bgMud" class="env-bg special-bg" style="display:none;">
+             <path d="M 0 360 Q 150 360 250 200 L 400 150 L 400 400 L 0 400 Z" fill="rgba(120, 53, 15, 0.2)" />
+          </g>
+          <g id="bgRoller" class="env-bg special-bg" style="display:none;">
+             <rect x="0" y="250" width="150" height="150" fill="rgba(100, 116, 139, 0.2)" />
+             <circle cx="150" cy="250" r="15" fill="rgba(203, 213, 225, 0.3)" />
+          </g>
+          <g id="bgPipe" class="env-bg special-bg" style="display:none;">
+             <rect x="-50" y="150" width="500" height="80" rx="40" fill="rgba(148, 163, 184, 0.15)" stroke="rgba(148, 163, 184, 0.3)" stroke-width="2"/>
+             <line x1="0" y1="170" x2="400" y2="170" stroke="rgba(255,255,255,0.1)" stroke-width="4"/>
+          </g>
+          <g id="bgVehicle" class="env-bg special-bg" style="display:none;">
+             <path d="M -20 360 L -20 200 L 100 200 L 150 260 L 300 260 L 300 360 Z" fill="rgba(239, 68, 68, 0.15)" />
+             <rect x="10" y="210" width="80" height="40" fill="rgba(255,255,255,0.1)" rx="4"/>
+             <circle cx="60" cy="360" r="25" fill="rgba(0,0,0,0.4)" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
+             <circle cx="240" cy="360" r="25" fill="rgba(0,0,0,0.4)" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
           </g>
 
           <line id="ropeLoad" stroke="var(--text)" stroke-width="6" stroke-linecap="round" />
@@ -1553,9 +1589,8 @@ window.copyBankAccount = function() {
                 <text id="distText" x="0" y="0" fill="var(--tagline)" font-size="11" font-weight="bold" text-anchor="middle" class="mask-text" data-i18n="distExt">長距離延伸至地面</text>
              </g>
 
-             <!-- 💡 增大感應區，並加入拖曳動畫虛線圈與引導文字 -->
+             <!-- 💡 移除閃爍文字，只保留拖曳感應區與不干擾視覺的隱形圈 -->
              <circle cx="0" cy="0" r="60" fill="transparent" /> 
-             <circle cx="0" cy="0" r="35" class="drag-cue" />
              <rect x="-14" y="-20" width="28" height="40" fill="#475569" rx="4" id="anchorBox" />
              <path d="M -15 -5 L 15 5 M -15 5 L 15 15" stroke="var(--tagline)" stroke-width="4" stroke-linecap="round" />
              <text y="-25" fill="var(--tagline)" font-size="13" font-weight="bold" text-anchor="middle" pointer-events="none" id="anchorLabel" class="mask-text" data-i18n="groundOp">地面操作</text>
@@ -1773,16 +1808,26 @@ window.copyBankAccount = function() {
         <div class="menu-group" style="padding: 15px;">
           <p style="font-size: 13.5px; color: var(--text); margin-top: 0; margin-bottom: 15px; line-height: 1.6; text-align: justify;">本工具為散木團隊精心開發。若這套沙盤對您的實務與教學有幫助，歡迎自由隨喜給予我們一點實質鼓勵，這將化為我們開發下一套救援系統的核心動力！</p>
           
-          <!-- 方案 A：銀行轉帳 -->
+          <!-- 💡 方案 A：銀行與郵局轉帳 -->
           <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--safe); border-radius: 8px; padding: 12px; margin-bottom: 12px;">
-            <div style="color: var(--safe); font-weight: bold; font-size: 13px; margin-bottom: 8px;">🏦 台灣銀行轉帳 (可免海外手續費)</div>
-            <div style="font-size: 13px; color: var(--muted); margin-bottom: 4px;">永豐銀行 (代碼 807) • 戶名：吳佩芳</div>
-            <div style="font-size: 18px; color: var(--text); font-family: monospace; letter-spacing: 1px; font-weight: bold; margin-bottom: 8px;" id="bankAccount">20401800252531</div>
-            <div style="font-size: 12.5px; color: var(--warn); margin-bottom: 12px; line-height: 1.5;">
+            <div style="color: var(--safe); font-weight: bold; font-size: 13px; margin-bottom: 8px;">🏦 銀行與郵局轉帳 (可免海外手續費)</div>
+            
+            <div style="background:rgba(255,255,255,0.05); padding:8px; border-radius:6px; margin-bottom:8px;">
+              <div style="font-size: 13px; color: var(--muted); margin-bottom: 4px;">永豐銀行 (代碼 807) • 戶名：吳佩芳</div>
+              <div style="font-size: 18px; color: var(--text); font-family: monospace; letter-spacing: 1px; font-weight: bold; margin-bottom: 8px;" id="bankAccount">20401800252531</div>
+              <button type="button" onclick="window.copyAccount('bankAccount')" style="width: 100%; background: var(--safe); color: #0a1410; border: none; padding: 6px; border-radius: 4px; font-size: 13px; font-weight: bold; cursor: pointer;">📋 複製永豐帳號</button>
+            </div>
+
+            <div style="background:rgba(255,255,255,0.05); padding:8px; border-radius:6px; margin-bottom:8px;">
+              <div style="font-size: 13px; color: var(--muted); margin-bottom: 4px;">中華郵政 (代碼 700) • 戶名：吳佩芳</div>
+              <div style="font-size: 18px; color: var(--text); font-family: monospace; letter-spacing: 1px; font-weight: bold; margin-bottom: 8px;" id="postAccount">24415000144326</div>
+              <button type="button" onclick="window.copyAccount('postAccount')" style="width: 100%; background: var(--safe); color: #0a1410; border: none; padding: 6px; border-radius: 4px; font-size: 13px; font-weight: bold; cursor: pointer;">📋 複製郵局帳號</button>
+            </div>
+
+            <div style="font-size: 12.5px; color: var(--warn); margin-bottom: 4px; line-height: 1.5;">
               💡 匯款後請直接到下方自動販賣機領取金鑰 (費用填 0 元即可)<br>
               <span style="color: var(--text);">✏️ 提醒：請在匯款備註欄填寫 APP 名稱</span>
             </div>
-            <button type="button" onclick="window.copyBankAccount()" style="width: 100%; background: var(--safe); color: #0a1410; border: none; padding: 10px; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 6px rgba(74, 222, 128, 0.4);">📋 一鍵複製帳號</button>
           </div>
 
           <!-- 方案 B：自動販賣機 -->
@@ -2014,25 +2059,77 @@ function verifyVip() {
     errorMsg.innerHTML = '❌ 授權碼錯誤！若需領取新密碼請 <a href="https://fang5761.gumroad.com/l/redirect-simulator" target="_blank" style="color:var(--safe); text-decoration:underline;">按此前往</a>';
 }
 
-// AR 系統與媒體控制引擎
+// 💡 AR 系統與控制台引擎
 let stream = null, videoTrack = null, torchOn = false; 
 const mediaContainer = document.getElementById('media-container');
+const whiteOverlay = document.getElementById('white-paper-overlay');
 const video = document.getElementById('bg-video');
 const image = document.getElementById('bg-image');
 const cameraControls = document.getElementById('cameraControls');
 const btnCamera = document.getElementById('btn-camera'), btnFlashlight = document.getElementById('btn-flashlight'), gridOverlay = document.getElementById('grid-overlay'); 
 let gridVisible = true;
 
-// 💡 綁定透明度與縮放滑桿
-document.getElementById('sliderOpacity').addEventListener('input', (e) => { mediaContainer.style.opacity = e.target.value; });
+// 💡 綁定白紙透寫層 (Opacity) 與縮放滑桿
+document.getElementById('sliderWhite').addEventListener('input', (e) => { whiteOverlay.style.opacity = e.target.value; });
 document.getElementById('sliderZoom').addEventListener('input', (e) => { mediaContainer.style.transform = `scale(${e.target.value})`; });
 
+// 💡 控制台收合邏輯
+document.getElementById('camCtrlToggle').addEventListener('click', (e) => {
+    const body = document.getElementById('camCtrlBody');
+    if(body.style.display === 'none') {
+        body.style.display = 'flex';
+        e.target.textContent = '▼';
+    } else {
+        body.style.display = 'none';
+        e.target.textContent = '▶';
+    }
+});
+
+// 💡 控制台拖曳邏輯
+let isDraggingCtrl = false, ctrlStartX, ctrlStartY, ctrlInitialLeft, ctrlInitialTop;
+const ctrlHeader = document.getElementById('camCtrlHeader');
+
+const startCtrlDrag = (e) => {
+    isDraggingCtrl = true;
+    ctrlStartX = e.touches ? e.touches[0].clientX : e.clientX;
+    ctrlStartY = e.touches ? e.touches[0].clientY : e.clientY;
+    
+    const style = window.getComputedStyle(cameraControls);
+    ctrlInitialLeft = parseInt(style.left, 10) || 0;
+    ctrlInitialTop = parseInt(style.top, 10) || 0;
+    
+    if (e.cancelable) e.preventDefault();
+};
+
+const doCtrlDrag = (e) => {
+    if(!isDraggingCtrl) return;
+    let currentX = e.touches ? e.touches[0].clientX : e.clientX;
+    let currentY = e.touches ? e.touches[0].clientY : e.clientY;
+    let dx = currentX - ctrlStartX;
+    let dy = currentY - ctrlStartY;
+    cameraControls.style.left = (ctrlInitialLeft + dx) + 'px';
+    cameraControls.style.top = (ctrlInitialTop + dy) + 'px';
+};
+
+const stopCtrlDrag = () => { isDraggingCtrl = false; };
+
+ctrlHeader.addEventListener('mousedown', startCtrlDrag);
+ctrlHeader.addEventListener('touchstart', startCtrlDrag, {passive: false});
+window.addEventListener('mousemove', doCtrlDrag);
+window.addEventListener('touchmove', doCtrlDrag, {passive: false});
+window.addEventListener('mouseup', stopCtrlDrag);
+window.addEventListener('touchend', stopCtrlDrag);
+
 function resetCameraControls() {
-    document.getElementById('sliderOpacity').value = 0.6;
+    document.getElementById('sliderWhite').value = 0.2;
     document.getElementById('sliderZoom').value = 1;
-    mediaContainer.style.opacity = 1; // 預設恢復全不透明，相機模式開啟時才降為 0.6
+    whiteOverlay.style.opacity = 0.2; 
     mediaContainer.style.transform = 'scale(1)';
     cameraControls.style.display = 'none';
+    cameraControls.style.left = '10px';
+    cameraControls.style.top = '10px';
+    document.getElementById('camCtrlBody').style.display = 'flex';
+    document.getElementById('camCtrlToggle').textContent = '▼';
 }
 
 async function toggleCamera() { 
@@ -2051,9 +2148,7 @@ async function toggleCamera() {
       video.srcObject = stream; video.style.opacity = "1"; btnCamera.classList.add('active'); 
       mainCard.classList.add('camera-mode'); document.body.classList.add('camera-mode');
       
-      // 開啟 AR 控制台並重置
-      document.getElementById('sliderOpacity').value = 0.6;
-      mediaContainer.style.opacity = 0.6;
+      resetCameraControls();
       cameraControls.style.display = 'flex';
       
     } catch (err) { showToast("⚠️ 鏡頭啟動失敗：" + err.message, "bad"); } 
@@ -2111,9 +2206,7 @@ function loadImage(event) {
       mainCard.classList.add('camera-mode'); document.body.classList.add('camera-mode');
       document.querySelector('label[title="載入照片"]').classList.add('active');
       
-      // 開啟 AR 控制台並重置
-      document.getElementById('sliderOpacity').value = 0.6;
-      mediaContainer.style.opacity = 0.6;
+      resetCameraControls();
       cameraControls.style.display = 'flex';
     }; reader.readAsDataURL(file); 
   } 
@@ -2165,15 +2258,12 @@ async function takeScreenshot() {
       tempCanvas.style.height = '100%';
       tempCanvas.style.objectFit = 'cover';
       tempCanvas.style.zIndex = '-1';
-      // 💡 保留相應的透明度與縮放比例，讓截圖與肉眼所見一致
+      // 保留相應的縮放比例，透明度已由 white-paper-overlay 原生負責覆蓋
       const zoomVal = document.getElementById('sliderZoom').value;
-      const opacityVal = document.getElementById('sliderOpacity').value;
       const ctx = tempCanvas.getContext('2d');
-      // 將畫布中心移至中心點並進行縮放
       ctx.translate(tempCanvas.width/2, tempCanvas.height/2);
       ctx.scale(zoomVal, zoomVal);
       ctx.translate(-tempCanvas.width/2, -tempCanvas.height/2);
-      ctx.globalAlpha = opacityVal; // 套用使用者調整的透明度
       ctx.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
       document.getElementById('media-container').appendChild(tempCanvas);
       video.style.opacity = '0';
@@ -2194,7 +2284,6 @@ async function takeScreenshot() {
       showToast("❌ 截圖失敗，請稍後再試！", "bad"); 
   }
   
-  // 💡 截圖完成後復原所有隱藏或修改過的元素
   if (tempCanvas) { tempCanvas.remove(); video.style.opacity = '1'; }
   placeholders.forEach(p => { p.inp.style.display = ''; p.span.remove(); }); 
   target.classList.remove('capture-mode');
@@ -2394,9 +2483,8 @@ function renderRedirectNode() {
     if (lastShapeData === currentShapeData) return; 
     lastShapeData = currentShapeData;
     
-    // 💡 包含透明觸控感應區與微型動畫圈
+    // 💡 包含透明觸控感應區
     let html = `<circle cx="0" cy="0" r="60" fill="transparent" />`;
-    html += `<circle cx="0" cy="0" r="28" class="drag-cue" />`;
     
     let c = scenes[currentScene].color;
     
