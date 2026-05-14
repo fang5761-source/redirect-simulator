@@ -55,8 +55,9 @@
 
   body.camera-mode { background-color: transparent !important; }
   
-  /* 💡 AR/相機模式自動隱藏環境背景，但不隱藏格線 */
+  /* 💡 AR/相機模式自動隱藏環境背景與微型情境模型 (Diorama) */
   body.camera-mode .env-bg { display: none !important; }
+  body.camera-mode .diorama-bg { display: none !important; }
 
   #status-bar-protector {
     position: fixed; top: 0; left: 0; width: 100%; height: env(safe-area-inset-top);
@@ -72,7 +73,6 @@
   input, textarea { -webkit-user-select: auto; user-select: auto; box-sizing: border-box; }
   *{box-sizing:border-box}
 
-  /* 💡 移除黑色遮罩層，改用媒體容器自身透明度 */
   #bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background-color: var(--bg); overflow: hidden; display: flex; align-items: center; justify-content: center; }
   #media-container { width: 100%; height: 100%; position: absolute; transition: transform 0.2s ease-out, opacity 0.2s; transform-origin: center center; }
   #bg-video, #bg-image { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s; }
@@ -146,7 +146,6 @@
   .edu-wrap { margin-top: 8px; padding: 12px; background: rgba(255, 216, 77, 0.1); border-radius: 8px; border: 1px solid var(--warn); text-align: justify; font-size: 13.5px; font-weight: bold; color: var(--text); line-height: 1.6; transition: background 0.3s, border 0.3s; }
   .mask-text { paint-order: stroke fill; stroke: var(--bg); stroke-width: 4px; stroke-linecap: round; stroke-linejoin: round; }
 
-  /* 💡 AR 控制台面板移至 svgWrap 右上角，不阻擋下方拖曳 */
   #cameraControls { display: none; position: absolute; top: 10px; right: 10px; flex-direction: column; gap: 10px; background: rgba(0,0,0,0.6); padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); z-index: 10; backdrop-filter: blur(4px); box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
   .control-slider-wrap { display: flex; align-items: center; gap: 8px; }
   .control-slider-wrap span { font-size: 12px; color: var(--text); font-weight: bold; width: 35px; }
@@ -689,8 +688,8 @@ const i18n = {
     fricInvalid: "❌ 0에서 1 사이의 유효한 숫자를 입력하세요.",
     edu_static: "⏸️ <b>정지 상태에서는 마찰 저항이 없습니다.</b><br>조작단은 하중({T}kg)과 같은 힘만 내면 유지됩니다.",
     edu_haul_base: "🥵 <b>{name} 마찰력이 매우 큽니다!</b><br>조작단이 MA {ma}:1 로 <b>{T}kg</b>의 힘을 내야 합니다!",
-    edu_haul_cara: "🪝🤨 <b>카라비너는 중간 마찰력을 제공합니다.</b><br>조작단이 MA {ma}:1 로 <b>{T}kg</b>의 힘을 내야 합니다.",
-    edu_haul_pull: "⚙️😎 <b>고효율! 매우 힘이 덜 듭니다.</b><br>조작단은 MA {ma}:1 로 약 <b>{T}kg</b>의 힘만으로 당길 수 있습니다.",
+    edu_haul_cara: "🪝🤨 <b>{name}는 중간 마찰력을 제공합니다.</b><br>조작단이 MA {ma}:1 로 <b>{T}kg</b>의 힘을 내야 합니다.",
+    edu_haul_pull: "⚙️😎 <b>{name}는 고효율! 매우 힘이 덜 듭니다.</b><br>조작단은 MA {ma}:1 로 약 <b>{T}kg</b>의 힘만으로 당길 수 있습니다.",
     edu_low_base: "🛡️ <b>내릴 때는 마찰력이 브레이크 역할을 합니다!</b><br>MA {ma}:1 로 조작단은 <b>{T}kg</b>의 힘만으로 통제할 수 있습니다.",
     edu_low_cara: "🪝🛡️ <b>적절한 제동력을 제공합니다.</b><br>MA {ma}:1 로 조작단은 <b>{T}kg</b>의 힘을 내면 통제할 수 있습니다.",
     edu_low_pull: "⚙️⚠️ <b>매우 미끄럽습니다! 내릴 때 주의하세요.</b><br>MA {ma}:1 로 조작단은 하중에 가까운 힘({T}kg)을 필사적으로 버텨야 합니다!",
@@ -1529,30 +1528,6 @@ window.copyBankAccount = function() {
              <rect x="370" y="80" width="20" height="320" fill="rgba(245, 158, 11, 0.1)" />
           </g>
 
-          <!-- 💡 為 5 個進階介質新增情境圖（相機模式下自動隱藏） -->
-          <g id="bgConcrete" class="env-bg special-bg" style="display:none;">
-             <rect x="0" y="200" width="150" height="200" fill="rgba(148, 163, 184, 0.2)" />
-             <rect x="150" y="200" width="250" height="200" fill="rgba(148, 163, 184, 0.05)" />
-             <line x1="150" y1="200" x2="150" y2="400" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
-          </g>
-          <g id="bgMud" class="env-bg special-bg" style="display:none;">
-             <path d="M 0 360 Q 150 360 250 200 L 400 150 L 400 400 L 0 400 Z" fill="rgba(120, 53, 15, 0.2)" />
-          </g>
-          <g id="bgRoller" class="env-bg special-bg" style="display:none;">
-             <rect x="0" y="250" width="150" height="150" fill="rgba(100, 116, 139, 0.2)" />
-             <circle cx="150" cy="250" r="15" fill="rgba(203, 213, 225, 0.3)" />
-          </g>
-          <g id="bgPipe" class="env-bg special-bg" style="display:none;">
-             <rect x="-50" y="150" width="500" height="80" rx="40" fill="rgba(148, 163, 184, 0.15)" stroke="rgba(148, 163, 184, 0.3)" stroke-width="2"/>
-             <line x1="0" y1="170" x2="400" y2="170" stroke="rgba(255,255,255,0.1)" stroke-width="4"/>
-          </g>
-          <g id="bgVehicle" class="env-bg special-bg" style="display:none;">
-             <path d="M -20 360 L -20 200 L 100 200 L 150 260 L 300 260 L 300 360 Z" fill="rgba(239, 68, 68, 0.15)" />
-             <rect x="10" y="210" width="80" height="40" fill="rgba(255,255,255,0.1)" rx="4"/>
-             <circle cx="60" cy="360" r="25" fill="rgba(0,0,0,0.4)" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
-             <circle cx="240" cy="360" r="25" fill="rgba(0,0,0,0.4)" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
-          </g>
-
           <line id="ropeLoad" stroke="var(--text)" stroke-width="6" stroke-linecap="round" />
           <line id="ropeAnchor" stroke="var(--tagline)" stroke-width="6" stroke-linecap="round" />
           
@@ -1578,8 +1553,8 @@ window.copyBankAccount = function() {
                 <text id="distText" x="0" y="0" fill="var(--tagline)" font-size="11" font-weight="bold" text-anchor="middle" class="mask-text" data-i18n="distExt">長距離延伸至地面</text>
              </g>
 
+             <!-- 💡 增大感應區，並加入拖曳動畫虛線圈與引導文字 -->
              <circle cx="0" cy="0" r="60" fill="transparent" /> 
-             <!-- 💡 移除閃爍文字，只保留微亮的導引虛線圈 -->
              <circle cx="0" cy="0" r="35" class="drag-cue" />
              <rect x="-14" y="-20" width="28" height="40" fill="#475569" rx="4" id="anchorBox" />
              <path d="M -15 -5 L 15 5 M -15 5 L 15 15" stroke="var(--tagline)" stroke-width="4" stroke-linecap="round" />
@@ -2347,13 +2322,13 @@ function setFriction(btn, mode) {
         currentE = parseFloat(btn.dataset.val);
         currentMode = mode;
         
-        // 💡 選擇五大新介質時，自動切換至「淨空場景」，並顯示專屬背景圖
+        // 💡 選擇五大新介質時，自動切換至「淨空場景」
         const specialMediums = {
-            'concrete': 'bgConcrete',
-            'mud': 'bgMud',
-            'roller': 'bgRoller',
-            'pipe': 'bgPipe',
-            'vehicle': 'bgVehicle'
+            'concrete': true,
+            'mud': true,
+            'roller': true,
+            'pipe': true,
+            'vehicle': true
         };
         
         if (specialMediums[mode]) {
@@ -2363,14 +2338,12 @@ function setFriction(btn, mode) {
             if (noneBtn) noneBtn.classList.add('active');
             currentScene = 'none';
             
-            // 隱藏所有場景，顯示專屬場景
+            // 隱藏所有全螢幕場景
             document.querySelectorAll('.env-bg').forEach(el => {
                 if(el.tagName === 'g' && el.id) el.style.display = 'none';
             });
-            document.getElementById(specialMediums[mode]).style.display = 'block';
         } else {
-            // 切換回預設（樹幹/鉤環/滑輪），隱藏所有特殊場景，並顯示回原本的場景
-            document.querySelectorAll('.special-bg').forEach(el => el.style.display = 'none');
+            // 切換回預設（樹幹/鉤環/滑輪），並顯示回原本的場景
             if(scenes[currentScene].bg !== 'none') {
                 document.getElementById(scenes[currentScene].bg).style.display = 'block';
             }
@@ -2414,18 +2387,20 @@ function setMA(btn) {
     updateEngine();
 }
 
-// 💡 優化：只有切換場景或介質時才重新繪製，大幅提升拖拉順暢度，並繪製五大新增介質的視覺幾何圖形
+// 💡 繪製微型情境模型 (Diorama Chunks)！
 let lastShapeData = '';
 function renderRedirectNode() {
     let currentShapeData = currentScene + '-' + currentMode;
     if (lastShapeData === currentShapeData) return; 
     lastShapeData = currentShapeData;
     
-    // 💡 增大感應區，並加入會呼吸的虛線拖曳圈
+    // 💡 包含透明觸控感應區與微型動畫圈
     let html = `<circle cx="0" cy="0" r="60" fill="transparent" />`;
     html += `<circle cx="0" cy="0" r="28" class="drag-cue" />`;
     
     let c = scenes[currentScene].color;
+    
+    // 💡 加入微型情境背景 (掛載 class="diorama-bg" 以便相機模式隱藏)
     if (currentMode === 'base') {
         if(currentScene === 'tree') html += `<path d="M-25,-5 Q0,-20 25,-5 Q0,-15 -25,-5" fill="none" stroke="${c}" stroke-width="8" stroke-linecap="round"/><circle cx="0" cy="0" r="6" fill="#0a1410" />`;
         else if(currentScene === 'steel') html += `<rect x="-20" y="-10" width="40" height="15" fill="${c}" rx="4"/><circle cx="0" cy="0" r="6" fill="#0a1410" />`;
@@ -2435,15 +2410,46 @@ function renderRedirectNode() {
     } else if (currentMode === 'pulley') {
         html += `<circle cx="0" cy="0" r="18" fill="var(--warn)" stroke="#0a1410" stroke-width="3" /><circle cx="0" cy="0" r="6" fill="#0a1410" /><line x1="0" y1="0" x2="10" y2="10" stroke="#000" stroke-width="2"/>`;
     } else if (currentMode === 'concrete') {
-        html += `<rect x="-15" y="-15" width="30" height="30" fill="#94a3b8" rx="2" /><circle cx="0" cy="0" r="4" fill="#0a1410" />`;
+        html += `<g class="diorama-bg">
+                    <path d="M -40,0 L 40,0 L 40,160 L -40,160 Z" fill="#334155" />
+                    <path d="M -40,0 L 0,0 L 0,160 L -40,160 Z" fill="#475569" />
+                    <line x1="-40" y1="0" x2="40" y2="0" stroke="#94a3b8" stroke-width="6" />
+                 </g>
+                 <circle cx="0" cy="0" r="4" fill="#0a1410" />
+                 <circle cx="0" cy="0" r="2" fill="#cbd5e1" />`;
     } else if (currentMode === 'mud') {
-        html += `<path d="M-20,10 Q-10,-10 0,-5 Q10,-15 20,10 Z" fill="#78350f" /><circle cx="0" cy="0" r="4" fill="#0a1410" />`;
+        html += `<g class="diorama-bg">
+                    <path d="M -80,160 Q -40,-10 0,0 Q 60,-10 120,160 Z" fill="#451a03" />
+                    <path d="M -80,160 Q -40,-10 0,0 Q 60,-10 120,160" fill="none" stroke="#4d7c0f" stroke-width="10" />
+                 </g>
+                 <circle cx="0" cy="0" r="4" fill="#0a1410" />
+                 <circle cx="0" cy="0" r="2" fill="#eab308" />`;
     } else if (currentMode === 'roller') {
-        html += `<rect x="-15" y="-8" width="30" height="16" fill="#cbd5e1" rx="8"/><circle cx="-8" cy="0" r="5" fill="#475569"/><circle cx="8" cy="0" r="5" fill="#475569"/>`;
+        html += `<g class="diorama-bg">
+                    <path d="M -40,0 L 40,0 L 40,160 L -40,160 Z" fill="#334155" />
+                    <path d="M -40,0 L 0,0 L 0,160 L -40,160 Z" fill="#475569" />
+                 </g>
+                 <rect x="-25" y="-12" width="50" height="12" fill="#94a3b8" rx="6" />
+                 <circle cx="-12" cy="-6" r="5" fill="#1e293b" />
+                 <circle cx="12" cy="-6" r="5" fill="#1e293b" />
+                 <circle cx="0" cy="0" r="4" fill="#0a1410" />`;
     } else if (currentMode === 'pipe') {
-        html += `<circle cx="0" cy="0" r="15" fill="none" stroke="#94a3b8" stroke-width="6" /><circle cx="0" cy="0" r="4" fill="#0a1410" />`;
+        html += `<g class="diorama-bg">
+                    <rect x="-150" y="-15" width="300" height="30" fill="#64748b" rx="15" />
+                    <rect x="-150" y="-10" width="300" height="8" fill="#94a3b8" rx="4" />
+                 </g>
+                 <circle cx="0" cy="0" r="16" fill="none" stroke="#e2e8f0" stroke-width="4" stroke-dasharray="4 4" />
+                 <circle cx="0" cy="0" r="4" fill="#0a1410" />`;
     } else if (currentMode === 'vehicle') {
-        html += `<path d="M-20,-5 L20,-5 L15,10 L-15,10 Z" fill="#ef4444" /><circle cx="0" cy="0" r="4" fill="#0a1410" />`;
+        html += `<g class="diorama-bg">
+                    <path d="M 10,0 L 20,-20 L 50,-60 L 180,-60 L 180,80 L 10,80 Z" fill="#b91c1c" />
+                    <path d="M 55,-50 L 110,-50 L 110,-10 L 35,-10 Z" fill="#020617" />
+                    <rect x="10" y="30" width="30" height="40" fill="#1e293b" rx="4" />
+                    <circle cx="100" cy="80" r="30" fill="#020617" />
+                    <circle cx="100" cy="80" r="12" fill="#94a3b8" />
+                 </g>
+                 <circle cx="0" cy="0" r="10" fill="none" stroke="#e2e8f0" stroke-width="4" />
+                 <circle cx="0" cy="0" r="4" fill="#0a1410" />`;
     }
     
     els.redirectNode.innerHTML = html;
