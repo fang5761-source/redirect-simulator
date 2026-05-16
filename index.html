@@ -1689,8 +1689,8 @@ function triggerFlash(el) {
   <div class="modal-box" style="padding: 15px; max-width: 95%; max-height: 90vh; display:flex; flex-direction:column; gap:10px;">
     <h3 style="color:var(--safe); margin:0;" data-i18n="shotPreviewTitle">📸 戰術截圖已生成</h3>
     <p style="font-size:13px; color:var(--muted); margin:0;" data-i18n="shotPreviewTip">請 <b>長按圖片</b> 或使用下方按鈕進行儲存</p>
-    <div style="flex:1; overflow-y:auto; border-radius:8px; border:2px solid var(--line); background:#ccc; -webkit-overflow-scrolling: touch;">
-        <img id="shotPreviewImg" src="" style="width: 100%; height: auto; display: block; -webkit-touch-callout: default !important; -webkit-user-select: auto !important; user-select: auto !important; pointer-events: auto !important; touch-action: auto !important;">
+    <div style="flex:1; overflow-y:auto; border-radius:8px; border:2px solid var(--line); background:#ccc; -webkit-overflow-scrolling: touch; display: flex; justify-content: center; align-items: center;">
+        <img id="shotPreviewImg" src="" style="max-width: 100%; max-height: 100%; display: block; margin: auto; -webkit-touch-callout: default !important; -webkit-user-select: auto !important; user-select: auto !important; pointer-events: auto !important; touch-action: auto !important;">
     </div>
     <div style="display: flex; gap: 8px; flex-shrink:0;">
         <button class="primary-btn btn-unlock" onclick="downloadScreenshot()" style="margin:0; flex:1; font-size:14px;">📥 下載圖片</button>
@@ -2485,6 +2485,13 @@ async function doTakeScreenshot(isTransparent) {
   
   // 修復上下被裁切：徹底解除 html, body, scroll-wrapper 的高度與固定限制
   const wrapper = document.getElementById('scroll-wrapper');
+  const bgLayer = document.getElementById('bg-layer');
+  
+  // 1. 紀錄捲動位置並強制歸零，防止畫面上方被切掉
+  const oldScrollTop = wrapper.scrollTop;
+  wrapper.scrollTop = 0;
+  window.scrollTo(0, 0);
+
   const oldHtmlPos = htmlEl.style.position;
   const oldHtmlH = htmlEl.style.height;
   const oldHtmlOv = htmlEl.style.overflow;
@@ -2496,6 +2503,11 @@ async function doTakeScreenshot(isTransparent) {
   const oldWrapOv = wrapper.style.overflow;
   const oldWrapPos = wrapper.style.position;
 
+  // 2. 紀錄背景實際高度，防止照片被過度拉伸變形
+  const currentBgHeight = bgLayer.offsetHeight;
+  const oldBgPos = bgLayer.style.position;
+  const oldBgH = bgLayer.style.height;
+
   htmlEl.style.position = 'relative';
   htmlEl.style.height = 'auto';
   htmlEl.style.overflow = 'visible';
@@ -2506,6 +2518,10 @@ async function doTakeScreenshot(isTransparent) {
   wrapper.style.height = 'auto';
   wrapper.style.overflow = 'visible';
   wrapper.style.position = 'relative';
+
+  // 3. 鎖定背景層高度為螢幕可視高度
+  bgLayer.style.position = 'absolute';
+  bgLayer.style.height = currentBgHeight + 'px';
 
   target.classList.add('taking-screenshot');
   if (isTransparent) {
@@ -2553,7 +2569,8 @@ async function doTakeScreenshot(isTransparent) {
         backgroundColor: isTransparent ? null : (document.body.classList.contains('camera-mode') ? '#0a1410' : '#0a1410'), 
         scale: 2, 
         useCORS: true, 
-        windowHeight: wrapper.scrollHeight, // 強制設定視窗高度為捲動高度
+        scrollY: 0, // 強制從最頂端捕捉，治好斷頭症狀
+        windowHeight: target.scrollHeight, 
         ignoreElements: (el) => {
             if (el.hasAttribute('data-html2canvas-ignore')) return true;
             if (el.classList && el.classList.contains('menu-list')) return true;
@@ -2575,7 +2592,7 @@ async function doTakeScreenshot(isTransparent) {
   target.classList.remove('taking-screenshot');
   target.classList.remove('capture-transparent');
   
-  // 復原高度限制
+  // 4. 復原高度與背景限制
   htmlEl.style.position = oldHtmlPos;
   htmlEl.style.height = oldHtmlH;
   htmlEl.style.overflow = oldHtmlOv;
@@ -2586,6 +2603,12 @@ async function doTakeScreenshot(isTransparent) {
   wrapper.style.height = oldWrapH;
   wrapper.style.overflow = oldWrapOv;
   wrapper.style.position = oldWrapPos;
+
+  bgLayer.style.position = oldBgPos;
+  bgLayer.style.height = oldBgH;
+
+  // 5. 將畫面自動捲回您原本正在觀看的位置
+  wrapper.scrollTop = oldScrollTop;
 }
 
 // 💡 新增：手動下載與分享的輔助函數
