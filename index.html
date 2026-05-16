@@ -55,7 +55,7 @@
 
   body.camera-mode { background-color: transparent !important; }
   
-  /* 💡 AR/相機模式自動隱藏環境背景與微型情境模型 (Diorama) */
+  /* AR/相機模式自動隱藏環境背景與微型情境模型 */
   body.camera-mode .env-bg { display: none !important; }
   body.camera-mode .diorama-bg { display: none !important; }
 
@@ -73,12 +73,12 @@
   input, textarea { -webkit-user-select: auto; user-select: auto; box-sizing: border-box; }
   *{box-sizing:border-box}
 
-  /* 💡 重新定義背景層，加入獨立的「白紙透寫層 (white-paper-overlay)」 */
+  /* 獨立白紙透寫層 */
   #bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background-color: var(--bg); overflow: hidden; display: flex; align-items: center; justify-content: center; }
   #media-container { width: 100%; height: 100%; position: absolute; transition: transform 0.2s ease-out; transform-origin: center center; }
   #bg-video, #bg-image { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s; }
   
-  /* 💡 修正白紙層的高度(z-index: 1)，確保它蓋在照片與鏡頭上！ */
+  /* 修正白紙層的高度(z-index: 1)，確保它蓋在照片與鏡頭上！ */
   #white-paper-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; opacity: 0; pointer-events: none; transition: opacity 0.2s; z-index: 1; }
 
   #grid-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 20px 20px; opacity: 0.5; pointer-events: none; transition: opacity 0.3s; }
@@ -120,7 +120,7 @@
   .svgWrap { position:relative; width:100%; height: 35vh; min-height: 280px; max-height: 380px; background: transparent; border-radius: 12px; border: 1px dashed var(--line); overflow: hidden; margin-bottom: 8px; }
   svg { display: block; width: 100%; height: 100%; }
   
-  /* 💡 全域 SVG 陰影：確保白紙模式下繩索依然清晰可見 */
+  /* 全域 SVG 陰影：確保白紙模式下繩索依然清晰可見 */
   #ropeLoad, #ropeAnchor, #forceArrowLine, #forceArrowHead, #angleText, .mask-text {
       filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.9));
   }
@@ -149,7 +149,7 @@
   .edu-wrap { margin-top: 8px; padding: 12px; background: rgba(255, 216, 77, 0.1); border-radius: 8px; border: 1px solid var(--warn); text-align: justify; font-size: 13.5px; font-weight: bold; color: var(--text); line-height: 1.6; transition: background 0.3s, border 0.3s; }
   .mask-text { paint-order: stroke fill; stroke: var(--bg); stroke-width: 4px; stroke-linecap: round; stroke-linejoin: round; }
 
-  /* 💡 優化 AR 控制台面板：支援收合與拖曳 */
+  /* 優化 AR 控制台面板：支援收合與拖曳 */
   #cameraControls { display: none; position: absolute; top: 10px; left: 10px; flex-direction: column; background: rgba(0,0,0,0.75); padding: 8px 12px; border-radius: 10px; border: 1px solid var(--warn); z-index: 100; backdrop-filter: blur(8px); box-shadow: 0 4px 15px rgba(0,0,0,0.7); min-width: 140px; }
   .control-slider-wrap { display: flex; align-items: center; gap: 8px; }
   .control-slider-wrap span { font-size: 12px; color: var(--text); font-weight: bold; width: 45px; }
@@ -184,7 +184,7 @@
   #toastMessage { position: fixed; top: -50px; left: 50%; transform: translateX(-50%); background: var(--card); color: var(--text); padding: 14px 24px; border-radius: 10px; border-left: 4px solid var(--safe); box-shadow: 0 8px 25px rgba(0,0,0,0.6); z-index: 10000; font-weight: bold; text-align: center; font-size: 14px; width: 85%; max-width: 320px; transition: top 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); opacity: 0; pointer-events: none; }
   #toastMessage.show { top: 20px; opacity: 1; pointer-events: auto; }
 
-  /* 💡 統一選單樣式 */
+  /* 統一選單樣式 */
   .menu-list { display: flex; flex-direction: column; width: 100%; margin-top: 5px; }
   
   details.main-accordion { margin-top: 12px; }
@@ -230,7 +230,7 @@
 </head>
 <body>
 
-<!-- 🚀 散木團隊：多層次防盜保護系統 v6.2 -->
+<!-- 🚀 散木團隊：多層次防盜保護系統 v6.3 -->
 <script>
 (function(){
   const _0xd = atob('ZmFuZzU3NjEtc291cmNlLmdpdGh1Yi5pbw=='); 
@@ -260,7 +260,7 @@
 </script>
 
 <script>
-// 💡 V6.2 8國語言智慧切換引擎 (i18n)
+// 💡 V6.3 多語系支援與高空介質更新
 const i18n = {
   zh: {
     appTitle: "下方固定點架設儀 (全地形)",
@@ -280,11 +280,11 @@ const i18n = {
     directPull: "直拉",
     btnFricCara: "🪝 鉤環",
     btnFricPull: "⚙️ 滑輪",
-    btnFricConc: "🧱 水泥",
-    btnFricMud: "🌱 泥土坡",
+    btnFricPad: "🛏️ 鋪保護墊",
     btnFricRoller: "🛞 護角滾輪",
-    btnFricPipe: "🪈 圓柱鐵管",
-    btnFricVeh: "🚒 救援車體",
+    lblRoof: "樓頂地板",
+    lblWall: "大樓外牆",
+    lblParapet: "女兒牆",
     actionLabel: "🕹️ 系統操作動作",
     btnStat: "⏸️ 靜止鎖定",
     btnHaul: "⬆️ 系統上拉",
@@ -301,7 +301,7 @@ const i18n = {
     edu_haul_base: "🥵 <b>{name} (COD) 摩擦力極大！這是最累的拉法。</b><br>為了把負載往上拉，操作端必須多花力氣才能克服摩擦力！搭配 MA {ma}:1 省力系統，手部實際只需拉 <b>{T}kg</b>。但{name}仍承受恐怖的連帶破壞力。",
     edu_haul_cara: "🪝🤨 <b>{name}提供中等摩擦力。</b><br>雖然比粗糙表面滑順，但摩擦力仍不小。搭配 MA {ma}:1 系統，手部實際只需拉 <b>{T}kg</b>。",
     edu_haul_pull: "⚙️😎 <b>{name}高效率轉向！極度省力。</b><br>摩擦阻力較低，搭配 MA {ma}:1 系統，操作端只需要出 <b>{T}kg</b> 的力量就能拉動。轉向點也比較安全！",
-    edu_low_base: "🛡️ <b>下放時，{name} 反而變成救星！</b><br>巨大的摩擦力變成「天然煞車」，若搭配 MA {ma}:1 系統，操作端只要輕輕握住 <b>{T}kg</b> 的力量即可穩穩控制！",
+    edu_low_base: "🛡️ <b>下放時，{name} 反меча變成救星！</b><br>巨大的摩擦力變成「天然煞車」，若搭配 MA {ma}:1 系統，操作端只要輕輕握住 <b>{T}kg</b> 的力量即可穩穩控制！",
     edu_low_cara: "🪝🛡️ <b>{name}提供適中的煞車力。</b><br>下放時摩擦力幫忙煞車，若搭配 MA {ma}:1 系統，操作端需出力 <b>{T}kg</b> 即可控制。",
     edu_low_pull: "⚙️⚠️ <b>{name}太溜了！下放請小心。</b><br>因為沒有足夠的摩擦力幫忙煞車，若搭配 MA {ma}:1 系統，操作端仍需握住 <b>{T}kg</b> 的力量。",
     edu_warning: "<br><br>🚨 <b>滑輪倍增效應：</b> 繩索夾角太小，讓轉向點承受了超過 2 倍的合力，極易發生崩塌斷裂意外！",
@@ -354,7 +354,7 @@ const i18n = {
     pwaStep7: "往下滑，選擇「加入主畫面」",
     pwaStep8: "點選「加入」，即可將捷徑加到主畫面",
     installBtn: "📥 點擊一鍵安裝 APP",
-    disclaimer: "<strong style='color: var(--bad); font-size: 14px;'>⚠️ 軟體免責聲明：</strong><br>本軟體摩擦係數為理論估算均值(樹幹0.4/鉤環0.6/滑輪0.95)。實際救援中，表面粗糙度皆會劇烈改變摩擦力。實際救援操作之系統架設與安全確保，均須由專業教官與指揮官實地判定，開發團隊不負任何實地操作之法律與賠償責任。<br><br><span style='color:var(--warn);'>※ 本系統採單機授權，為保障研發團隊權益，遺失密碼或更換設備請重新購買，恕無提供補發與人工客服。</span>",
+    disclaimer: "<strong style='color: var(--bad); font-size: 14px;'>⚠️ 軟體免責聲明：</strong><br>本軟體摩擦係數為理論估算均值。實際救援中，表面粗糙度皆會劇烈改變摩擦力。實際救援操作之系統架設與安全確保，均須由專業教官與指揮官實地判定，開發團隊不負任何實地操作之法律與賠償責任。<br><br><span style='color:var(--warn);'>※ 本系統採單機授權，為保障研發團隊權益，遺失密碼或更換設備請重新購買，恕無提供補發與人工客服。</span>",
     vipTitle: "🔒 專業版功能解鎖",
     vipEnable1: "您即將啟用「",
     vipEnable2: "」！",
@@ -411,11 +411,11 @@ const i18n = {
     directPull: " Pull",
     btnFricCara: "🪝 Carabiner",
     btnFricPull: "⚙️ Pulley",
-    btnFricConc: "🧱 Concrete",
-    btnFricMud: "🌱 Mud",
-    btnFricRoller: "🛞 Roller",
-    btnFricPipe: "🪈 Pipe",
-    btnFricVeh: "🚒 Vehicle",
+    btnFricPad: "🛏️ Edge Pad",
+    btnFricRoller: "🛞 Edge Roller",
+    lblRoof: "Roof Floor",
+    lblWall: "Outer Wall",
+    lblParapet: "Parapet",
     actionLabel: "🕹️ System Action",
     btnStat: "⏸️ Static",
     btnHaul: "⬆️ Hauling",
@@ -542,11 +542,11 @@ const i18n = {
     directPull: " 直引き",
     btnFricCara: "🪝 カラビナ",
     btnFricPull: "⚙️ プーリー",
-    btnFricConc: "🧱 コンクリ",
-    btnFricMud: "🌱 泥地",
+    btnFricPad: "🛏️ エッジパッド",
     btnFricRoller: "🛞 ローラー",
-    btnFricPipe: "🪈 パイプ",
-    btnFricVeh: "🚒 車両",
+    lblRoof: "屋上床",
+    lblWall: "外壁",
+    lblParapet: "パラペット",
     actionLabel: "🕹️ システム動作",
     btnStat: "⏸️ 静止",
     btnHaul: "⬆️ 引き上げ",
@@ -673,11 +673,11 @@ const i18n = {
     directPull: " 직접 당기기",
     btnFricCara: "🪝 카라비너",
     btnFricPull: "⚙️ 도르래",
-    btnFricConc: "🧱 콘크리트",
-    btnFricMud: "🌱 진흙",
+    btnFricPad: "🛏️ 엣지 패드",
     btnFricRoller: "🛞 롤러",
-    btnFricPipe: "🪈 파이프",
-    btnFricVeh: "🚒 차량",
+    lblRoof: "옥상 바닥",
+    lblWall: "외벽",
+    lblParapet: "파라펫",
     actionLabel: "🕹️ 시스템 동작",
     btnStat: "⏸️ 정지",
     btnHaul: "⬆️ 끌어올리기",
@@ -804,11 +804,11 @@ const i18n = {
     directPull: " Direct",
     btnFricCara: "🪝 Mousqueton",
     btnFricPull: "⚙️ Poulie",
-    btnFricConc: "🧱 Béton",
-    btnFricMud: "🌱 Boue",
+    btnFricPad: "🛏️ Protège-corde",
     btnFricRoller: "🛞 Rouleau",
-    btnFricPipe: "🪈 Tuyau",
-    btnFricVeh: "🚒 Véhicule",
+    lblRoof: "Toit",
+    lblWall: "Mur Extérieur",
+    lblParapet: "Parapet",
     actionLabel: "🕹️ Action du Système",
     btnStat: "⏸️ Statique",
     btnHaul: "⬆️ Hissage",
@@ -933,11 +933,11 @@ const i18n = {
     directPull: " Direkt",
     btnFricCara: "🪝 Karabiner",
     btnFricPull: "⚙️ Rolle",
-    btnFricConc: "🧱 Beton",
-    btnFricMud: "🌱 Schlamm",
+    btnFricPad: "🛏️ Kantenschutz",
     btnFricRoller: "🛞 Rolle",
-    btnFricPipe: "🪈 Rohr",
-    btnFricVeh: "🚒 Fzg",
+    lblRoof: "Dachboden",
+    lblWall: "Außenwand",
+    lblParapet: "Brüstung",
     actionLabel: "🕹️ Systemaktion",
     btnStat: "⏸️ Statisch",
     btnHaul: "⬆️ Heben",
@@ -1064,11 +1064,11 @@ const i18n = {
     directPull: " Directo",
     btnFricCara: "🪝 Mosquetón",
     btnFricPull: "⚙️ Polea",
-    btnFricConc: "🧱 Hormigón",
-    btnFricMud: "🌱 Barro",
+    btnFricPad: "🛏️ Protector",
     btnFricRoller: "🛞 Rodillo",
-    btnFricPipe: "🪈 Tubo",
-    btnFricVeh: "🚒 Vehículo",
+    lblRoof: "Techo",
+    lblWall: "Muro Exterior",
+    lblParapet: "Parapeto",
     actionLabel: "🕹️ Acción del Sistema",
     btnStat: "⏸️ Estático",
     btnHaul: "⬆️ Izado",
@@ -1195,11 +1195,11 @@ const i18n = {
     directPull: " Direto",
     btnFricCara: "🪝 Mosquetão",
     btnFricPull: "⚙️ Polia",
-    btnFricConc: "🧱 Concreto",
-    btnFricMud: "🌱 Lama",
+    btnFricPad: "🛏️ Protetor",
     btnFricRoller: "🛞 Rolo",
-    btnFricPipe: "🪈 Tubo",
-    btnFricVeh: "🚒 Veículo",
+    lblRoof: "Teto",
+    lblWall: "Parede Externa",
+    lblParapet: "Parapeito",
     actionLabel: "🕹️ Ação do Sistema",
     btnStat: "⏸️ Estático",
     btnHaul: "⬆️ Içamento",
@@ -1310,7 +1310,6 @@ const i18n = {
   }
 };
 
-// 💡 自動偵測系統語言黑科技
 const availableLangs = ['zh', 'en', 'ja', 'ko', 'fr', 'de', 'es', 'pt'];
 let currentLang = localStorage.getItem('sunmoon_lang');
 
@@ -1354,7 +1353,6 @@ function applyTranslations() {
     }
 }
 
-// 💡 下拉選單切換觸發事件
 function changeLang(selectedLang) {
     if(availableLangs.includes(selectedLang)) {
         currentLang = selectedLang;
@@ -1363,7 +1361,6 @@ function changeLang(selectedLang) {
     }
 }
 
-// 💡 補回遺失的提示訊息 (Toast) 顯示功能
 let toastTimer = null;
 function showToast(msg, type = 'safe') {
     const toast = document.getElementById('toastMessage');
@@ -1377,7 +1374,6 @@ function showToast(msg, type = 'safe') {
     }, 3000);
 }
 
-// 💡 散木專屬：通用一鍵複製帳號引擎
 window.copyAccount = function(elementId) {
   const account = document.getElementById(elementId).innerText;
   const dummy = document.createElement('input');
@@ -1392,7 +1388,7 @@ window.copyAccount = function(elementId) {
 
 <div id="status-bar-protector" data-html2canvas-ignore="true"></div>
 
-<!-- 💡 更新背景層：加入獨立白紙透寫層 (white-paper-overlay) -->
+<!-- 獨立背景與白紙透寫層 -->
 <div id="bg-layer">
   <div id="media-container">
       <video id="bg-video" autoplay playsinline muted></video>
@@ -1403,7 +1399,7 @@ window.copyAccount = function(elementId) {
 <div id="grid-overlay"></div>
 <div id="toastMessage" data-html2canvas-ignore="true"></div>
 
-<!-- 💡 技術支援視窗 -->
+<!-- 技術支援視窗 -->
 <div id="supportModal" class="modal-overlay" data-html2canvas-ignore="true">
   <div class="modal-box">
     <h3 style="color:var(--warn); margin-top:0;" data-i18n="supTitle">💬 系統問題回報</h3>
@@ -1417,7 +1413,7 @@ window.copyAccount = function(elementId) {
   </div>
 </div>
 
-<!-- 💡 付費解鎖視窗 -->
+<!-- 付費解鎖視窗 -->
 <div id="vipModal" class="modal-overlay" data-html2canvas-ignore="true">
   <div class="modal-box" id="vipModalBox">
     <h3><span data-i18n="vipTitle">🔒 專業版功能解鎖</span> <span class="vip-badge" style="display:inline-block; margin-left:8px;">PRO</span></h3>
@@ -1425,12 +1421,10 @@ window.copyAccount = function(elementId) {
     <p id="vipFeatureDesc" style="font-size:14px; color:var(--safe); font-weight:bold; margin-bottom: 12px;"></p>
     <p style="font-size:13px;" data-i18n="vipProOnly">此功能為進階專業版限定。<br>支持散木團隊研發，永久解鎖全功能！</p>
     
-    <!-- 💡 霸氣免責聲明 -->
     <div style="background:rgba(0,0,0,0.3); padding:10px; border-radius:8px; border-left:4px solid var(--bad); margin-bottom:12px; text-align:left;">
       <span style="color:var(--bad); font-size:12px; font-weight:bold; line-height:1.5; display:block;" data-i18n="vipDisclaimer">⚠️ 注意：本系統採單機授權，遺失密碼或更換設備請重新購買，恕無提供補發與人工客服。</span>
     </div>
 
-    <!-- 💡 對接 Gumroad 專屬商品網址 -->
     <button class="primary-btn" style="background:var(--vip); margin-bottom:10px;" onclick="window.open('https://fang5761.gumroad.com/l/redirect-simulator', '_blank')" data-i18n="vipStoreBtn">🛒 前往專業版自動販賣機</button>
     <div style="font-size: 12.5px; color: var(--warn); margin-bottom: 5px; line-height: 1.4; font-weight: bold;" data-i18n="vipHint">💡 備註：取得金鑰方式，可先參考下方說明欄</div>
     
@@ -1445,7 +1439,7 @@ window.copyAccount = function(elementId) {
   </div>
 </div>
 
-<!-- 自訂名稱專屬視窗 -->
+<!-- 自訂名稱視窗 -->
 <div id="nameModal" class="modal-overlay" data-html2canvas-ignore="true">
   <div class="modal-box">
     <h3 style="color:var(--safe); margin-top:0;" data-i18n="customNameTitle">✏️ 自訂介質名稱</h3>
@@ -1458,7 +1452,7 @@ window.copyAccount = function(elementId) {
   </div>
 </div>
 
-<!-- 自訂摩擦力專屬視窗 -->
+<!-- 自訂摩擦力視窗 -->
 <div id="frictionModal" class="modal-overlay" data-html2canvas-ignore="true">
   <div class="modal-box">
     <h3 style="color:var(--warn); margin-top:0;" data-i18n="customFricTitle">⚙️ 自訂摩擦係數</h3>
@@ -1479,7 +1473,6 @@ window.copyAccount = function(elementId) {
   <div class="app-container">
 
     <div class="card" id="mainCard">
-      <!-- 💡 將 topbar 標記為截圖時隱藏 -->
       <div class="topbar capture-hide">
           <div class="title-left" id="mainTitleText">
             <span data-i18n="appTitle">下方固定點架設儀 (全地形)</span> <span class="vip-badge">PRO</span>
@@ -1500,7 +1493,7 @@ window.copyAccount = function(elementId) {
       </div>
 
       <div class="svgWrap" id="svgWrap">
-        <!-- 💡 AR 控制台面板：支援拖曳移動與展開/縮放，不會擋住下方操作 -->
+        <!-- AR 控制台面板 -->
         <div id="cameraControls" class="capture-hide" style="display:none; position: absolute; top: 10px; left: 10px; flex-direction: column; background: rgba(0,0,0,0.75); padding: 8px 12px; border-radius: 10px; border: 1px solid var(--warn); z-index: 100; backdrop-filter: blur(8px); box-shadow: 0 8px 25px rgba(0,0,0,0.6); min-width: 140px;">
             <div id="camCtrlHeader" style="display:flex; justify-content:space-between; align-items:center; cursor:move; margin-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:4px; user-select:none;">
                 <span style="font-size:12px; font-weight:bold; color:var(--warn);">🎛️ 疊圖控制台</span>
@@ -1519,9 +1512,17 @@ window.copyAccount = function(elementId) {
         </div>
 
         <svg id="canvas" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet">
+          <!-- 💡 補回遺失的大樓與女兒牆背景 SVG 圖層 -->
+          <g id="buildingScene" style="display:none;">
+              <path id="buildingPath" d="" fill="#334155" stroke="#1e293b" stroke-width="2" />
+              <path id="parapetPath" d="" fill="#475569" stroke="#1e293b" stroke-width="2" />
+              <text id="lblRoof" class="mask-text" fill="rgba(255,255,255,0.7)" font-size="13" font-weight="bold" data-i18n="lblRoof">樓頂地板</text>
+              <text id="lblWall" class="mask-text" fill="rgba(255,255,255,0.5)" font-size="14" font-weight="bold" transform="" data-i18n="lblWall">大樓外牆</text>
+              <text id="lblParapet" class="mask-text" fill="rgba(255,255,255,0.7)" font-size="12" font-weight="bold" text-anchor="middle" data-i18n="lblParapet">女兒牆</text>
+          </g>
           
           <g class="env-bg">
-            <line x1="0" y1="360" x2="400" y2="360" stroke="rgba(255,255,255,0.15)" stroke-width="2" stroke-dasharray="10 5" />
+            <line x1="-150" y1="360" x2="550" y2="360" stroke="rgba(255,255,255,0.15)" stroke-width="2" stroke-dasharray="10 5" />
             <text x="390" y="375" fill="rgba(255,255,255,0.2)" font-size="12" font-weight="bold" text-anchor="end" data-i18n="ground">地面 Ground</text>
           </g>
 
@@ -1540,50 +1541,26 @@ window.copyAccount = function(elementId) {
              <rect x="370" y="80" width="20" height="320" fill="rgba(245, 158, 11, 0.1)" />
           </g>
 
-          <!-- 💡 為 5 個進階介質新增情境圖（相機模式下自動隱藏） -->
-          <g id="bgConcrete" class="env-bg special-bg" style="display:none;">
-             <rect x="0" y="200" width="150" height="200" fill="rgba(148, 163, 184, 0.2)" />
-             <rect x="150" y="200" width="250" height="200" fill="rgba(148, 163, 184, 0.05)" />
-             <line x1="150" y1="200" x2="150" y2="400" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
-          </g>
-          <g id="bgMud" class="env-bg special-bg" style="display:none;">
-             <path d="M 0 360 Q 150 360 250 200 L 400 150 L 400 400 L 0 400 Z" fill="rgba(120, 53, 15, 0.2)" />
-          </g>
-          <g id="bgRoller" class="env-bg special-bg" style="display:none;">
-             <rect x="0" y="250" width="150" height="150" fill="rgba(100, 116, 139, 0.2)" />
-             <circle cx="150" cy="250" r="15" fill="rgba(203, 213, 225, 0.3)" />
-          </g>
-          <g id="bgPipe" class="env-bg special-bg" style="display:none;">
-             <rect x="-50" y="150" width="500" height="80" rx="40" fill="rgba(148, 163, 184, 0.15)" stroke="rgba(148, 163, 184, 0.3)" stroke-width="2"/>
-             <line x1="0" y1="170" x2="400" y2="170" stroke="rgba(255,255,255,0.1)" stroke-width="4"/>
-          </g>
-          <g id="bgVehicle" class="env-bg special-bg" style="display:none;">
-             <path d="M -20 360 L -20 200 L 100 200 L 150 260 L 300 260 L 300 360 Z" fill="rgba(239, 68, 68, 0.15)" />
-             <rect x="10" y="210" width="80" height="40" fill="rgba(255,255,255,0.1)" rx="4"/>
-             <circle cx="60" cy="360" r="25" fill="rgba(0,0,0,0.4)" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
-             <circle cx="240" cy="360" r="25" fill="rgba(0,0,0,0.4)" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
-          </g>
-
           <line id="ropeLoad" stroke="var(--text)" stroke-width="6" stroke-linecap="round" />
           <line id="ropeAnchor" stroke="var(--tagline)" stroke-width="6" stroke-linecap="round" />
           
           <path id="angleArc" fill="rgba(255, 216, 77, 0.1)" stroke="var(--warn)" stroke-width="2" />
           <text id="angleText" class="mask-text" fill="var(--warn)" font-size="16" font-weight="bold" text-anchor="middle"></text>
 
-          <g id="redirectNode" class="draggable-anchor"></g>
+          <g id="redirectNode" class="draggable-anchor tactical-shadow"></g>
 
           <g id="forceArrowGroup">
              <line id="forceArrowLine" x1="0" y1="0" x2="0" y2="0" stroke="var(--bad)" stroke-width="6" stroke-linecap="round" />
              <polygon id="forceArrowHead" points="0,0 0,0 0,0" fill="var(--bad)" />
           </g>
 
-          <g id="loadGroup">
+          <g id="loadGroup" class="tactical-shadow">
              <circle cx="0" cy="12" r="10" fill="#e8f5e9" />
              <rect x="-12" y="24" width="24" height="26" rx="5" fill="#e8f5e9" />
              <text x="0" y="42" fill="#0a1410" font-size="14" font-weight="bold" text-anchor="middle" font-family="monospace">W</text>
           </g>
 
-          <g id="anchorGroup" class="draggable-anchor">
+          <g id="anchorGroup" class="draggable-anchor tactical-shadow">
              <g id="distanceIndicator" opacity="0" style="transition: opacity 0.3s ease;">
                 <line id="distLine" x1="0" y1="0" x2="0" y2="0" stroke="var(--tagline)" stroke-width="2" stroke-dasharray="4 4" opacity="0.6"/>
                 <text id="distText" x="0" y="0" fill="var(--tagline)" font-size="11" font-weight="bold" text-anchor="middle" class="mask-text" data-i18n="distExt">長距離延伸至地面</text>
@@ -1639,17 +1616,13 @@ window.copyAccount = function(elementId) {
                <span data-i18n="frictionLabel">🛡️ 轉向點 (COD) 摩擦力介質</span>
                <button onclick="customFriction()" style="background:var(--card); border:1px solid var(--warn); color:var(--warn); border-radius:4px; padding:2px 6px; font-size:11px; cursor:pointer;" data-i18n="btnCustom">✏️ 自訂</button>
             </div>
-            <!-- 💡 更新 toggle-group 支援自動換行與五大進階介質 -->
             <div class="toggle-group" style="flex-wrap: wrap;">
                <button class="toggle-btn active" id="btnFrictionBase" data-type="friction" data-val="0.4" onclick="setFriction(this, 'base')" style="flex: 1 1 calc(33% - 6px);">🌳 樹幹直拉</button>
                <button class="toggle-btn" data-type="friction" data-val="0.6" onclick="setFriction(this, 'carabiner')" style="flex: 1 1 calc(33% - 6px);"><span data-i18n="btnFricCara">🪝 鉤環</span><span class="lock-icon">🔒</span></button>
                <button class="toggle-btn" data-type="friction" data-val="0.95" onclick="setFriction(this, 'pulley')" style="flex: 1 1 calc(33% - 6px);"><span data-i18n="btnFricPull">⚙️ 滑輪</span><span class="lock-icon">🔒</span></button>
                
-               <button class="toggle-btn" data-type="friction" data-val="0.25" onclick="setFriction(this, 'concrete')" style="flex: 1 1 calc(19% - 6px); padding: 6px 2px;"><span data-i18n="btnFricConc">🧱 水泥</span><span class="lock-icon">🔒</span></button>
-               <button class="toggle-btn" data-type="friction" data-val="0.15" onclick="setFriction(this, 'mud')" style="flex: 1 1 calc(19% - 6px); padding: 6px 2px;"><span data-i18n="btnFricMud">🌱 泥土</span><span class="lock-icon">🔒</span></button>
-               <button class="toggle-btn" data-type="friction" data-val="0.8" onclick="setFriction(this, 'roller')" style="flex: 1 1 calc(19% - 6px); padding: 6px 2px;"><span data-i18n="btnFricRoller">🛞 滾輪</span><span class="lock-icon">🔒</span></button>
-               <button class="toggle-btn" data-type="friction" data-val="0.55" onclick="setFriction(this, 'pipe')" style="flex: 1 1 calc(19% - 6px); padding: 6px 2px;"><span data-i18n="btnFricPipe">🪈 鐵管</span><span class="lock-icon">🔒</span></button>
-               <button class="toggle-btn" data-type="friction" data-val="0.45" onclick="setFriction(this, 'vehicle')" style="flex: 1 1 calc(19% - 6px); padding: 6px 2px;"><span data-i18n="btnFricVeh">🚒 車體</span><span class="lock-icon">🔒</span></button>
+               <button class="toggle-btn" data-type="friction" data-val="0.5" onclick="setFriction(this, 'pad')" style="flex: 1 1 calc(48% - 6px); padding: 6px 2px;"><span data-i18n="btnFricPad">🛏️ 鋪保護墊</span><span class="lock-icon">🔒</span></button>
+               <button class="toggle-btn" data-type="friction" data-val="0.85" onclick="setFriction(this, 'roller')" style="flex: 1 1 calc(48% - 6px); padding: 6px 2px;"><span data-i18n="btnFricRoller">🛞 護角滾輪</span><span class="lock-icon">🔒</span></button>
             </div>
          </div>
 
@@ -1662,7 +1635,6 @@ window.copyAccount = function(elementId) {
             </div>
          </div>
 
-         <!-- 💡 新增：MA 系統操作比切換列 (預設隱藏，上拉與下放時開啟) -->
          <div class="control-row" id="maRow" style="display:none; margin-top:4px;">
             <div class="btn-group-lbl" style="color:var(--safe);" data-i18n="maLabel">⚙️ 系統省力比 (MA)</div>
             <div class="toggle-group">
@@ -1674,14 +1646,13 @@ window.copyAccount = function(elementId) {
          </div>
       </div>
       
-      <!-- 💡 說明文字保留，讓它順利被截圖拍攝進去 -->
       <div class="edu-wrap" id="eduPanel" data-i18n="eduDefault">
          📍 試著在沙盤中任意拖曳「轉向點」或「地面操作」，對齊照片角度來觀察力量變化。
       </div>
     </div> 
     
     <div class="menu-list capture-hide">
-      <!-- 💡 第一區：系統設定與操作指南 -->
+      <!-- (選單結構無更動，保留雙軌贊助與版本資訊等) -->
       <details class="main-accordion" id="settingsAccordion">
         <summary><div style="display:flex; align-items:center; gap:8px;"><span class="menu-icon">⚙️</span> <span data-i18n="menuSet" style="color: var(--warn);">系統設定與操作指南</span></div></summary>
         <div class="menu-group">
@@ -1748,7 +1719,6 @@ window.copyAccount = function(elementId) {
         </div>
       </details>
 
-      <!-- 💡 第二區：專業名詞與原理解析 -->
       <details class="main-accordion" style="margin-top: 10px;">
         <summary><div style="display:flex; align-items:center; gap:8px;"><span class="menu-icon">📚</span> <span data-i18n="menu1" style="color: var(--warn);">專業名詞與原理解析</span></div></summary>
         <div class="menu-group">
@@ -1761,7 +1731,6 @@ window.copyAccount = function(elementId) {
         </div>
       </details>
 
-      <!-- 💡 第三區：系統支援與開發資訊 -->
       <details class="main-accordion" style="margin-top: 10px;">
         <summary><div style="display:flex; align-items:center; gap:8px;"><span class="menu-icon">💬</span> <span data-i18n="menuSup" style="color: var(--warn);">系統支援與開發資訊</span></div></summary>
         <div class="menu-group">
@@ -1774,7 +1743,7 @@ window.copyAccount = function(elementId) {
             <div class="menu-content">
               <div style="text-align: center; margin-bottom: 15px;">
                 <span data-i18n="devTitle" style="display:inline-block; background:var(--safe); color:#0a1410; font-weight:bold; padding:4px 14px; border-radius:20px; font-size:13px; letter-spacing:0.5px; box-shadow: 0 2px 6px rgba(74,222,128,0.3);">下方固定點架設儀 專業正式版</span>
-                <div style="font-size: 11px; color: var(--muted); margin-top: 8px; font-family: monospace;">Version 6.3.0</div>
+                <div style="font-size: 11px; color: var(--muted); margin-top: 8px; font-family: monospace;">Version 6.4.0</div>
               </div>
               <p style="margin-top: 0; margin-bottom: 6px; font-weight: bold; color: var(--text); text-align: center;" data-i18n="devTeam">本工具由 <span style="color:var(--warn);">散木團隊</span> 開發製作</p>
               <p style="margin-top: 0; margin-bottom: 4px; font-size: 13px; text-align: center;" data-i18n="devT1">教學架構與工程判斷／徐世豐</p>
@@ -1801,13 +1770,12 @@ window.copyAccount = function(elementId) {
         </div>
       </details>
 
-      <!-- 💡 第四區：贊助散木團隊 (含雙軌贊助與一鍵複製) -->
       <details class="main-accordion" style="margin-top: 10px;">
         <summary><div style="display:flex; align-items:center; gap:8px;"><span class="menu-icon">☕</span> <span data-i18n="menuSponsor" style="color: var(--warn);">請團隊喝咖啡 / 取得金鑰方式</span></div></summary>
         <div class="menu-group" style="padding: 15px;">
           <p style="font-size: 13.5px; color: var(--text); margin-top: 0; margin-bottom: 15px; line-height: 1.6; text-align: justify;">本工具為散木團隊精心開發。若這套沙盤對您的實務與教學有幫助，歡迎自由隨喜給予我們一點實質鼓勵，這將化為我們開發下一套救援系統的核心動力！</p>
           
-          <!-- 💡 方案 A：銀行與郵局轉帳 -->
+          <!-- 雙軌帳號 -->
           <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--safe); border-radius: 8px; padding: 12px; margin-bottom: 12px;">
             <div style="color: var(--safe); font-weight: bold; font-size: 13px; margin-bottom: 8px;">🏦 銀行與郵局轉帳 (可免海外手續費)</div>
             
@@ -1829,7 +1797,7 @@ window.copyAccount = function(elementId) {
             </div>
           </div>
 
-          <!-- 方案 B：自動販賣機 -->
+          <!-- 自動販賣機 -->
           <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--line); border-radius: 8px; padding: 12px;">
             <div style="text-align: left; margin-bottom: 12px;">
               <div style="color: var(--text); font-weight: bold; font-size: 13px; margin-bottom: 4px;">🛒 專業版自動販賣機 (支援刷卡)</div>
@@ -1844,14 +1812,14 @@ window.copyAccount = function(elementId) {
 
       <div class="footer-disclaimer" data-i18n="disclaimer">
         <strong style="color: var(--bad); font-size: 14px;">⚠️ 軟體免責聲明：</strong><br>
-        本軟體摩擦係數為理論估算均值(樹幹0.4/鉤環0.6/滑輪0.95)。實際救援中，表面粗糙度皆會劇烈改變摩擦力。實際救援操作之系統架設與安全確保，均須由專業教官與指揮官實地判定，開發團隊不負任何實地操作之法律與賠償責任。<br><br><span style='color:var(--warn);'>※ 本系統採單機授權，為保障研發團隊權益，遺失密碼或更換設備請重新購買，恕無提供補發與人工客服。</span>
+        本軟體摩擦係數為理論估算均值。實際救援中，表面粗糙度皆會劇烈改變摩擦力。實際救援操作之系統架設與安全確保，均須由專業教官與指揮官實地判定，開發團隊不負任何實地操作之法律與賠償責任。<br><br><span style='color:var(--warn);'>※ 本系統採單機授權，為保障研發團隊權益，遺失密碼或更換設備請重新購買，恕無提供補發與人工客服。</span>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-// 🚀 散木團隊：雲端金鑰外掛與核心授權系統
+// 🚀 散木團隊核心授權系統
 const PERMANENT_KEYS = ["SMR-T8Y3-L6P2", "SMR-B3Q8-P9Y1", "SMR-C5R2-W6Z7"];
 const MASTER_KEY = "SUNMOONBOSS"; 
 
@@ -2019,7 +1987,6 @@ function verifyVip() {
     const inputPwd = document.getElementById('vipPwdInput').value.trim().toUpperCase(); 
     const errorMsg = document.getElementById('vipErrorMsg');
     
-    // ✅ 萬用後門與快速登出機制
     if (inputPwd === "SUNMOONBOSS") { 
         try { localStorage.setItem('sunmoon_vip_redirect_status', 'true'); } catch(e){} 
         isUserVip = true; document.body.classList.add('is-vip');
@@ -2058,7 +2025,7 @@ function verifyVip() {
     errorMsg.innerHTML = '❌ 授權碼錯誤！若需領取新密碼請 <a href="https://fang5761.gumroad.com/l/redirect-simulator" target="_blank" style="color:var(--safe); text-decoration:underline;">按此前往</a>';
 }
 
-// 💡 AR 系統與控制台引擎
+// AR 系統與控制台引擎
 let stream = null, videoTrack = null, torchOn = false; 
 const mediaContainer = document.getElementById('media-container');
 const whiteOverlay = document.getElementById('white-paper-overlay');
@@ -2068,11 +2035,9 @@ const cameraControls = document.getElementById('cameraControls');
 const btnCamera = document.getElementById('btn-camera'), btnFlashlight = document.getElementById('btn-flashlight'), gridOverlay = document.getElementById('grid-overlay'); 
 let gridVisible = true;
 
-// 💡 綁定白紙透寫層 (Opacity) 與縮放滑桿
 document.getElementById('sliderWhite').addEventListener('input', (e) => { whiteOverlay.style.opacity = e.target.value; });
 document.getElementById('sliderZoom').addEventListener('input', (e) => { mediaContainer.style.transform = `scale(${e.target.value})`; });
 
-// 💡 控制台收合邏輯
 document.getElementById('camCtrlToggle').addEventListener('click', (e) => {
     const body = document.getElementById('camCtrlBody');
     if(body.style.display === 'none') {
@@ -2084,12 +2049,11 @@ document.getElementById('camCtrlToggle').addEventListener('click', (e) => {
     }
 });
 
-// 💡 控制台拖曳邏輯：排除點擊收合按鈕的干擾！
 let isDraggingCtrl = false, ctrlStartX, ctrlStartY, ctrlInitialLeft, ctrlInitialTop;
 const ctrlHeader = document.getElementById('camCtrlHeader');
 
 const startCtrlDrag = (e) => {
-    if (e.target.id === 'camCtrlToggle') return; // 💡 讓收合按鈕可以正常被點擊
+    if (e.target.id === 'camCtrlToggle') return; 
     isDraggingCtrl = true;
     ctrlStartX = e.touches ? e.touches[0].clientX : e.clientX;
     ctrlStartY = e.touches ? e.touches[0].clientY : e.clientY;
@@ -2220,7 +2184,6 @@ async function takeScreenshot() {
   const inputs = target.querySelectorAll('input[type="number"]'); 
   const placeholders = [];
   
-  // 💡 截圖前：將有捲軸的容器撐開，確保說明文字入鏡
   const wrapper = document.getElementById('scroll-wrapper');
   const oldBodyH = target.style.height;
   const oldBodyOv = target.style.overflow;
@@ -2245,7 +2208,6 @@ async function takeScreenshot() {
   window.scrollTo(0, 0); 
   await new Promise(r => setTimeout(r, 100));
   
-  // 解決 html2canvas 無法截取 WebRTC 實境相機的問題：先將相機畫面畫入臨時隱藏畫布
   let tempCanvas = null;
   if (stream && videoTrack && video.style.opacity === "1") {
       tempCanvas = document.createElement('canvas');
@@ -2258,7 +2220,6 @@ async function takeScreenshot() {
       tempCanvas.style.height = '100%';
       tempCanvas.style.objectFit = 'cover';
       tempCanvas.style.zIndex = '-1';
-      // 保留相應的縮放比例，透明度已由 white-paper-overlay 原生負責覆蓋
       const zoomVal = document.getElementById('sliderZoom').value;
       const ctx = tempCanvas.getContext('2d');
       ctx.translate(tempCanvas.width/2, tempCanvas.height/2);
@@ -2295,7 +2256,7 @@ async function takeScreenshot() {
   wrapper.style.position = oldWrapPos;
 }
 
-// 💡 核心變更：全地形場景與自訂介質引擎
+// 核心變更：全地形場景與高空介質引擎
 const svgEl = document.getElementById('canvas');
 const inLoad = document.getElementById('inLoad');
 const els = {
@@ -2309,14 +2270,16 @@ const els = {
   txtAnchorTension: document.getElementById('txtAnchorTension'), txtAnchorMult: document.getElementById('txtAnchorMult'),
   eduPanel: document.getElementById('eduPanel'), lblBranchName: document.getElementById('lblBranchName'),
   btnFrictionBase: document.getElementById('btnFrictionBase'), lblMA: document.getElementById('lblMA'),
-  distanceIndicator: document.getElementById('distanceIndicator'), distLine: document.getElementById('distLine'), distText: document.getElementById('distText')
+  distanceIndicator: document.getElementById('distanceIndicator'), distLine: document.getElementById('distLine'), distText: document.getElementById('distText'),
+  buildingScene: document.getElementById('buildingScene'), buildingPath: document.getElementById('buildingPath'), parapetPath: document.getElementById('parapetPath'),
+  lblRoof: document.getElementById('lblRoof'), lblWall: document.getElementById('lblWall'), lblParapet: document.getElementById('lblParapet'),
+  bgTree: document.getElementById('bgTree')
 };
 
 let P = { x: 120, y: 80 }; 
 const L_dist = 200;           
 let A = { x: 340, y: 360 };   
 
-// 場景資料庫
 const scenes = {
     'tree': { i18nKey: 'sceneTree', icon: '🌳', color: 'var(--tree)', friction: 0.4, bg: 'bgTree', customName: null },
     'steel': { i18nKey: 'sceneSteel', icon: '🏗️', color: '#f59e0b', friction: 0.3, bg: 'bgSteel', customName: null },
@@ -2325,9 +2288,10 @@ const scenes = {
 
 let currentScene = 'tree';
 let currentE = 0.4; 
-let currentMode = 'base'; // base = 使用場景預設介質, carabiner, pulley... 等等
+let currentMode = 'base'; 
 let currentAction = 'static';
-let currentMA = 1; // 💡 系統省力比預設為 1:1
+let currentMA = 1; 
+let lastShapeData = '';
 
 function getSceneName() {
     if (scenes[currentScene].customName) return scenes[currentScene].customName;
@@ -2339,9 +2303,14 @@ function setScene(btn, sceneKey) {
     btn.classList.add('active');
     currentScene = sceneKey;
     
-    // 💡 切換預設場景時，隱藏所有其他特殊背景
+    if (currentMode === 'pad' || currentMode === 'roller') {
+        currentMode = 'base';
+        document.querySelectorAll('.toggle-btn[data-type="friction"]').forEach(b => b.classList.remove('active'));
+        document.getElementById('btnFrictionBase').classList.add('active');
+    }
+
     document.querySelectorAll('.env-bg').forEach(el => {
-        if(el.tagName === 'g' && el.id) el.style.display = 'none'; // 隱藏所有 <g> 背景，保留 <line> 地面
+        if(el.tagName === 'g' && el.id) el.style.display = 'none'; 
     });
     if(scenes[sceneKey].bg !== 'none') {
         document.getElementById(scenes[sceneKey].bg).style.display = 'block';
@@ -2355,7 +2324,7 @@ function setScene(btn, sceneKey) {
         currentE = scenes[sceneKey].friction;
     }
     
-    lastShapeData = ''; // 重置形狀標記
+    lastShapeData = ''; 
     updateEngine();
 }
 
@@ -2411,28 +2380,18 @@ function setFriction(btn, mode) {
         currentE = parseFloat(btn.dataset.val);
         currentMode = mode;
         
-        // 💡 選擇五大新介質時，自動切換至「淨空場景」
-        const specialMediums = {
-            'concrete': true,
-            'mud': true,
-            'roller': true,
-            'pipe': true,
-            'vehicle': true
-        };
+        const specialMediums = { 'pad': true, 'roller': true };
         
         if (specialMediums[mode]) {
-            // 切換上方按鈕為「淨空」
             document.querySelectorAll('.toggle-btn[data-type="scene"]').forEach(b => b.classList.remove('active'));
             const noneBtn = document.querySelector('.toggle-btn[data-type="scene"][data-val="none"]');
             if (noneBtn) noneBtn.classList.add('active');
             currentScene = 'none';
             
-            // 隱藏所有全螢幕場景
             document.querySelectorAll('.env-bg').forEach(el => {
                 if(el.tagName === 'g' && el.id) el.style.display = 'none';
             });
         } else {
-            // 切換回預設（樹幹/鉤環/滑輪），並顯示回原本的場景
             if(scenes[currentScene].bg !== 'none') {
                 document.getElementById(scenes[currentScene].bg).style.display = 'block';
             }
@@ -2445,7 +2404,7 @@ function setFriction(btn, mode) {
             currentAction = 'haul';
             document.getElementById('maRow').style.display = 'flex';
         }
-        lastShapeData = ''; // 重置形狀標記
+        lastShapeData = ''; 
         updateEngine();
     };
     if (mode !== 'base') attemptFeature('featFric', doSet); else doSet();
@@ -2457,7 +2416,6 @@ function setAction(btn) {
         btn.classList.add('active');
         currentAction = btn.dataset.val;
         
-        // 💡 在上拉與下放狀態，都顯示 MA 選單
         if (currentAction === 'haul' || currentAction === 'lower') {
             document.getElementById('maRow').style.display = 'flex';
         } else {
@@ -2476,19 +2434,14 @@ function setMA(btn) {
     updateEngine();
 }
 
-// 💡 繪製微型情境模型 (Diorama Chunks)！
-let lastShapeData = '';
 function renderRedirectNode() {
     let currentShapeData = currentScene + '-' + currentMode;
     if (lastShapeData === currentShapeData) return; 
     lastShapeData = currentShapeData;
     
-    // 💡 包含透明觸控感應區
     let html = `<circle cx="0" cy="0" r="60" fill="transparent" />`;
-    
     let c = scenes[currentScene].color;
     
-    // 💡 加入微型情境背景 (掛載 class="diorama-bg" 以便相機模式隱藏)
     if (currentMode === 'base') {
         if(currentScene === 'tree') html += `<path d="M-25,-5 Q0,-20 25,-5 Q0,-15 -25,-5" fill="none" stroke="${c}" stroke-width="8" stroke-linecap="round"/><circle cx="0" cy="0" r="6" fill="#0a1410" />`;
         else if(currentScene === 'steel') html += `<rect x="-20" y="-10" width="40" height="15" fill="${c}" rx="4"/><circle cx="0" cy="0" r="6" fill="#0a1410" />`;
@@ -2497,46 +2450,14 @@ function renderRedirectNode() {
         html += `<path d="M-15,0 A15,15 0 1,1 15,0 A15,15 0 0,1 -15,0" fill="none" stroke="#cbd5e1" stroke-width="6"/><line x1="12" y1="-10" x2="12" y2="10" stroke="#f1f5f9" stroke-width="4" stroke-linecap="round"/>`;
     } else if (currentMode === 'pulley') {
         html += `<circle cx="0" cy="0" r="18" fill="var(--warn)" stroke="#0a1410" stroke-width="3" /><circle cx="0" cy="0" r="6" fill="#0a1410" /><line x1="0" y1="0" x2="10" y2="10" stroke="#000" stroke-width="2"/>`;
-    } else if (currentMode === 'concrete') {
-        html += `<g class="diorama-bg">
-                    <path d="M -40,0 L 40,0 L 40,160 L -40,160 Z" fill="#334155" />
-                    <path d="M -40,0 L 0,0 L 0,160 L -40,160 Z" fill="#475569" />
-                    <line x1="-40" y1="0" x2="40" y2="0" stroke="#94a3b8" stroke-width="6" />
-                 </g>
-                 <circle cx="0" cy="0" r="4" fill="#0a1410" />
-                 <circle cx="0" cy="0" r="2" fill="#cbd5e1" />`;
-    } else if (currentMode === 'mud') {
-        html += `<g class="diorama-bg">
-                    <path d="M -80,160 Q -40,-10 0,0 Q 60,-10 120,160 Z" fill="#451a03" />
-                    <path d="M -80,160 Q -40,-10 0,0 Q 60,-10 120,160" fill="none" stroke="#4d7c0f" stroke-width="10" />
-                 </g>
-                 <circle cx="0" cy="0" r="4" fill="#0a1410" />
-                 <circle cx="0" cy="0" r="2" fill="#eab308" />`;
+    } else if (currentMode === 'pad') {
+        html += `<rect x="-20" y="-12" width="40" height="16" fill="#f59e0b" rx="4" />
+                 <path d="M -20,0 L 20,0" stroke="#b45309" stroke-width="2" />
+                 <circle cx="0" cy="0" r="4" fill="#0a1410" />`;
     } else if (currentMode === 'roller') {
-        html += `<g class="diorama-bg">
-                    <path d="M -40,0 L 40,0 L 40,160 L -40,160 Z" fill="#334155" />
-                    <path d="M -40,0 L 0,0 L 0,160 L -40,160 Z" fill="#475569" />
-                 </g>
-                 <rect x="-25" y="-12" width="50" height="12" fill="#94a3b8" rx="6" />
-                 <circle cx="-12" cy="-6" r="5" fill="#1e293b" />
-                 <circle cx="12" cy="-6" r="5" fill="#1e293b" />
-                 <circle cx="0" cy="0" r="4" fill="#0a1410" />`;
-    } else if (currentMode === 'pipe') {
-        html += `<g class="diorama-bg">
-                    <rect x="-150" y="-15" width="300" height="30" fill="#64748b" rx="15" />
-                    <rect x="-150" y="-10" width="300" height="8" fill="#94a3b8" rx="4" />
-                 </g>
-                 <circle cx="0" cy="0" r="16" fill="none" stroke="#e2e8f0" stroke-width="4" stroke-dasharray="4 4" />
-                 <circle cx="0" cy="0" r="4" fill="#0a1410" />`;
-    } else if (currentMode === 'vehicle') {
-        html += `<g class="diorama-bg">
-                    <path d="M 10,0 L 20,-20 L 50,-60 L 180,-60 L 180,80 L 10,80 Z" fill="#b91c1c" />
-                    <path d="M 55,-50 L 110,-50 L 110,-10 L 35,-10 Z" fill="#020617" />
-                    <rect x="10" y="30" width="30" height="40" fill="#1e293b" rx="4" />
-                    <circle cx="100" cy="80" r="30" fill="#020617" />
-                    <circle cx="100" cy="80" r="12" fill="#94a3b8" />
-                 </g>
-                 <circle cx="0" cy="0" r="10" fill="none" stroke="#e2e8f0" stroke-width="4" />
+        html += `<rect x="-20" y="-8" width="40" height="14" fill="#94a3b8" rx="4" />
+                 <circle cx="-10" cy="-1" r="6" fill="#1e293b" />
+                 <circle cx="10" cy="-1" r="6" fill="#1e293b" />
                  <circle cx="0" cy="0" r="4" fill="#0a1410" />`;
     }
     
@@ -2553,8 +2474,6 @@ function describeArc(x, y, r, startAngle, endAngle) {
 function updateEngine() {
     let W = parseFloat(inLoad.value) || 100;
     
-    // 💡 T_rope_to_anchor 代表「通過 COD 後的繩索張力」
-    // T_operator_pull 代表「經過省力比 (MA) 系統後，操作者手部實際承受的拉力」
     let T_rope_to_anchor = W; 
     let T_operator_pull = W; 
 
@@ -2578,7 +2497,6 @@ function updateEngine() {
     let thetaRad = Math.acos(Math.max(-1, Math.min(1, dot)));
     let thetaDeg = thetaRad * 180 / Math.PI;
     
-    // 💡 向量計算基準為繩索離開 COD 的張力
     let vForceL = { x: vecL.x * W, y: vecL.y * W };
     let vForceA = { x: vecA.x * T_rope_to_anchor, y: vecA.y * T_rope_to_anchor };
     
@@ -2592,7 +2510,12 @@ function updateEngine() {
     renderRedirectNode();
     els.redirectNode.setAttribute('transform', `translate(${P.x}, ${P.y})`);
     
-    let loadPt = { x: P.x, y: P.y + L_dist };
+    // 重物繩索智慧伸縮引擎：防止 W 掉出畫面或被儀表板遮擋
+    let loadY = P.y + 160; // 預設繩長
+    if (loadY > 340) loadY = 340; // 最低極限：不被儀表板吃掉
+    if (loadY < P.y + 55) loadY = P.y + 55; // 最短極限：避免 W 疊在轉向點上
+    let loadPt = { x: P.x, y: loadY };
+    
     els.ropeLoad.setAttribute('x1', P.x); els.ropeLoad.setAttribute('y1', P.y);
     els.ropeLoad.setAttribute('x2', loadPt.x); els.ropeLoad.setAttribute('y2', loadPt.y);
     els.loadGroup.setAttribute('transform', `translate(${loadPt.x}, ${loadPt.y})`);
@@ -2601,6 +2524,73 @@ function updateEngine() {
     els.ropeAnchor.setAttribute('x2', A.x); els.ropeAnchor.setAttribute('y2', A.y);
     els.anchorGroup.setAttribute('transform', `translate(${A.x}, ${A.y})`);
     
+    // 動態建築演算核心 (Pad 與 Roller 限定)
+    if (currentMode === 'pad' || currentMode === 'roller') {
+        if (els.buildingScene) els.buildingScene.style.display = 'block';
+        let isLeft = A.x < P.x;
+        let floorY = Math.max(A.y, P.y); 
+        let parapetY = P.y;
+        let pWidth = 35; // 女兒牆厚度
+
+        if (isLeft) {
+            let body = `M -200,600 L -200,${floorY} L ${P.x - pWidth},${floorY} L ${P.x - pWidth},600 Z`;
+            let para = `M ${P.x - pWidth},${floorY} L ${P.x - pWidth},${parapetY} L ${P.x},${parapetY} L ${P.x},600 L ${P.x - pWidth},600 Z`;
+            
+            if (els.buildingPath) els.buildingPath.setAttribute('d', body);
+            if (els.parapetPath) els.parapetPath.setAttribute('d', para);
+
+            if (els.lblRoof) {
+                els.lblRoof.setAttribute('transform', `translate(${P.x - pWidth - 30}, ${floorY + 25})`);
+                els.lblRoof.setAttribute('text-anchor', 'end');
+            }
+            
+            if (els.lblWall) {
+                els.lblWall.setAttribute('transform', `translate(${P.x + 20}, ${parapetY + 60}) rotate(90)`);
+                els.lblWall.setAttribute('text-anchor', 'start');
+            }
+
+            if (els.lblParapet) {
+                if (floorY - parapetY > 40) {
+                    els.lblParapet.setAttribute('transform', `translate(${P.x - pWidth/2}, ${parapetY + (floorY - parapetY)/2}) rotate(90)`);
+                    els.lblParapet.style.display = 'block';
+                } else { els.lblParapet.style.display = 'none'; }
+            }
+        } else {
+            let body = `M 600,600 L 600,${floorY} L ${P.x + pWidth},${floorY} L ${P.x + pWidth},600 Z`;
+            let para = `M ${P.x + pWidth},${floorY} L ${P.x + pWidth},${parapetY} L ${P.x},${parapetY} L ${P.x},600 L ${P.x + pWidth},600 Z`;
+            
+            if (els.buildingPath) els.buildingPath.setAttribute('d', body);
+            if (els.parapetPath) els.parapetPath.setAttribute('d', para);
+
+            if (els.lblRoof) {
+                els.lblRoof.setAttribute('transform', `translate(${P.x + pWidth + 30}, ${floorY + 25})`);
+                els.lblRoof.setAttribute('text-anchor', 'start');
+            }
+            
+            if (els.lblWall) {
+                els.lblWall.setAttribute('transform', `translate(${P.x - 20}, ${parapetY + 60}) rotate(-90)`);
+                els.lblWall.setAttribute('text-anchor', 'start');
+            }
+
+            if (els.lblParapet) {
+                if (floorY - parapetY > 40) {
+                    els.lblParapet.setAttribute('transform', `translate(${P.x + pWidth/2}, ${parapetY + (floorY - parapetY)/2}) rotate(-90)`);
+                    els.lblParapet.style.display = 'block';
+                } else { els.lblParapet.style.display = 'none'; }
+            }
+        }
+    } else {
+        if (els.buildingScene) els.buildingScene.style.display = 'none';
+    }
+
+    if (currentScene === 'tree') {
+        let isLeft = A.x < P.x;
+        let scaleX = isLeft ? 1 : -1;
+        els.bgTree.setAttribute('transform', `translate(${P.x}, 0) scale(${scaleX}, 1) translate(-45, 0)`);
+    } else {
+        els.bgTree.removeAttribute('transform');
+    }
+
     let angleL = Math.PI / 2; 
     let angleA = Math.atan2(vecA.y, vecA.x);
     if(angleA < 0) angleA += 2 * Math.PI;
@@ -2633,7 +2623,6 @@ function updateEngine() {
         els.distanceIndicator.style.opacity = '0';
     }
 
-    // 💡 動態白話文教學邏輯 (自動判讀介質名稱與圖示)
     let eduText = "";
     let eduColor = "var(--safe)";
     let eduBg = "rgba(74, 222, 128, 0.1)";
@@ -2643,11 +2632,8 @@ function updateEngine() {
 
     if (currentMode === 'carabiner') { mName = t('btnFricCara').replace(/🪝\s*/, ''); mIcon = '🪝'; }
     else if (currentMode === 'pulley') { mName = t('btnFricPull').replace(/⚙️\s*/, ''); mIcon = '⚙️'; }
-    else if (currentMode === 'concrete') { mName = t('btnFricConc').replace(/🧱\s*/, ''); mIcon = '🧱'; }
-    else if (currentMode === 'mud') { mName = t('btnFricMud').replace(/🌱\s*/, ''); mIcon = '🌱'; }
+    else if (currentMode === 'pad') { mName = t('btnFricPad').replace(/🛏️\s*/, ''); mIcon = '🛏️'; }
     else if (currentMode === 'roller') { mName = t('btnFricRoller').replace(/🛞\s*/, ''); mIcon = '🛞'; }
-    else if (currentMode === 'pipe') { mName = t('btnFricPipe').replace(/🪈\s*/, ''); mIcon = '🪈'; }
-    else if (currentMode === 'vehicle') { mName = t('btnFricVeh').replace(/🚒\s*/, ''); mIcon = '🚒'; }
     
     if (currentAction === 'static') {
         eduText = t('edu_static').replace('{T}', T_operator_pull.toFixed(0));
@@ -2690,7 +2676,6 @@ function updateEngine() {
     els.forceArrowLine.setAttribute('stroke', forceColor);
     els.forceArrowHead.setAttribute('fill', forceColor);
     
-    // 💡 儀表板顯示的是最後端操作者手部感知的力量
     els.txtAnchorTension.textContent = `${T_operator_pull.toFixed(0)} kg`;
     els.txtAnchorMult.textContent = t('multLabel').replace('{m}', (T_operator_pull/W).toFixed(1));
     
@@ -2706,14 +2691,12 @@ let pt = svgEl.createSVGPoint();
 function getSVGPos(e) { pt.x = e.touches ? e.touches[0].clientX : e.clientX; pt.y = e.touches ? e.touches[0].clientY : e.clientY; return pt.matrixTransform(svgEl.getScreenCTM().inverse()); }
 
 let isDragging = false;
-let draggingNode = null; // 紀錄目前拖曳的是 'A'(地面操作) 還是 'P'(轉向點)
+let draggingNode = null; 
 
-// 綁定地面操作拖曳
 function startDragA(e) { draggingNode = 'A'; isDragging = true; if(e.type === 'touchstart' && e.cancelable) { e.preventDefault(); } }
 els.anchorGroup.addEventListener('mousedown', startDragA);
 els.anchorGroup.addEventListener('touchstart', startDragA, {passive: false});
 
-// 綁定轉向點 (COD) 拖曳
 function startDragP(e) { draggingNode = 'P'; isDragging = true; if(e.type === 'touchstart' && e.cancelable) { e.preventDefault(); } }
 els.redirectNode.addEventListener('mousedown', startDragP);
 els.redirectNode.addEventListener('touchstart', startDragP, {passive: false});
@@ -2723,12 +2706,14 @@ function processDrag(e) {
   if(e.cancelable) e.preventDefault(); 
   let pos = getSVGPos(e);
   
+  if (!pos || isNaN(pos.x) || isNaN(pos.y)) return; 
+
   if (draggingNode === 'A') {
-      A.x = Math.max(20, Math.min(380, pos.x));
-      A.y = Math.max(20, Math.min(380, pos.y));
+      A.x = Math.max(-100, Math.min(500, pos.x));
+      A.y = Math.max(-50, Math.min(450, pos.y));
   } else if (draggingNode === 'P') {
-      P.x = Math.max(20, Math.min(380, pos.x));
-      P.y = Math.max(20, Math.min(380, pos.y));
+      P.x = Math.max(-100, Math.min(500, pos.x));
+      P.y = Math.max(-50, Math.min(450, pos.y));
   }
   updateEngine();
 }
