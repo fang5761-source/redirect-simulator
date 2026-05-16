@@ -55,11 +55,9 @@
 
   body.camera-mode { background-color: transparent !important; }
   
-  /* AR/相機模式自動隱藏環境背景與微型情境模型 */
   body.camera-mode .env-bg { display: none !important; }
   body.camera-mode .diorama-bg { display: none !important; }
   
-  /* 相機/白紙模式下的高對比優化 ( Req 3, 5 ) */
   body.camera-mode .edu-wrap {
     background: rgba(0, 0, 0, 0.85) !important;
     backdrop-filter: blur(5px);
@@ -86,7 +84,6 @@
   input, textarea { -webkit-user-select: auto; user-select: auto; box-sizing: border-box; }
   *{box-sizing:border-box}
 
-  /* 獨立白紙透寫層 */
   #bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background-color: var(--bg); overflow: hidden; display: flex; align-items: center; justify-content: center; }
   #media-container { width: 100%; height: 100%; position: absolute; transition: transform 0.2s ease-out; transform-origin: center center; }
   #bg-video, #bg-image { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s; }
@@ -103,8 +100,26 @@
 
   .card { width:100%; background:var(--card); border:2px solid var(--line); border-radius:16px; padding: 10px; box-shadow:0 10px 30px rgba(0,0,0,.5); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); transition: border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease; }
   .card.camera-mode { background: transparent !important; border-color: rgba(255,255,255,0.2) !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; box-shadow: none !important; }
-  .capture-mode .capture-hide { display: none !important; }
   
+  .capture-mode .capture-hide { 
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+  }
+  .capture-mode .card {
+      border-color: transparent !important;
+      background: transparent !important;
+      box-shadow: none !important;
+  }
+  
+  .capture-transparent { background-color: transparent !important; }
+  .capture-transparent #bg-layer, 
+  .capture-transparent #grid-overlay { display: none !important; }
+  .capture-transparent .card { background: transparent !important; border-color: transparent !important; box-shadow: none !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+  .capture-transparent .dash-box { background: transparent !important; border-color: transparent !important; }
+  .capture-transparent .edu-wrap { background: transparent !important; border-color: transparent !important; }
+  .capture-transparent .app-container { filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.8)) !important; }
+
   .topbar { display: flex; align-items: center; margin-bottom: 8px; width: 100%; justify-content: space-between; }
   
   .title-left { 
@@ -122,7 +137,27 @@
   #langSelect:focus { border-color: var(--safe); }
   #langSelect option { background: var(--bg); color: var(--text); }
 
-  .icon-bar { display: flex; justify-content: space-between; align-items: center; gap: 6px; background: rgba(0,0,0,0.4); padding: 6px 8px; border-radius: 12px; margin-bottom: 8px; border: 1px solid var(--line); }
+  .icon-bar { 
+    display: flex; justify-content: space-between; align-items: center; gap: 6px; 
+    background: rgba(0,0,0,0.4); padding: 6px 8px; border-radius: 12px; 
+    margin-bottom: 8px; border: 1px solid var(--line); transition: all 0.3s ease;
+  }
+  body.camera-mode .icon-bar {
+      position: fixed;
+      bottom: max(20px, env(safe-area-inset-bottom));
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 20px);
+      max-width: 480px;
+      z-index: 10000;
+      background: rgba(10, 20, 16, 0.95);
+      border: 2px solid var(--safe);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+      margin-bottom: 0;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+  }
+
   .icon-btn { flex: 1; aspect-ratio: 1/1; max-height: 36px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid transparent; display: flex; justify-content: center; align-items: center; position: relative; cursor: pointer; transition: all 0.2s; font-size: 16px; color: var(--text); padding: 0; }
   .icon-btn:active { background: var(--line); transform: scale(0.95); }
   .icon-btn.active { background: var(--safe); color: var(--bg); border-color: var(--safe); }
@@ -132,9 +167,7 @@
   .svgWrap { position:relative; width:100%; height: 35vh; min-height: 280px; max-height: 380px; background: transparent; border-radius: 12px; border: 1px dashed var(--line); overflow: hidden; margin-bottom: 8px; }
   svg { display: block; width: 100%; height: 100%; }
   
-  #ropeLoad, #ropeAnchor, #forceArrowLine, #forceArrowHead, #angleText, .mask-text {
-      filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.9));
-  }
+  #ropeLoad, #ropeAnchor, #forceArrowLine, #forceArrowHead, #angleText, .mask-text { filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.9)); }
 
   .draggable-anchor { cursor: grab; touch-action: none; }
   .draggable-anchor:active { cursor: grabbing; }
@@ -142,14 +175,8 @@
   .dashboard { display: flex; justify-content: space-between; gap: 6px; margin-bottom: 8px; }
   .dash-box { flex: 1; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; text-align: center; }
   .dash-box .lbl { font-size: 11px; color: var(--muted); font-weight: bold; margin-bottom: 4px; }
-  .dash-box .val { font-size: 18px; font-weight: 900; font-family: monospace; display: inline-block; }
+  .dash-box .val { font-size: 18px; font-weight: 900; font-family: monospace; }
   .dash-box .sub { font-size: 10px; opacity: 0.8; margin-top: 2px; }
-
-  .val-flash { animation: flashHighlight 0.5s ease-out; }
-  @keyframes flashHighlight {
-      0% { transform: scale(1.3); text-shadow: 0 0 15px currentColor; }
-      100% { transform: scale(1); text-shadow: none; }
-  }
 
   .control-deck { background: rgba(0,0,0,0.3); border: 1px solid var(--line); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
   .control-row { display: flex; flex-direction: column; gap: 6px; }
@@ -166,10 +193,10 @@
   .edu-wrap { margin-top: 8px; padding: 12px; background: rgba(255, 216, 77, 0.1); border-radius: 8px; border: 1px solid var(--warn); text-align: justify; font-size: 13.5px; font-weight: bold; color: var(--text); line-height: 1.6; transition: background 0.3s, border 0.3s; }
   .mask-text { paint-order: stroke fill; stroke: var(--bg); stroke-width: 4px; stroke-linecap: round; stroke-linejoin: round; }
 
-  #cameraControls { display: none; position: absolute; top: 10px; left: 10px; flex-direction: column; background: rgba(0,0,0,0.75); padding: 8px 12px; border-radius: 10px; border: 1px solid var(--warn); z-index: 100; backdrop-filter: blur(8px); box-shadow: 0 4px 15px rgba(0,0,0,0.7); min-width: 140px; }
+  #cameraControls { display: none; position: absolute; top: 10px; left: 10px; flex-direction: column; background: rgba(0,0,0,0.75); padding: 8px 12px; border-radius: 10px; border: 1px solid var(--warn); z-index: 100; backdrop-filter: blur(8px); box-shadow: 0 4px 15px rgba(0,0,0,0.7); min-width: 150px; }
   .control-slider-wrap { display: flex; align-items: center; gap: 8px; }
   .control-slider-wrap span { font-size: 12px; color: var(--text); font-weight: bold; width: 45px; }
-  .control-slider-wrap input[type=range] { width: 80px; accent-color: var(--safe); }
+  .control-slider-wrap input[type=range] { width: 85px; accent-color: var(--safe); }
 
   .modal-overlay { 
     display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
@@ -245,7 +272,6 @@
 </head>
 <body>
 
-<!-- 🚀 散木團隊：多層次防盜保護系統 v6.4 -->
 <script>
 (function(){
   const _0xd = atob('ZmFuZzU3NjEtc291cmNlLmdpdGh1Yi5pbw=='); 
@@ -275,7 +301,7 @@
 </script>
 
 <script>
-// 💡 V6.4.2 專屬訂製版
+// 💡 V6.8.0 樹枝方向修正 + 繩索粗細快調版
 const i18n = {
   zh: {
     appTitle: "下方固定點架設儀 (全地形)",
@@ -406,289 +432,50 @@ const i18n = {
     featFric: "⚙️ 動態摩擦力運算",
     featFricDesc: "解鎖所有實戰介質的摩擦係數！精準推演不同地形對系統的受力影響。",
     featAction: "🕹️ 上拉下放引擎",
-    featActionDesc: "解鎖動態操作！真實模擬上拉與下放時，摩擦力造成的恐怖張力翻倍效應！"
-  },
-  en: {
-    appTitle: "Redirect Sandbox PRO",
-    ground: "Ground",
-    distExt: "Extended to Ground",
-    groundOp: "Ground OP",
-    loadW: "Load (W)",
-    always1x: "Always = 1x",
-    anchorTension: "Anchor Tension",
-    codForce: "COD Force",
-    terrainLabel: "🏕️ Terrain & Environment",
-    btnTree: "🌳 Tree",
-    btnSteel: "🏗️ Truss",
-    btnNone: "⬛ Blank",
-    frictionLabel: "🛡️ COD Friction Type",
-    btnCustom: "✏️ Custom",
-    directPull: " Pull",
-    btnFricCara: "🪝 Carabiner",
-    btnFricPull: "⚙️ Pulley",
-    btnFricPad: "🛏️ Edge Pad",
-    btnFricRoller: "🛞 Edge Roller",
-    lblRoof: "Roof Floor",
-    lblWall: "Outer Wall",
-    lblParapet: "Parapet",
-    actionLabel: "🕹️ System Action",
-    btnStat: "⏸️ Static",
-    btnHaul: "⬆️ Hauling",
-    btnLow: "⬇️ Lowering",
-    maLabel: "⚙️ Mechanical Advantage (MA)",
-    eduDefault: "📍 Drag the 'Redirect' or 'Ground OP' to align with AR/Photo backgrounds.<br><span style='color:var(--safe)'>💡 Hint: Double tap the canvas to hide/show panels!</span>",
-    sceneTree: "Tree",
-    sceneSteel: "Truss",
-    sceneNone: "Redirect",
-    nameUpdated: "COD named to: ",
-    fricUpdated: "Friction custom set to: ",
-    fricInvalid: "❌ Enter a valid number between 0 and 1",
-    edu_static: "⏸️ <b>Zero friction in static lock.</b><br>Operator holds force equal to load ({T}kg).",
-    edu_haul_base: "🥵 <b>High friction on {name}! Most exhausting.</b><br>Operator needs <b>{T}kg</b> force to haul with MA {ma}:1!",
-    edu_haul_cara: "🪝🤨 <b>Medium friction on {name}.</b><br>Requires <b>{T}kg</b> force to haul with MA {ma}:1.",
-    edu_haul_pull: "⚙️😎 <b>High efficiency! Effortless.</b><br>Operator only needs <b>{T}kg</b> force with MA {ma}:1.",
-    edu_low_base: "🛡️ <b>High friction acts as a natural brake!</b><br>With MA {ma}:1, operator controls the load holding just <b>{T}kg</b>.",
-    edu_low_cara: "🪝🛡️ <b>Medium braking force.</b><br>With MA {ma}:1, operator holds <b>{T}kg</b> to lower safely.",
-    edu_low_pull: "⚙️⚠️ <b>Very slippery! Caution when lowering.</b><br>With MA {ma}:1, operator must hold <b>{T}kg</b>.",
-    edu_warning: "<br><br>🚨 <b>Pulley Multiplier Effect:</b> Angle is too sharp! The anchor bears >2x load.",
-    multLabel: "({m}x Load)",
-    menuSet: "Settings & Guide",
-    menuSup: "Support & Dev Info",
-    menuSponsor: "Support Team / How to Get Key",
-    menuLang: "Language Setting",
-    menu1: "Theory & Principles",
-    menu3: "Share Link",
-    menu4: "Check Updates",
-    menu5: "Report an Issue",
-    menuOp: "System Manual",
-    menuInfo: "Version Info",
-    menuPWA: "Add to Home Screen",
-    op1: "Drag the <b>Redirect Node</b> or <b>Ground OP</b> to simulate force changes dynamically.",
-    op2: "Click <b>Terrain & Environment</b> to switch between scenes.",
-    op3: "Change <b>COD Friction Type</b> to observe how different mediums affect the load.",
-    op4: "Click <b>✏️Custom</b> to manually set the object name and friction coefficient.",
-    op5: "Toggle <b>System Action</b> to compare the effects of friction during Static, Hauling, and Lowering.",
-    devTitle: "Redirect Sandbox PRO",
-    devTeam: "Developed by <span style='color:var(--warn);'>SunMoon Team</span>",
-    devT1: "Engineering & Architecture / Shih-Feng Hsu",
-    devT2: "UI/UX Design / Pei-Fang Wu",
-    customNameTitle: "✏️ Custom COD Name",
-    customNameDesc: "Enter the custom terrain or object name:",
-    customNamePlh: "e.g., Concrete pillar",
-    customFricTitle: "⚙️ Custom Friction",
-    fricTip: "💡 <b>Tip:</b><br><span style='color:var(--bad)'>0.3</span> = High Friction<br><span style='color:var(--safe)'>0.9</span> = Low Friction",
-    fricPlh: "Enter 0.1 ~ 1.0",
-    cancel: "Cancel",
-    confirmName: "Confirm",
-    confirmFric: "Apply",
-    thCodT: "🔄 COD (Change of Direction)",
-    thCodD: "The point where the rope changes direction. The total force it bears depends on the rope angle.",
-    thFricT: "🛡️ Friction",
-    thFricD: "Resistance when rope contacts an object. 'Enemy' when hauling, 'friend' when lowering.",
-    thMultT: "🚨 Pulley Multiplier Effect",
-    thMultD: "When using an efficient pulley and a very sharp angle (e.g., 0°), the COD bears nearly 2x (200%) load!",
-    collapse: "🔼 Collapse",
-    pwaDesc: "Add to home screen for a 100% immersive, fullscreen experience:",
-    pwaAnd: "🤖 Android",
-    pwaIOS: "🍎 iOS (iPhone)",
-    pwaStep1: "Open the link in your browser",
-    pwaStep2: "Tap '⋮' in the browser menu",
-    pwaStep3: "Select 'Add to Home Screen'",
-    pwaStep4: "Tap 'Install' to add the app to your desktop",
-    pwaStep5: "Must use the <b>Safari</b> browser",
-    pwaStep6: "Tap the 'Share' icon at the bottom",
-    pwaStep7: "Scroll down and select 'Add to Home Screen'",
-    pwaStep8: "Tap 'Add' to create the shortcut",
-    installBtn: "📥 Install APP",
-    disclaimer: "<strong style='color: var(--bad); font-size: 14px;'>⚠️ Disclaimer:</strong><br>Friction coefficients are theoretical averages. Real-world surface roughness alters actual friction. Rigging and safety MUST be determined by professional instructors. <br><br><span style='color:var(--warn);'>* Single-device license. No customer support or code replacement for lost/changed devices. Please repurchase.</span>",
-    vipTitle: "🔒 PRO Feature Unlock",
-    vipEnable1: "You are about to enable '",
-    vipEnable2: "'!",
-    vipProOnly: "Support SunMoon Team to unlock all features permanently!",
-    vipDisclaimer: "⚠️ Notice: Single-device license. No customer support or replacements for lost/changed devices. Please repurchase.",
-    vipStoreBtn: "🛒 Go to PRO Store",
-    vipHint: "💡 Note: For how to get the key, please see the section below",
-    vipHasPwd: "Already have a password? Enter here:",
-    vipPwdPlh: "Enter VIP Password",
-    vipCancel: "Maybe Later",
-    vipUnlock: "Unlock Now 🔓",
-    vipErrPwd: "❌ Incorrect password. Please try again.",
-    vipStateUnlocked: "🛡️ System: Unlocked",
-    vipStateDesc: "To enter Commander Console, enter MASTER KEY:",
-    cmdTitle: "👑 Commander Console",
-    cmdExpToday: "👉 Today's Trial Code",
-    cmdExpTmrw: "👉 Tomorrow's Trial Code",
-    cmdPerm: "👉 🌟 Permanent Code",
-    cmdLogout: "Logout",
-    cmdClose: "Close",
-    toastAuthSuccess: "🎉 Auth Success!",
-    toastTrialSuccess: "⏱️ Trial Activated!",
-    toastLogout: "🔄 Logged out.",
-    supTitle: "💬 Report an Issue",
-    supDesc: "Found a bug or have a suggestion?<br><br>Click below to fill out the report form and help us improve the system!",
-    supLater: "Maybe Later",
-    supGo: "Go to Support Form",
-    featCam: "📷 AR Camera Overlay",
-    featCamDesc: "Overlay sandbox on real rescue scene!",
-    featPhoto: "📁 Photo Overlay",
-    featPhotoDesc: "Import site photos for realistic force simulation!",
-    featShot: "📸 Tactical Screenshot",
-    featShotDesc: "Export watermark-free, hi-res tactical report!",
-    featFric: "⚙️ Dynamic Friction",
-    featFricDesc: "Unlock all advanced friction settings!",
-    featAction: "🕹️ Haul & Lower Engine",
-    featActionDesc: "Simulate massive tension spikes from friction!"
-  },
-  ja: {
-    appTitle: "リダイレクト砂盤 (全地形)",
-    ground: "地面 Ground",
-    distExt: "長距離延長（地面）",
-    groundOp: "操作側",
-    loadW: "負荷 (W)",
-    always1x: "常に = 1倍",
-    anchorTension: "操作側張力",
-    codForce: "(COD) 荷重",
-    terrainLabel: "🏕️ 地形と環境",
-    btnTree: "🌳 ツリー",
-    btnSteel: "🏗️ 鉄骨",
-    btnNone: "⬛ 空白",
-    frictionLabel: "🛡️ COD 摩擦タイプ",
-    btnCustom: "✏️ カスタム",
-    directPull: " 直引き",
-    btnFricCara: "🪝 カラビナ",
-    btnFricPull: "⚙️ プーリー",
-    btnFricPad: "🛏️ エッジパッド",
-    btnFricRoller: "🛞 ローラー",
-    lblRoof: "屋上床",
-    lblWall: "外壁",
-    lblParapet: "パラペット",
-    actionLabel: "🕹️ システム動作",
-    btnStat: "⏸️ 静止",
-    btnHaul: "⬆️ 引き上げ",
-    btnLow: "⬇️ ロワリング",
-    maLabel: "⚙️ システム倍力比 (MA)",
-    eduDefault: "📍 砂盤の「支点」や「操作側」をドラッグして、写真に合わせ荷重変化を観察してください。<br><span style='color:var(--safe)'>💡 ヒント: 空白をダブルタップするとパネルを隠せます！</span>",
-    sceneTree: "樹木",
-    sceneSteel: "鉄骨",
-    sceneNone: "支点",
-    nameUpdated: "COD名を変更：",
-    fricUpdated: "摩擦係数を変更：",
-    fricInvalid: "❌ 0から1の間の数値を入力してください",
-    edu_static: "⏸️ <b>静止ロック時、摩擦抵抗ゼロ。</b><br>操作側は負荷({T}kg)と同等の力でバランスを維持できます。",
-    edu_haul_base: "🥵 <b>{name}の摩擦大！最もしんどい。</b><br>引き上げには MA {ma}:1 で<b>{T}kg</b>の力が必要！",
-    edu_haul_cara: "🪝🤨 <b>{name}の中程度摩擦。</b><br>引き上げに MA {ma}:1 で<b>{T}kg</b>の力が必要です。",
-    edu_haul_pull: "⚙️😎 <b>{name}は高効率！超省力。</b><br>操作側は MA {ma}:1 で<b>{T}kg</b>の力で済みます。",
-    edu_low_base: "🛡️ <b>ロワリング時、{name}の摩擦がブレーキに！</b><br>MA {ma}:1 で、操作側はわずか<b>{T}kg</b>の力で下降できます。",
-    edu_low_cara: "🪝🛡️ <b>適度なブレーキ力。</b><br>MA {ma}:1 で、操作側は<b>{T}kg</b>の力でコントロールできます。",
-    edu_low_pull: "⚙️⚠️ <b>滑りやすい！ロワリング注意。</b><br>MA {ma}:1 で、操作側は負荷({T}kg)を保持する必要があります！",
-    edu_warning: "<br><br>🚨 <b>プーリー倍増効果：</b> 角度が鋭すぎます！崩壊のリスク大！",
-    multLabel: "(負荷の {m} 倍)",
-    menuSet: "設定とガイド",
-    menuSup: "サポートと開発情報",
-    menuSponsor: "チームを支援 / キー取得方法",
-    menuLang: "言語設定 / Language",
-    menu1: "原理と専門用語",
-    menu3: "リンク共有",
-    menu4: "更新確認",
-    menu5: "システム問題報告",
-    menuOp: "操作マニュアル",
-    menuInfo: "バージョン情報",
-    menuPWA: "ホーム画面に追加",
-    op1: "サンドボックス内の <b>支点</b> と <b>操作側</b> をドラッグしてシミュレーションします。",
-    op2: "<b>地形と環境</b> をクリックし、環境を切り替えます。",
-    op3: "<b>COD摩擦タイプ</b> を変更し、負担にどう影響するか観察します。",
-    op4: "<b>✏️カスタム</b> をクリックして、名称と摩擦係を手動設定できます。",
-    op5: "<b>システム動作</b> を切り替えて、静止、引き上げ、ロワリング時の摩擦を比較します。",
-    devTitle: "リダイレクト砂盤 PRO",
-    devTeam: "開発：<span style='color:var(--warn);'>SunMoon Team</span>",
-    devT1: "アーキテクチャ・監修 / Shih-Feng Hsu",
-    devT2: "UI/UX デザイン / Pei-Fang Wu",
-    customNameTitle: "✏️ COD名カスタム",
-    customNameDesc: "地形やオブジェクト名を入力：",
-    customNamePlh: "例：コンクリート柱",
-    customFricTitle: "⚙️ 摩擦係数カスタム",
-    fricTip: "💡 <b>ヒント：</b><br><span style='color:var(--bad)'>0.3</span> = 摩擦大<br><span style='color:var(--safe)'>0.9</span> = 摩擦小",
-    fricPlh: "0.1 ~ 1.0",
-    cancel: "キャンセル",
-    confirmName: "確認",
-    confirmFric: "適用",
-    thCodT: "🔄 リダイレクト (COD)",
-    thCodD: "ロープの進行方向を変える支点。受ける合力はロープの角度に依存します。",
-    thFricT: "🛡️ 摩擦 (Friction)",
-    thFricD: "接触抵抗。引き上げ時は負担を増やし、ロワリング時はブレーキを助けます。",
-    thMultT: "🚨 プーリー倍増効果",
-    thMultD: "高効率プーリーで角度が非常に狭い場合、CODは負荷の約2倍(200%)の力を受けます！",
-    collapse: "🔼 閉じる",
-    pwaDesc: "ホーム画面に追加してフルスクリーン体験を：",
-    pwaAnd: "🤖 Android",
-    pwaIOS: "🍎 iOS (iPhone)",
-    pwaStep1: "ブラウザでリンクを開く",
-    pwaStep2: "右上の「⋮」をタップ",
-    pwaStep3: "「ホーム画面に追加」を選択",
-    pwaStep4: "「インストール」をタップ",
-    pwaStep5: "必ず <b>Safari</b> を使用してください",
-    pwaStep6: "下部の「共有」アイコンをタップ",
-    pwaStep7: "「ホーム画面に追加」を選択",
-    pwaStep8: "「追加」をタップ",
-    installBtn: "📥 アプリをインストール",
-    disclaimer: "<strong style='color: var(--bad); font-size: 14px;'>⚖️ 免責事項：</strong><br>本ソフトウェアは理論上の物理演算ツールです。実際の救助操作は必ず専門の教官が判断してください。<br><br><span style='color:var(--warn);'>※ 本アプリは単一デバイスライセンスです。機種変更時のコード再発行やカスタマーサポートは提供しておりません。開発支援のため再購入をお願いします。</span>",
-    vipTitle: "🔒 PRO版ロック解除",
-    vipEnable1: "「",
-    vipEnable2: "」を有効にします！",
-    vipProOnly: "SunMoonチームを支援し、全機能を解放しましょう！",
-    vipDisclaimer: "⚠️ 注意: 単一デバイスライセンスです。機種変更時のコード再発行やサポートはありません。再購入をお願いします。",
-    vipStoreBtn: "🛒 PRO版ストアへ",
-    vipHint: "💡 備考：キーの取得方法は下部の説明欄をご覧ください",
-    vipHasPwd: "パスワードをお持ちですか？",
-    vipPwdPlh: "VIPパスワードを入力",
-    vipCancel: "後で",
-    vipUnlock: "ロック解除 🔓",
-    vipErrPwd: "❌ パスワードが間違っています。",
-    vipStateUnlocked: "🛡️ システム状態: ロック解除済み",
-    vipStateDesc: "指揮官コンソールに入るには、キーを入力してください：",
-    cmdTitle: "👑 指揮官専用コンソール",
-    cmdExpToday: "👉 今日の体験コード",
-    cmdExpTmrw: "👉 明日の体験コード",
-    cmdPerm: "👉 🌟 パーマネントコード",
-    cmdLogout: "ログアウト",
-    cmdClose: "閉じる",
-    toastAuthSuccess: "🎉 認証成功！",
-    toastTrialSuccess: "⏱️ 体験版有効化！",
-    toastLogout: "🔄 ログアウトしました。",
-    supTitle: "💬 システム問題報告",
-    supDesc: "バグや提案がありますか？<br><br>下のボタンからフォームに入力してください！",
-    supLater: "後で",
-    supGo: "サポートフォームへ",
-    featCam: "📷 ARカメラオーバーレイ",
-    featCamDesc: "実際の現場に砂盤を重ねてシミュレーション！",
-    featPhoto: "📁 写真オーバーレイ",
-    featPhotoDesc: "現場の写真をインポートし、最もリアルな荷重シミュレーションを行います！",
-    featShot: "📸 戦術スクリーンショット",
-    featShotDesc: "透かしのない高解像度の戦術レポートを出力！",
-    featFric: "⚙️ 動的摩擦力計算",
-    featFricDesc: "すべての摩擦係数を解放します！",
-    featAction: "🕹️ 引き上げ・ロワリングエンジン",
-    featActionDesc: "摩擦による張力倍増効果をリアルにシミュレーション！"
+    featActionDesc: "解鎖動態操作！真實模擬上拉與下放時，摩擦力造成的恐怖張力翻倍效應！",
+    shotFmtTitle: "📸 選擇截圖格式",
+    shotFmtDesc: "請問您需要哪種背景格式？",
+    shotFmtDark: "⬛ 標準深色背景",
+    shotFmtTrans: "🏁 透明去背 (適合放入 PPT)"
   }
 };
-// 其餘語言略，主語言使用中文
-const currentLang = 'zh';
 
-function t(key) { return i18n[currentLang][key] || i18n['en'][key] || key; }
+const availableLangs = ['zh'];
+let currentLang = 'zh';
+
+function t(key) {
+    return i18n[currentLang][key] || i18n['zh'][key] || key;
+}
 
 function applyTranslations() {
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
-        if (i18n[currentLang][key]) { el.innerHTML = i18n[currentLang][key]; }
+        if (i18n[currentLang][key]) {
+            el.innerHTML = i18n[currentLang][key];
+        }
     });
+    
     document.querySelectorAll('[data-i18n-plh]').forEach(el => {
         const key = el.getAttribute('data-i18n-plh');
-        if (i18n[currentLang][key]) { el.placeholder = i18n[currentLang][key]; }
+        if (i18n[currentLang][key]) {
+            el.placeholder = i18n[currentLang][key];
+        }
     });
+
+    const langSelect = document.getElementById('langSelect');
+    if (langSelect) langSelect.value = currentLang;
+
     if (typeof updateEngine === 'function' && typeof els !== 'undefined' && els.lblBranchName) {
         els.lblBranchName.textContent = getSceneName();
         els.btnFrictionBase.innerHTML = `${scenes[currentScene].icon} ${getSceneName()}${t('directPull')}`;
         updateEngine();
+    }
+}
+
+function changeLang(selectedLang) {
+    if(availableLangs.includes(selectedLang)) {
+        currentLang = selectedLang;
+        applyTranslations();
     }
 }
 
@@ -700,7 +487,9 @@ function showToast(msg, type = 'safe') {
     toast.style.borderLeftColor = `var(--${type})`;
     toast.classList.add('show');
     if (toastTimer) clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => { toast.classList.remove('show'); }, 3000);
+    toastTimer = setTimeout(() => {
+        toast.classList.remove('show');
+    }, 3000);
 }
 
 window.copyAccount = function(elementId) {
@@ -714,18 +503,16 @@ window.copyAccount = function(elementId) {
   showToast('📋 帳號已複製！感謝您的心意！', 'safe');
 };
 
-// 視覺焦點引導功能
 function triggerFlash(el) {
     if(!el) return;
     el.classList.remove('val-flash');
-    void el.offsetWidth; // 強制重繪
+    void el.offsetWidth;
     el.classList.add('val-flash');
 }
 </script>
 
 <div id="status-bar-protector" data-html2canvas-ignore="true"></div>
 
-<!-- 獨立背景與白紙透寫層 -->
 <div id="bg-layer">
   <div id="media-container">
       <video id="bg-video" autoplay playsinline muted></video>
@@ -736,19 +523,30 @@ function triggerFlash(el) {
 <div id="grid-overlay"></div>
 <div id="toastMessage" data-html2canvas-ignore="true"></div>
 
-<!-- 截圖預覽視窗 (專治 iOS 存檔卡死) -->
+<!-- 截圖格式選擇視窗 -->
+<div id="shotFormatModal" class="modal-overlay" data-html2canvas-ignore="true">
+  <div class="modal-box">
+    <h3 style="color:var(--safe); margin-top:0;" data-i18n="shotFmtTitle">📸 選擇截圖格式</h3>
+    <p style="font-size:13px; color:var(--muted); margin-bottom:12px;" data-i18n="shotFmtDesc">請問您需要哪種背景格式？</p>
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      <button class="primary-btn btn-unlock" onclick="doTakeScreenshot(false)" style="margin:0; background:var(--card); color:var(--text); border:1px solid var(--line);" data-i18n="shotFmtDark">⬛ 標準深色背景</button>
+      <button class="primary-btn btn-unlock" onclick="doTakeScreenshot(true)" style="margin:0; background:var(--safe); color:#0a1410;" data-i18n="shotFmtTrans">🏁 透明去背 (適合放入 PPT)</button>
+      <button class="primary-btn btn-cancel" onclick="document.getElementById('shotFormatModal').style.display='none'" style="margin:0; background:transparent; color:var(--muted);">取消返回</button>
+    </div>
+  </div>
+</div>
+
 <div id="shotModal" class="modal-overlay" data-html2canvas-ignore="true" style="z-index: 10000; flex-direction:column; justify-content:center; align-items:center;">
   <div class="modal-box" style="padding: 15px; max-width: 95%; max-height: 90vh; display:flex; flex-direction:column; gap:10px;">
     <h3 style="color:var(--safe); margin:0;">📸 戰術截圖已生成</h3>
     <p style="font-size:13px; color:var(--muted); margin:0;">請 <b>長按下方圖片</b> 選擇「儲存圖片」或「分享」</p>
-    <div style="flex:1; overflow-y:auto; border-radius:8px; border:2px solid var(--line); background:#000;">
+    <div style="flex:1; overflow-y:auto; border-radius:8px; border:2px solid var(--line); background:#ccc;">
         <img id="shotPreviewImg" src="" style="width: 100%; display: block; object-fit: contain;">
     </div>
     <button class="primary-btn btn-cancel" onclick="document.getElementById('shotModal').style.display='none'" style="margin:0; flex-shrink:0;">返回系統</button>
   </div>
 </div>
 
-<!-- 負載快調視窗 (長按捷徑) -->
 <div id="loadModal" class="modal-overlay" data-html2canvas-ignore="true">
   <div class="modal-box">
     <h3 style="color:var(--text); margin-top:0;">⚖️ 快速設定負載 (W)</h3>
@@ -761,7 +559,6 @@ function triggerFlash(el) {
   </div>
 </div>
 
-<!-- 技術支援視窗 -->
 <div id="supportModal" class="modal-overlay" data-html2canvas-ignore="true">
   <div class="modal-box">
     <h3 style="color:var(--warn); margin-top:0;" data-i18n="supTitle">💬 系統問題回報</h3>
@@ -775,7 +572,6 @@ function triggerFlash(el) {
   </div>
 </div>
 
-<!-- 付費解鎖視窗 -->
 <div id="vipModal" class="modal-overlay" data-html2canvas-ignore="true">
   <div class="modal-box" id="vipModalBox">
     <h3><span data-i18n="vipTitle">🔒 專業版功能解鎖</span> <span class="vip-badge" style="display:inline-block; margin-left:8px;">PRO</span></h3>
@@ -801,7 +597,6 @@ function triggerFlash(el) {
   </div>
 </div>
 
-<!-- 自訂名稱視窗 -->
 <div id="nameModal" class="modal-overlay" data-html2canvas-ignore="true">
   <div class="modal-box">
     <h3 style="color:var(--safe); margin-top:0;" data-i18n="customNameTitle">✏️ 自訂介質名稱</h3>
@@ -814,7 +609,6 @@ function triggerFlash(el) {
   </div>
 </div>
 
-<!-- 自訂摩擦力視窗 -->
 <div id="frictionModal" class="modal-overlay" data-html2canvas-ignore="true">
   <div class="modal-box">
     <h3 style="color:var(--warn); margin-top:0;" data-i18n="customFricTitle">⚙️ 自訂摩擦係數</h3>
@@ -850,15 +644,15 @@ function triggerFlash(el) {
         <label class="icon-btn" id="btn-photo" onclick="handleImageUploadClick(event)" title="載入照片" style="margin:0;">📁<span class="lock-icon">🔒</span></label>
         <input type="file" id="upload-image" accept="image/*" onchange="loadImage(event)">
         <button class="icon-btn" onclick="toggleGrid()" title="工程網格">🌐</button>
-        <button class="icon-btn" onclick="attemptFeature('featShot', takeScreenshot)" title="戰術截圖">📸<span class="lock-icon">🔒</span></button>
+        <button class="icon-btn" onclick="attemptFeature('featShot', () => { document.getElementById('shotFormatModal').style.display='flex'; })" title="戰術截圖">📸<span class="lock-icon">🔒</span></button>
         <button class="icon-btn" onclick="resetEngine()" title="重置沙盤">↺</button>
       </div>
 
       <div class="svgWrap" id="svgWrap">
-        <!-- AR 控制台面板 -->
-        <div id="cameraControls" class="capture-hide" style="display:none; position: absolute; top: 10px; left: 10px; flex-direction: column; background: rgba(0,0,0,0.75); padding: 8px 12px; border-radius: 10px; border: 1px solid var(--warn); z-index: 100; backdrop-filter: blur(8px); box-shadow: 0 8px 25px rgba(0,0,0,0.6); min-width: 140px;">
+        <!-- AR 控制台面板 (已加入繩粗設定) -->
+        <div id="cameraControls" class="capture-hide" style="display:none; position: absolute; top: 10px; left: 10px; flex-direction: column; background: rgba(0,0,0,0.75); padding: 8px 12px; border-radius: 10px; border: 1px solid var(--warn); z-index: 100; backdrop-filter: blur(8px); box-shadow: 0 8px 25px rgba(0,0,0,0.6); min-width: 150px;">
             <div id="camCtrlHeader" style="display:flex; justify-content:space-between; align-items:center; cursor:move; margin-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:4px; user-select:none;">
-                <span style="font-size:12px; font-weight:bold; color:var(--warn);">🎛️ 疊圖控制台</span>
+                <span style="font-size:12px; font-weight:bold; color:var(--warn);">🎛️ 畫面控制台</span>
                 <span id="camCtrlToggle" style="cursor:pointer; font-size:12px; padding:2px 6px;">▼</span>
             </div>
             <div id="camCtrlBody" style="display:flex; flex-direction:column; gap:10px;">
@@ -869,6 +663,10 @@ function triggerFlash(el) {
                 <div class="control-slider-wrap">
                     <span>🔍縮放</span>
                     <input type="range" id="sliderZoom" min="1" max="3" step="0.1" value="1">
+                </div>
+                <div class="control-slider-wrap">
+                    <span>🪢繩粗</span>
+                    <input type="range" id="sliderRope" min="2" max="12" step="1" value="6">
                 </div>
             </div>
         </div>
@@ -888,8 +686,8 @@ function triggerFlash(el) {
           </g>
 
           <g id="bgTree" class="env-bg" stroke="none" fill="rgba(139, 90, 43, 0.25)">
-             <path d="M 10 400 C 10 300 30 200 30 100 C 30 50 10 0 10 0 L 80 0 C 80 50 90 120 80 180 C 70 250 80 400 80 400 Z" />
-             <path d="M 75 100 C 100 90 110 80 140 70 L 180 55 L 180 80 C 140 90 100 110 75 140 Z" />
+             <path d="M -110 1000 C -110 200 -90 -200 -90 -1000 L -30 -1000 C -30 200 -50 1000 -50 1000 Z" />
+             <path d="M -35 15 Q 15 0 90 -50 L 100 -20 Q 20 35 -40 75 Z" />
           </g>
 
           <g id="bgSteel" class="env-bg" stroke="none" fill="rgba(245, 158, 11, 0.15)" style="display:none;">
@@ -902,7 +700,6 @@ function triggerFlash(el) {
              <rect x="370" y="80" width="20" height="320" fill="rgba(245, 158, 11, 0.1)" />
           </g>
 
-          <!-- 繩索黑底描邊(解決白色透寫層看不見的問題) -->
           <line id="ropeLoadBg" stroke="#000" stroke-width="10" stroke-linecap="round" />
           <line id="ropeLoad" stroke="var(--text)" stroke-width="6" stroke-linecap="round" />
           <line id="ropeAnchorBg" stroke="#000" stroke-width="10" stroke-linecap="round" />
@@ -918,7 +715,6 @@ function triggerFlash(el) {
              <polygon id="forceArrowHead" points="0,0 0,0 0,0" fill="var(--bad)" />
           </g>
 
-          <!-- 新增長按捷徑 -->
           <g id="loadGroup" class="tactical-shadow" style="cursor: pointer;">
              <circle cx="0" cy="12" r="10" fill="#e8f5e9" />
              <rect x="-12" y="24" width="24" height="26" rx="5" fill="#e8f5e9" />
@@ -927,8 +723,8 @@ function triggerFlash(el) {
 
           <g id="anchorGroup" class="draggable-anchor tactical-shadow">
              <g id="distanceIndicator" opacity="0" style="transition: opacity 0.3s ease;">
-                <line id="distLine" x1="0" y1="0" x2="0" y2="0" stroke="var(--tagline)" stroke-width="2" stroke-dasharray="4 4" opacity="0.6"/>
-                <text id="distText" x="0" y="0" fill="var(--tagline)" font-size="11" font-weight="bold" text-anchor="middle" class="mask-text" data-i18n="distExt">長距離延伸至地面</text>
+                 <line id="distLine" x1="0" y1="0" x2="0" y2="0" stroke="var(--tagline)" stroke-width="2" stroke-dasharray="4 4" opacity="0.6"/>
+                 <text id="distText" x="0" y="0" fill="var(--tagline)" font-size="11" font-weight="bold" text-anchor="middle" class="mask-text" data-i18n="distExt">長距離延伸至地面</text>
              </g>
 
              <circle cx="0" cy="0" r="60" fill="transparent" /> 
@@ -939,7 +735,7 @@ function triggerFlash(el) {
         </svg>
       </div>
 
-      <div class="dashboard">
+      <div class="dashboard capture-hide">
           <div class="dash-box" style="border-top: 3px solid var(--text);">
               <span class="lbl" data-i18n="loadW">負載端 (W)</span>
               <div style="display:flex; align-items:center; gap:2px;">
@@ -959,15 +755,14 @@ function triggerFlash(el) {
           <div class="dash-box" id="dashBranch" style="border-top: 3px solid var(--bad);">
               <span class="lbl" style="display:flex; align-items:center; gap:4px;">
                   <span id="lblBranchName">樹幹</span><span data-i18n="codForce">(COD)受力</span>
-                  <button class="capture-hide" onclick="customName()" style="background:transparent; border:1px solid var(--muted); color:var(--muted); border-radius:4px; padding:0px 4px; font-size:10px; cursor:pointer;" title="點擊自訂介質名稱" data-i18n="btnCustom">✏️自訂</button>
+                  <button onclick="customName()" style="background:transparent; border:1px solid var(--muted); color:var(--muted); border-radius:4px; padding:0px 4px; font-size:10px; cursor:pointer;" title="點擊自訂介質名稱" data-i18n="btnCustom">✏️自訂</button>
               </span>
               <span class="val" id="txtBranchForce" style="color:var(--bad);">-- kg</span>
               <span class="sub" id="txtBranchMult">--</span>
           </div>
       </div>
       
-      <!-- 移除 capture-hide 讓截圖包含這塊重要設定 -->
-      <div class="control-deck">
+      <div class="control-deck capture-hide">
          <div class="control-row">
             <div class="btn-group-lbl" style="color:var(--muted);" data-i18n="terrainLabel">🏕️ 模擬地形與環境</div>
             <div class="toggle-group">
@@ -980,15 +775,15 @@ function triggerFlash(el) {
          <div class="control-row">
             <div class="btn-group-lbl" style="display:flex; align-items:center; justify-content:center; gap:6px;">
                <span data-i18n="frictionLabel">🛡️ 轉向點 (COD) 摩擦力介質</span>
-               <button onclick="customFriction()" style="background:var(--card); border:1px solid var(--warn); color:var(--warn); border-radius:4px; padding:2px 6px; font-size:11px; cursor:pointer;" data-i18n="btnCustom" class="capture-hide">✏️ 自訂</button>
+               <button onclick="customFriction()" style="background:var(--card); border:1px solid var(--warn); color:var(--warn); border-radius:4px; padding:2px 6px; font-size:11px; cursor:pointer;" data-i18n="btnCustom">✏️ 自訂</button>
             </div>
             <div class="toggle-group" style="flex-wrap: wrap;">
                <button class="toggle-btn active" id="btnFrictionBase" data-type="friction" data-val="0.4" onclick="setFriction(this, 'base')" style="flex: 1 1 calc(33% - 6px);">🌳 樹幹直拉</button>
-               <button class="toggle-btn" data-type="friction" data-val="0.6" onclick="setFriction(this, 'carabiner')" style="flex: 1 1 calc(33% - 6px);"><span data-i18n="btnFricCara">🪝 鉤環</span><span class="lock-icon capture-hide">🔒</span></button>
-               <button class="toggle-btn" data-type="friction" data-val="0.95" onclick="setFriction(this, 'pulley')" style="flex: 1 1 calc(33% - 6px);"><span data-i18n="btnFricPull">⚙️ 滑輪</span><span class="lock-icon capture-hide">🔒</span></button>
+               <button class="toggle-btn" data-type="friction" data-val="0.6" onclick="setFriction(this, 'carabiner')" style="flex: 1 1 calc(33% - 6px);"><span data-i18n="btnFricCara">🪝 鉤環</span><span class="lock-icon">🔒</span></button>
+               <button class="toggle-btn" data-type="friction" data-val="0.95" onclick="setFriction(this, 'pulley')" style="flex: 1 1 calc(33% - 6px);"><span data-i18n="btnFricPull">⚙️ 滑輪</span><span class="lock-icon">🔒</span></button>
                
-               <button class="toggle-btn" data-type="friction" data-val="0.5" onclick="setFriction(this, 'pad')" style="flex: 1 1 calc(48% - 6px); padding: 6px 2px;"><span data-i18n="btnFricPad">🛏️ 鋪保護墊</span><span class="lock-icon capture-hide">🔒</span></button>
-               <button class="toggle-btn" data-type="friction" data-val="0.85" onclick="setFriction(this, 'roller')" style="flex: 1 1 calc(48% - 6px); padding: 6px 2px;"><span data-i18n="btnFricRoller">🛞 護角滾輪</span><span class="lock-icon capture-hide">🔒</span></button>
+               <button class="toggle-btn" data-type="friction" data-val="0.5" onclick="setFriction(this, 'pad')" style="flex: 1 1 calc(48% - 6px); padding: 6px 2px;"><span data-i18n="btnFricPad">🛏️ 鋪保護墊</span><span class="lock-icon">🔒</span></button>
+               <button class="toggle-btn" data-type="friction" data-val="0.85" onclick="setFriction(this, 'roller')" style="flex: 1 1 calc(48% - 6px); padding: 6px 2px;"><span data-i18n="btnFricRoller">🛞 護角滾輪</span><span class="lock-icon">🔒</span></button>
             </div>
          </div>
 
@@ -996,8 +791,8 @@ function triggerFlash(el) {
             <div class="btn-group-lbl" style="color:var(--tagline);" data-i18n="actionLabel">🕹️ 系統操作動作</div>
             <div class="toggle-group">
                <button class="toggle-btn active" data-type="action" data-val="static" onclick="setAction(this)" data-i18n="btnStat">⏸️ 靜止鎖定</button>
-               <button class="toggle-btn" data-type="action" data-val="haul" onclick="setAction(this)"><span data-i18n="btnHaul">⬆️ 系統上拉</span><span class="lock-icon capture-hide">🔒</span></button>
-               <button class="toggle-btn" data-type="action" data-val="lower" onclick="setAction(this)"><span data-i18n="btnLow">⬇️ 系統下放</span><span class="lock-icon capture-hide">🔒</span></button>
+               <button class="toggle-btn" data-type="action" data-val="haul" onclick="setAction(this)"><span data-i18n="btnHaul">⬆️ 系統上拉</span><span class="lock-icon">🔒</span></button>
+               <button class="toggle-btn" data-type="action" data-val="lower" onclick="setAction(this)"><span data-i18n="btnLow">⬇️ 系統下放</span><span class="lock-icon">🔒</span></button>
             </div>
          </div>
 
@@ -1012,28 +807,21 @@ function triggerFlash(el) {
          </div>
       </div>
       
-      <div class="edu-wrap" id="eduPanel" data-i18n="eduDefault">
+      <div class="edu-wrap capture-hide" id="eduPanel" data-i18n="eduDefault">
          📍 試著在沙盤中任意拖曳「轉向點」或「地面操作」，對齊照片角度來觀察力量變化。<br><span style='color:var(--safe)'>💡 秘技：雙擊沙盤空白處可一鍵隱藏/喚醒控制台！</span>
       </div>
     </div> 
     
     <div class="menu-list capture-hide">
+      <!-- 選單區域保持不變 -->
       <details class="main-accordion" id="settingsAccordion">
         <summary><div style="display:flex; align-items:center; gap:8px;"><span class="menu-icon">⚙️</span> <span data-i18n="menuSet" style="color: var(--warn);">系統設定與操作指南</span></div></summary>
         <div class="menu-group">
           
           <div class="menu-action-btn" style="border-bottom: 1px solid rgba(150,150,150,0.1); justify-content: space-between;">
             <div class="menu-header-left"><span class="menu-icon">🌍</span><span data-i18n="menuLang">語言設定 / Language</span></div>
-            <!-- 修改選單，移除國旗 -->
             <select id="langSelect" onchange="changeLang(this.value)" style="background: rgba(255,255,255,0.05); border: 1px solid var(--line); color: var(--text); border-radius: 6px; padding: 4px 8px; font-size: 13px; font-weight: bold; outline: none; cursor: pointer;">
               <option value="zh">繁體中文</option>
-              <option value="en">English</option>
-              <option value="ja">日本語</option>
-              <option value="ko">한국어</option>
-              <option value="fr">Français</option>
-              <option value="de">Deutsch</option>
-              <option value="es">Español</option>
-              <option value="pt">Português</option>
             </select>
           </div>
 
@@ -1109,7 +897,7 @@ function triggerFlash(el) {
             <div class="menu-content">
               <div style="text-align: center; margin-bottom: 15px;">
                 <span data-i18n="devTitle" style="display:inline-block; background:var(--safe); color:#0a1410; font-weight:bold; padding:4px 14px; border-radius:20px; font-size:13px; letter-spacing:0.5px; box-shadow: 0 2px 6px rgba(74,222,128,0.3);">下方固定點架設儀 專業正式版</span>
-                <div style="font-size: 11px; color: var(--muted); margin-top: 8px; font-family: monospace;">Version 6.4.2</div>
+                <div style="font-size: 11px; color: var(--muted); margin-top: 8px; font-family: monospace;">Version 6.8.0</div>
               </div>
               <p style="margin-top: 0; margin-bottom: 6px; font-weight: bold; color: var(--text); text-align: center;" data-i18n="devTeam">本工具由 <span style="color:var(--warn);">散木團隊</span> 開發製作</p>
               <p style="margin-top: 0; margin-bottom: 4px; font-size: 13px; text-align: center;" data-i18n="devT1">教學架構與工程判斷／徐世豐</p>
@@ -1402,6 +1190,15 @@ let gridVisible = true;
 document.getElementById('sliderWhite').addEventListener('input', (e) => { whiteOverlay.style.opacity = e.target.value; });
 document.getElementById('sliderZoom').addEventListener('input', (e) => { mediaContainer.style.transform = `scale(${e.target.value})`; });
 
+// 💡 新增：繩粗微調滑桿的事件監聽
+document.getElementById('sliderRope').addEventListener('input', (e) => {
+    let w = parseInt(e.target.value);
+    els.ropeLoad.setAttribute('stroke-width', w);
+    els.ropeAnchor.setAttribute('stroke-width', w);
+    els.ropeLoadBg.setAttribute('stroke-width', w + 4);
+    els.ropeAnchorBg.setAttribute('stroke-width', w + 4);
+});
+
 document.getElementById('camCtrlToggle').addEventListener('click', (e) => {
     const body = document.getElementById('camCtrlBody');
     if(body.style.display === 'none') {
@@ -1451,6 +1248,7 @@ window.addEventListener('touchend', stopCtrlDrag);
 function resetCameraControls() {
     document.getElementById('sliderWhite').value = 0.2;
     document.getElementById('sliderZoom').value = 1;
+    // 預設不重置繩粗，讓使用者保留手感
     whiteOverlay.style.opacity = 0.2; 
     mediaContainer.style.transform = 'scale(1)';
     cameraControls.style.display = 'none';
@@ -1494,13 +1292,21 @@ async function toggleFlashlight() {
 }
 
 function handleImageUploadClick(e) { 
+    const btnPhoto = document.querySelector('label[title="載入照片"]');
     if (image.style.opacity === "1") {
         e.preventDefault();
         clearPhotoOverlay();
         return;
     }
-    if (isUserVip) { document.getElementById('upload-image').click(); } 
-    else { e.preventDefault(); attemptFeature('featPhoto', () => { document.getElementById('upload-image').click(); }); }
+
+    if (isUserVip) {
+        document.getElementById('upload-image').click();
+    } else {
+        e.preventDefault(); 
+        attemptFeature('featPhoto', () => {
+            document.getElementById('upload-image').click();
+        });
+    }
 }
 
 function clearPhotoOverlay() {
@@ -1533,39 +1339,33 @@ function loadImage(event) {
 }
 function toggleGrid() { gridVisible = !gridVisible; gridOverlay.style.opacity = gridVisible ? "0.5" : "0"; }
 
-async function takeScreenshot() {
+async function doTakeScreenshot(isTransparent) {
+  document.getElementById('shotFormatModal').style.display = 'none';
   const target = document.body;
+  
   target.classList.add('capture-mode');
+  if (isTransparent) {
+      target.classList.add('capture-transparent');
+  }
   
   const inputs = target.querySelectorAll('input[type="number"]'); 
   const placeholders = [];
   
-  const wrapper = document.getElementById('scroll-wrapper');
-  const oldBodyH = target.style.height;
-  const oldBodyOv = target.style.overflow;
-  const oldWrapH = wrapper.style.height;
-  const oldWrapOv = wrapper.style.overflow;
-  const oldWrapPos = wrapper.style.position;
-
-  target.style.height = 'auto';
-  target.style.overflow = 'visible';
-  wrapper.style.height = 'auto';
-  wrapper.style.overflow = 'visible';
-  wrapper.style.position = 'relative';
-
   inputs.forEach(inp => {
-      if(inp.closest('.capture-hide') || inp.closest('[data-html2canvas-ignore]')) return;
+      // 判斷是否為不需要被隱藏的輸入框
+      if(inp.closest('.capture-hide') && !inp.closest('.topbar') && !inp.closest('.icon-bar')) return;
+      if(inp.closest('[data-html2canvas-ignore]')) return;
       const span = document.createElement('span');
       span.textContent = inp.value;
       span.style.color = 'var(--text)'; span.style.fontSize = '18px'; span.style.fontWeight = 'bold'; span.style.fontFamily = 'monospace'; span.style.margin = '0 2px';
       inp.style.display = 'none'; inp.parentNode.insertBefore(span, inp); placeholders.push({ span, inp });
   });
   
-  window.scrollTo(0, 0); 
   await new Promise(r => setTimeout(r, 100));
   
   let tempCanvas = null;
-  if (stream && videoTrack && video.style.opacity === "1") {
+  // 如果是透明去背模式，我們連相機/照片的背景都不要擷取
+  if (!isTransparent && stream && videoTrack && video.style.opacity === "1") {
       tempCanvas = document.createElement('canvas');
       tempCanvas.width = video.videoWidth;
       tempCanvas.height = video.videoHeight;
@@ -1588,14 +1388,24 @@ async function takeScreenshot() {
 
   try {
     const canvas = await html2canvas(target, { 
-        backgroundColor: document.body.classList.contains('camera-mode') ? '#0a1410' : '#0a1410', 
+        backgroundColor: isTransparent ? null : (document.body.classList.contains('camera-mode') ? '#0a1410' : '#0a1410'), 
         scale: 2, 
         useCORS: true, 
-        ignoreElements: (el) => el.hasAttribute('data-html2canvas-ignore') || el.classList.contains('capture-hide') 
+        ignoreElements: (el) => {
+            if (el.hasAttribute('data-html2canvas-ignore')) return true;
+            if (el.classList && el.classList.contains('capture-hide')) {
+                if (el.classList.contains('topbar') || el.classList.contains('icon-bar')) {
+                    return false; 
+                }
+                return true; 
+            }
+            return false;
+        }
     });
     
-    // 專治 iOS 卡死：改用自製的圖片預覽 Modal 呈現，讓使用者長按儲存
     document.getElementById('shotPreviewImg').src = canvas.toDataURL('image/png');
+    // 如果是去背圖，預覽底色換成網格方便辨識
+    document.getElementById('shotPreviewImg').parentElement.style.background = isTransparent ? 'repeating-conic-gradient(#333 0% 25%, #222 0% 50%) 50% / 20px 20px' : '#000';
     document.getElementById('shotModal').style.display = 'flex';
     
   } catch(e) { 
@@ -1605,12 +1415,7 @@ async function takeScreenshot() {
   if (tempCanvas) { tempCanvas.remove(); video.style.opacity = '1'; }
   placeholders.forEach(p => { p.inp.style.display = ''; p.span.remove(); }); 
   target.classList.remove('capture-mode');
-  
-  target.style.height = oldBodyH;
-  target.style.overflow = oldBodyOv;
-  wrapper.style.height = oldWrapH;
-  wrapper.style.overflow = oldWrapOv;
-  wrapper.style.position = oldWrapPos;
+  target.classList.remove('capture-transparent');
 }
 
 // 核心變更：全地形場景與高空介質引擎
@@ -1881,7 +1686,7 @@ function updateEngine() {
     if (loadY < P.y + 55) loadY = P.y + 55; 
     let loadPt = { x: P.x, y: loadY };
     
-    // 背景保護黑線 (解決白紙模式看不清楚的問題)
+    // 背景保護黑線
     els.ropeLoadBg.setAttribute('x1', P.x); els.ropeLoadBg.setAttribute('y1', P.y);
     els.ropeLoadBg.setAttribute('x2', loadPt.x); els.ropeLoadBg.setAttribute('y2', loadPt.y);
     els.ropeLoad.setAttribute('x1', P.x); els.ropeLoad.setAttribute('y1', P.y);
@@ -1926,9 +1731,12 @@ function updateEngine() {
         if (els.buildingScene) els.buildingScene.style.display = 'none';
     }
 
+    // 💡 樹幹絕對綁定引擎：根據 P 點 X/Y 座標即時渲染樹幹位置，並聰明翻轉
+    // 修復邏輯：地面操作在右側 (A.x >= P.x) 時，樹枝往右長 (scaleX=1)；在左側時往左長 (scaleX=-1)。
     if (currentScene === 'tree') {
-        let scaleX = A.x >= P.x ? 1 : -1;
-        els.bgTree.setAttribute('transform', `translate(${P.x}, 0) scale(${scaleX}, 1) translate(-100, 0)`);
+        let isRight = A.x >= P.x;
+        let scaleX = isRight ? 1 : -1;
+        els.bgTree.setAttribute('transform', `translate(${P.x}, ${P.y}) scale(${scaleX}, 1)`);
     } else {
         els.bgTree.removeAttribute('transform');
     }
@@ -2047,6 +1855,7 @@ function processDrag(e) {
   if(!isDragging) return;
   if(e.cancelable) e.preventDefault(); 
   let pos = getSVGPos(e);
+  
   if (!pos || isNaN(pos.x) || isNaN(pos.y)) return; 
 
   if (draggingNode === 'A') {
@@ -2111,6 +1920,14 @@ function confirmLoadChange() {
 function resetEngine() {
   P = { x: 120, y: 80 }; 
   A = { x: 340, y: 360 }; 
+  // 觸發畫面重置，預設繩粗也會被更新，但保留滑桿手感
+  let sliderRope = document.getElementById('sliderRope');
+  if(sliderRope) {
+      els.ropeLoad.setAttribute('stroke-width', sliderRope.value);
+      els.ropeAnchor.setAttribute('stroke-width', sliderRope.value);
+      els.ropeLoadBg.setAttribute('stroke-width', parseInt(sliderRope.value) + 4);
+      els.ropeAnchorBg.setAttribute('stroke-width', parseInt(sliderRope.value) + 4);
+  }
   inLoad.value = 100;
   setScene(document.querySelector('.toggle-btn[data-type="scene"][data-val="tree"]'), 'tree');
   document.querySelector('.toggle-btn[data-type="action"][data-val="static"]').click();
@@ -2143,7 +1960,7 @@ if ('serviceWorker' in navigator && ['http:', 'https:'].includes(window.location
 }
 
 function checkForUpdates() {
-    if (confirm(t('updateMsg') || '確定要檢查更新嗎？')) {
+    if (confirm(t('updateMsg'))) {
         const wrapper = document.getElementById('scroll-wrapper');
         if (wrapper) wrapper.scrollTo({ top: 0, behavior: 'smooth' });
         
