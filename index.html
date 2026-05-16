@@ -111,13 +111,22 @@
       background: transparent !important;
       box-shadow: none !important;
   }
+
+  /* 💡 截圖專用模式 (保留設定面版，僅隱藏頂部與按鈕，維持座標) */
+  .taking-screenshot .topbar,
+  .taking-screenshot .icon-bar {
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+  }
+  .taking-screenshot .menu-list {
+      display: none !important;
+  }
   
   .capture-transparent { background-color: transparent !important; }
   .capture-transparent #bg-layer, 
   .capture-transparent #grid-overlay { display: none !important; }
   .capture-transparent .card { background: transparent !important; border-color: transparent !important; box-shadow: none !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
-  .capture-transparent .dash-box { background: transparent !important; border-color: transparent !important; }
-  .capture-transparent .edu-wrap { background: transparent !important; border-color: transparent !important; }
   .capture-transparent .app-container { filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.8)) !important; }
 
   .topbar { display: flex; align-items: center; margin-bottom: 8px; width: 100%; justify-content: space-between; }
@@ -193,7 +202,6 @@
   .edu-wrap { margin-top: 8px; padding: 12px; background: rgba(255, 216, 77, 0.1); border-radius: 8px; border: 1px solid var(--warn); text-align: justify; font-size: 13.5px; font-weight: bold; color: var(--text); line-height: 1.6; transition: background 0.3s, border 0.3s; }
   .mask-text { paint-order: stroke fill; stroke: var(--bg); stroke-width: 4px; stroke-linecap: round; stroke-linejoin: round; }
 
-  #cameraControls { display: none; position: absolute; top: 10px; left: 10px; flex-direction: column; background: rgba(0,0,0,0.75); padding: 8px 12px; border-radius: 10px; border: 1px solid var(--warn); z-index: 100; backdrop-filter: blur(8px); box-shadow: 0 4px 15px rgba(0,0,0,0.7); min-width: 150px; }
   .control-slider-wrap { display: flex; align-items: center; gap: 8px; }
   .control-slider-wrap span { font-size: 12px; color: var(--text); font-weight: bold; width: 45px; }
   .control-slider-wrap input[type=range] { width: 85px; accent-color: var(--safe); }
@@ -301,7 +309,7 @@
 </script>
 
 <script>
-// 💡 V6.8.0 樹枝方向修正 + 繩索粗細快調版
+// 💡 V6.9.0
 const i18n = {
   zh: {
     appTitle: "下方固定點架設儀 (全地形)",
@@ -437,11 +445,965 @@ const i18n = {
     shotFmtDesc: "請問您需要哪種背景格式？",
     shotFmtDark: "⬛ 標準深色背景",
     shotFmtTrans: "🏁 透明去背 (適合放入 PPT)"
+  },
+  en: {
+    appTitle: "Redirect Simulator",
+    ground: "Ground",
+    distExt: "Extended to Ground",
+    groundOp: "Ground OP",
+    loadW: "Load (W)",
+    always1x: "Always = 1x",
+    anchorTension: "Anchor Tension",
+    codForce: "COD Force",
+    terrainLabel: "🏕️ Terrain & Environment",
+    btnTree: "🌳 Tree",
+    btnSteel: "🏗️ Truss",
+    btnNone: "⬛ Blank",
+    frictionLabel: "🛡️ COD Friction Type",
+    btnCustom: "✏️ Custom",
+    directPull: " Pull",
+    btnFricCara: "🪝 Carabiner",
+    btnFricPull: "⚙️ Pulley",
+    btnFricPad: "🛏️ Edge Pad",
+    btnFricRoller: "🛞 Edge Roller",
+    lblRoof: "Roof Floor",
+    lblWall: "Outer Wall",
+    lblParapet: "Parapet",
+    actionLabel: "🕹️ System Action",
+    btnStat: "⏸️ Static",
+    btnHaul: "⬆️ Hauling",
+    btnLow: "⬇️ Lowering",
+    maLabel: "⚙️ Mechanical Advantage (MA)",
+    eduDefault: "📍 Drag the 'Redirect' or 'Ground OP' to align with AR/Photo backgrounds.",
+    sceneTree: "Tree",
+    sceneSteel: "Truss",
+    sceneNone: "Redirect",
+    nameUpdated: "COD named to: ",
+    fricUpdated: "Friction custom set to: ",
+    fricInvalid: "❌ Enter a valid number between 0 and 1",
+    edu_static: "⏸️ <b>Zero friction in static lock.</b><br>Operator holds force equal to load ({T}kg).",
+    edu_haul_base: "🥵 <b>High friction on {name}! Most exhausting.</b><br>Operator needs <b>{T}kg</b> force to haul with MA {ma}:1!",
+    edu_haul_cara: "🪝🤨 <b>Medium friction on {name}.</b><br>Requires <b>{T}kg</b> force to haul with MA {ma}:1.",
+    edu_haul_pull: "⚙️😎 <b>High efficiency! Effortless.</b><br>Operator only needs <b>{T}kg</b> force with MA {ma}:1.",
+    edu_low_base: "🛡️ <b>High friction acts as a natural brake!</b><br>With MA {ma}:1, operator controls the load holding just <b>{T}kg</b>.",
+    edu_low_cara: "🪝🛡️ <b>Medium braking force.</b><br>With MA {ma}:1, operator holds <b>{T}kg</b> to lower safely.",
+    edu_low_pull: "⚙️⚠️ <b>Very slippery! Caution when lowering.</b><br>With MA {ma}:1, operator must hold <b>{T}kg</b>.",
+    edu_warning: "<br><br>🚨 <b>Pulley Multiplier Effect:</b> Angle is too sharp! The anchor bears >2x load.",
+    multLabel: "({m}x Load)",
+    menuSet: "Settings & Guide",
+    menuSup: "Support & Dev Info",
+    menuSponsor: "Support Team / How to Get Key",
+    menuLang: "Language Setting",
+    menu1: "Theory & Principles",
+    menu3: "Share Link",
+    menu4: "Check Updates",
+    menu5: "Report an Issue",
+    menuOp: "System Manual",
+    menuInfo: "Version Info",
+    menuPWA: "Add to Home Screen",
+    op1: "Drag the <b>Redirect Node</b> or <b>Ground OP</b> to simulate force changes dynamically.",
+    op2: "Click <b>Terrain & Environment</b> to switch between scenes.",
+    op3: "Change <b>COD Friction Type</b> to observe how different mediums affect the load.",
+    op4: "Click <b>✏️Custom</b> to manually set the object name and friction coefficient.",
+    op5: "Toggle <b>System Action</b> to compare the effects of friction during Static, Hauling, and Lowering.",
+    devTitle: "Redirect Sandbox PRO",
+    devTeam: "Developed by <span style='color:var(--warn);'>SunMoon Team</span>",
+    devT1: "Engineering & Architecture / Shih-Feng Hsu",
+    devT2: "UI/UX Design / Pei-Fang Wu",
+    customNameTitle: "✏️ Custom COD Name",
+    customNameDesc: "Enter the custom terrain or object name:",
+    customNamePlh: "e.g., Concrete pillar",
+    customFricTitle: "⚙️ Custom Friction",
+    fricTip: "💡 <b>Tip:</b><br><span style='color:var(--bad)'>0.3</span> = High Friction<br><span style='color:var(--safe)'>0.9</span> = Low Friction",
+    fricPlh: "Enter 0.1 ~ 1.0",
+    cancel: "Cancel",
+    confirmName: "Confirm",
+    confirmFric: "Apply",
+    thCodT: "🔄 COD (Change of Direction)",
+    thCodD: "The point where the rope changes direction. The total force it bears depends on the rope angle.",
+    thFricT: "🛡️ Friction",
+    thFricD: "Resistance when rope contacts an object. 'Enemy' when hauling, 'friend' when lowering.",
+    thMultT: "🚨 Pulley Multiplier Effect",
+    thMultD: "When using an efficient pulley and a very sharp angle (e.g., 0°), the COD bears nearly 2x (200%) load!",
+    collapse: "🔼 Collapse",
+    pwaDesc: "Add to home screen for a 100% immersive, fullscreen experience:",
+    pwaAnd: "🤖 Android",
+    pwaIOS: "🍎 iOS (iPhone)",
+    pwaStep1: "Open the link in your browser",
+    pwaStep2: "Tap '⋮' in the browser menu",
+    pwaStep3: "Select 'Add to Home Screen'",
+    pwaStep4: "Tap 'Install' to add the app to your desktop",
+    pwaStep5: "Must use the <b>Safari</b> browser",
+    pwaStep6: "Tap the 'Share' icon at the bottom",
+    pwaStep7: "Scroll down and select 'Add to Home Screen'",
+    pwaStep8: "Tap 'Add' to create the shortcut",
+    installBtn: "📥 Install APP",
+    disclaimer: "<strong style='color: var(--bad); font-size: 14px;'>⚠️ Disclaimer:</strong><br>Friction coefficients are theoretical averages. Real-world surface roughness alters actual friction. Rigging and safety MUST be determined by professional instructors. <br><br><span style='color:var(--warn);'>* Single-device license. No customer support or code replacement for lost/changed devices. Please repurchase.</span>",
+    vipTitle: "🔒 PRO Feature Unlock",
+    vipEnable1: "You are about to enable '",
+    vipEnable2: "'!",
+    vipProOnly: "Support SunMoon Team to unlock all features permanently!",
+    vipDisclaimer: "⚠️ Notice: Single-device license. No customer support or replacements for lost/changed devices. Please repurchase.",
+    vipStoreBtn: "🛒 Go to PRO Store",
+    vipHint: "💡 Note: For how to get the key, please see the section below",
+    vipHasPwd: "Already have a password? Enter here:",
+    vipPwdPlh: "Enter VIP Password",
+    vipCancel: "Maybe Later",
+    vipUnlock: "Unlock Now 🔓",
+    vipErrPwd: "❌ Incorrect password. Please try again.",
+    vipStateUnlocked: "🛡️ System: Unlocked",
+    vipStateDesc: "To enter Commander Console, enter MASTER KEY:",
+    cmdTitle: "👑 Commander Console",
+    cmdExpToday: "👉 Today's Trial Code",
+    cmdExpTmrw: "👉 Tomorrow's Trial Code",
+    cmdPerm: "👉 🌟 Permanent Code",
+    cmdLogout: "Logout",
+    cmdClose: "Close",
+    toastAuthSuccess: "🎉 Auth Success!",
+    toastTrialSuccess: "⏱️ Trial Activated!",
+    toastLogout: "🔄 Logged out.",
+    supTitle: "💬 Report an Issue",
+    supDesc: "Found a bug or have a suggestion?<br><br>Click below to fill out the report form and help us improve the system!",
+    supLater: "Maybe Later",
+    supGo: "Go to Support Form",
+    featCam: "📷 AR Camera Overlay",
+    featCamDesc: "Overlay sandbox on real rescue scene!",
+    featPhoto: "📁 Photo Overlay",
+    featPhotoDesc: "Import site photos for realistic force simulation!",
+    featShot: "📸 Tactical Screenshot",
+    featShotDesc: "Export watermark-free, hi-res tactical report!",
+    featFric: "⚙️ Dynamic Friction",
+    featFricDesc: "Unlock all advanced friction settings!",
+    featAction: "🕹️ Haul & Lower Engine",
+    featActionDesc: "Simulate massive tension spikes from friction!",
+    shotFmtTitle: "📸 Screenshot Format",
+    shotFmtDesc: "Which background format do you need?",
+    shotFmtDark: "⬛ Standard Dark Background",
+    shotFmtTrans: "🏁 Transparent (Best for PPT)"
+  },
+  ja: {
+    appTitle: "リダイレクト砂盤 (全地形)",
+    ground: "地面 Ground",
+    distExt: "長距離延長（地面）",
+    groundOp: "操作側",
+    loadW: "負荷 (W)",
+    always1x: "常に = 1倍",
+    anchorTension: "操作側張力",
+    codForce: "(COD) 荷重",
+    terrainLabel: "🏕️ 地形と環境",
+    btnTree: "🌳 ツリー",
+    btnSteel: "🏗️ 鉄骨",
+    btnNone: "⬛ 空白",
+    frictionLabel: "🛡️ COD 摩擦タイプ",
+    btnCustom: "✏️ カスタム",
+    directPull: " 直引き",
+    btnFricCara: "🪝 カラビナ",
+    btnFricPull: "⚙️ プーリー",
+    btnFricPad: "🛏️ エッジパッド",
+    btnFricRoller: "🛞 ローラー",
+    lblRoof: "屋上床",
+    lblWall: "外壁",
+    lblParapet: "パラペット",
+    actionLabel: "🕹️ システム動作",
+    btnStat: "⏸️ 静止",
+    btnHaul: "⬆️ 引き上げ",
+    btnLow: "⬇️ ロワリング",
+    maLabel: "⚙️ システム倍力比 (MA)",
+    eduDefault: "📍 砂盤の「支点」や「操作側」をドラッグして、写真に合わせ荷重変化を観察してください。",
+    sceneTree: "樹木",
+    sceneSteel: "鉄骨",
+    sceneNone: "支点",
+    nameUpdated: "COD名を変更：",
+    fricUpdated: "摩擦係数を変更：",
+    fricInvalid: "❌ 0から1の間の数値を入力してください",
+    edu_static: "⏸️ <b>静止ロック時、摩擦抵抗ゼロ。</b><br>操作側は負荷({T}kg)と同等の力でバランスを維持できます。",
+    edu_haul_base: "🥵 <b>{name}の摩擦大！最もしんどい。</b><br>引き上げには MA {ma}:1 で<b>{T}kg</b>の力が必要！",
+    edu_haul_cara: "🪝🤨 <b>{name}の中程度摩擦。</b><br>引き上げに MA {ma}:1 で<b>{T}kg</b>の力が必要です。",
+    edu_haul_pull: "⚙️😎 <b>{name}は高効率！超省力。</b><br>操作側は MA {ma}:1 で<b>{T}kg</b>の力で済みます。",
+    edu_low_base: "🛡️ <b>ロワリング時、{name}の摩擦がブレーキに！</b><br>MA {ma}:1 で、操作側はわずか<b>{T}kg</b>の力で下降できます。",
+    edu_low_cara: "🪝🛡️ <b>適度なブレーキ力。</b><br>MA {ma}:1 で、操作側は<b>{T}kg</b>の力でコントロールできます。",
+    edu_low_pull: "⚙️⚠️ <b>滑りやすい！ロワリング注意。</b><br>MA {ma}:1 で、操作側は負荷({T}kg)を保持する必要があります！",
+    edu_warning: "<br><br>🚨 <b>プーリー倍増効果：</b> 角度が鋭すぎます！崩壊のリスク大！",
+    multLabel: "(負荷の {m} 倍)",
+    menuSet: "設定とガイド",
+    menuSup: "サポートと開発情報",
+    menuSponsor: "チームを支援 / キー取得方法",
+    menuLang: "言語設定 / Language",
+    menu1: "原理と専門用語",
+    menu3: "リンク共有",
+    menu4: "更新確認",
+    menu5: "システム問題報告",
+    menuOp: "操作マニュアル",
+    menuInfo: "バージョン情報",
+    menuPWA: "ホーム画面に追加",
+    op1: "サンドボックス内の <b>支点</b> と <b>操作側</b> をドラッグしてシミュレーションします。",
+    op2: "<b>地形と環境</b> をクリックし、環境を切り替えます。",
+    op3: "<b>COD摩擦タイプ</b> を変更し、負担にどう影響するか観察します。",
+    op4: "<b>✏️カスタム</b> をクリックして、名称と摩擦係数を手動設定できます。",
+    op5: "<b>システム動作</b> を切り替えて、静止、引き上げ、ロワリング時の摩擦を比較します。",
+    devTitle: "リダイレクト砂盤 PRO",
+    devTeam: "開発：<span style='color:var(--warn);'>SunMoon Team</span>",
+    devT1: "アーキテクチャ・監修 / Shih-Feng Hsu",
+    devT2: "UI/UX デザイン / Pei-Fang Wu",
+    customNameTitle: "✏️ COD名カスタム",
+    customNameDesc: "地形やオブジェクト名を入力：",
+    customNamePlh: "例：コンクリート柱",
+    customFricTitle: "⚙️ 摩擦係数カスタム",
+    fricTip: "💡 <b>ヒント：</b><br><span style='color:var(--bad)'>0.3</span> = 摩擦大<br><span style='color:var(--safe)'>0.9</span> = 摩擦小",
+    fricPlh: "0.1 ~ 1.0",
+    cancel: "キャンセル",
+    confirmName: "確認",
+    confirmFric: "適用",
+    thCodT: "🔄 リダイレクト (COD)",
+    thCodD: "ロープの進行方向を変える支点。受ける合力はロープの角度に依存します。",
+    thFricT: "🛡️ 摩擦 (Friction)",
+    thFricD: "接触抵抗。引き上げ時は負担を増やし、ロワリング時はブレーキを助けます。",
+    thMultT: "🚨 プーリー倍増効果",
+    thMultD: "高効率プーリーで角度が非常に狭い場合、CODは負荷の約2倍(200%)の力を受けます！",
+    collapse: "🔼 閉じる",
+    pwaDesc: "ホーム画面に追加してフルスクリーン体験を：",
+    pwaAnd: "🤖 Android",
+    pwaIOS: "🍎 iOS (iPhone)",
+    pwaStep1: "ブラウザでリンクを開く",
+    pwaStep2: "右上の「⋮」をタップ",
+    pwaStep3: "「ホーム画面に追加」を選択",
+    pwaStep4: "「インストール」をタップ",
+    pwaStep5: "必ず <b>Safari</b> を使用してください",
+    pwaStep6: "下部の「共有」アイコンをタップ",
+    pwaStep7: "「ホーム画面に追加」を選択",
+    pwaStep8: "「追加」をタップ",
+    installBtn: "📥 アプリをインストール",
+    disclaimer: "<strong style='color: var(--bad); font-size: 14px;'>⚖️ 免責事項：</strong><br>本ソフトウェアは理論上の物理演算ツールです。実際の救助操作は必ず専門の教官が判断してください。<br><br><span style='color:var(--warn);'>※ 本アプリは単一デバイスライセンスです。機種変更時のコード再発行やカスタマーサポートは提供しておりません。開発支援のため再購入をお願いします。</span>",
+    vipTitle: "🔒 PRO版ロック解除",
+    vipEnable1: "「",
+    vipEnable2: "」を有効にします！",
+    vipProOnly: "SunMoonチームを支援し、全機能を解放しましょう！",
+    vipDisclaimer: "⚠️ 注意: 単一デバイスライセンスです。機種変更時のコード再発行やサポートはありません。再購入をお願いします。",
+    vipStoreBtn: "🛒 PRO版ストアへ",
+    vipHint: "💡 備考：キーの取得方法は下部の説明欄をご覧ください",
+    vipHasPwd: "パスワードをお持ちですか？",
+    vipPwdPlh: "VIPパスワードを入力",
+    vipCancel: "後で",
+    vipUnlock: "ロック解除 🔓",
+    vipErrPwd: "❌ パスワードが間違っています。",
+    vipStateUnlocked: "🛡️ システム状態: ロック解除済み",
+    vipStateDesc: "指揮官コンソールに入るには、キーを入力してください：",
+    cmdTitle: "👑 指揮官専用コンソール",
+    cmdExpToday: "👉 今日の体験コード",
+    cmdExpTmrw: "👉 明日の体験コード",
+    cmdPerm: "👉 🌟 パーマネントコード",
+    cmdLogout: "ログアウト",
+    cmdClose: "閉じる",
+    toastAuthSuccess: "🎉 認証成功！",
+    toastTrialSuccess: "⏱️ 体験版有効化！",
+    toastLogout: "🔄 ログアウトしました。",
+    supTitle: "💬 システム問題報告",
+    supDesc: "バグや提案がありますか？<br><br>下のボタンからフォームに入力してください！",
+    supLater: "後で",
+    supGo: "サポートフォームへ",
+    featCam: "📷 ARカメラオーバーレイ",
+    featCamDesc: "実際の現場に砂盤を重ねてシミュレーション！",
+    featPhoto: "📁 写真オーバーレイ",
+    featPhotoDesc: "現場の写真をインポートし、最もリアルな荷重シミュレーションを行います！",
+    featShot: "📸 戦術スクリーンショット",
+    featShotDesc: "透かしのない高解像度の戦術レポートを出力！",
+    featFric: "⚙️ 動的摩擦力計算",
+    featFricDesc: "すべての摩擦係数を解放します！",
+    featAction: "🕹️ 引き上げ・ロワリングエンジン",
+    featActionDesc: "摩擦による張力倍増効果をリアルにシミュレーション！",
+    shotFmtTitle: "📸 スクリーンショット形式",
+    shotFmtDesc: "背景フォーマットを選択してください",
+    shotFmtDark: "⬛ 標準ダーク背景",
+    shotFmtTrans: "🏁 透過 (PPT向け)"
+  },
+  ko: {
+    appTitle: "하단 고정점 시뮬레이터",
+    ground: "지면 Ground",
+    distExt: "지면까지 연장",
+    groundOp: "지면 조작",
+    loadW: "하중 (W)",
+    always1x: "항상 = 1 배",
+    anchorTension: "지면 조작 장력",
+    codForce: "(COD) 하중",
+    terrainLabel: "🏕️ 지형 및 환경",
+    btnTree: "🌳 나무",
+    btnSteel: "🏗️ 철골",
+    btnNone: "⬛ 빈 공간",
+    frictionLabel: "🛡️ COD 마찰 매질",
+    btnCustom: "✏️ 사용자 지정",
+    directPull: " 직접 당기기",
+    btnFricCara: "🪝 카라비너",
+    btnFricPull: "⚙️ 도르래",
+    btnFricPad: "🛏️ 엣지 패드",
+    btnFricRoller: "🛞 롤러",
+    lblRoof: "옥상 바닥",
+    lblWall: "외벽",
+    lblParapet: "파라펫",
+    actionLabel: "🕹️ 시스템 동작",
+    btnStat: "⏸️ 정지",
+    btnHaul: "⬆️ 끌어올리기",
+    btnLow: "⬇️ 내리기",
+    maLabel: "⚙️ 기계적 이점 (MA)",
+    eduDefault: "📍 샌드박스의 '방향 전환점' 또는 '지면 조작'을 자유롭게 드래그하여 각도를 맞추세요.",
+    sceneTree: "나무",
+    sceneSteel: "철골",
+    sceneNone: "방향 전환점",
+    nameUpdated: "매질 이름 변경:",
+    fricUpdated: "COD 마찰 계 설정:",
+    fricInvalid: "❌ 0에서 1 사이의 유효한 숫자를 입력하세요.",
+    edu_static: "⏸️ <b>정지 상태에서는 마찰 저항이 없습니다.</b><br>조작단은 하중({T}kg)과 같은 힘만 내면 유지됩니다.",
+    edu_haul_base: "🥵 <b>{name} 마찰력이 매우 큽니다!</b><br>조작단이 MA {ma}:1 로 <b>{T}kg</b>의 힘을 내야 합니다!",
+    edu_haul_cara: "🪝🤨 <b>{name}는 중간 마찰력을 제공합니다.</b><br>조작단이 MA {ma}:1 로 <b>{T}kg</b>의 힘을 내야 합니다.",
+    edu_haul_pull: "⚙️😎 <b>{name}는 고효율! 매우 힘이 덜 듭니다.</b><br>조작단은 MA {ma}:1 로 약 <b>{T}kg</b>의 힘만으로 당길 수 있습니다.",
+    edu_low_base: "🛡️ <b>내릴 때는 마찰력이 브레이크 역할을 합니다!</b><br>MA {ma}:1 로 조작단은 <b>{T}kg</b>의 힘만으로 통제할 수 있습니다.",
+    edu_low_cara: "🪝🛡️ <b>적절한 제동력을 제공합니다.</b><br>MA {ma}:1 로 조작단은 <b>{T}kg</b>의 힘을 내면 통제할 수 있습니다.",
+    edu_low_pull: "⚙️⚠️ <b>매우 미끄럽습니다! 내릴 때 주의하세요.</b><br>MA {ma}:1 로 조작단은 하중에 가까운 힘({T}kg)을 필사적으로 버텨야 합니다!",
+    edu_warning: "<br><br>🚨 <b>도르래 증폭 효과:</b> 각도가 너무 작아서 붕괴 위험이 큽니다!",
+    multLabel: "(하중의 {m}배)",
+    menuSet: "설정 및 가이드",
+    menuSup: "지원 및 개발 정보",
+    menuSponsor: "팀 후원 / 키 발급 방법",
+    menuLang: "언어 설정 / Language",
+    menu1: "전문 용어 및 원리",
+    menu3: "링크 공유",
+    menu4: "업데이트 확인",
+    menu5: "문제 신고",
+    menuOp: "시스템 작동 설명",
+    menuInfo: "버전 정보",
+    menuPWA: "홈 화면에 추가",
+    op1: "샌드박스의 <b>방향 전환점</b>과 <b>지면 조작</b>을 드래그하여 시뮬레이션합니다.",
+    op2: "<b>지형 및 환경</b>을 클릭하여 나무, 철골 등을 전환합니다.",
+    op3: "<b>COD 마찰 매질</b>을 전환하여 당기기 영향을 관찰합니다.",
+    op4: "<b>✏️사용자 지정</b>을 클릭하여 마찰 계수를 수동 설정합니다.",
+    op5: "<b>🕹️시스템 동작</b>을 전환하여 정지, 올리기, 내리기를 비교합니다.",
+    devTitle: "하단 고정점 시뮬레이터 PRO",
+    devTeam: "<span style='color:var(--warn);'>SunMoon Team</span> 개발",
+    devT1: "아키텍처 및 엔지니어링 / Shih-Feng Hsu",
+    devT2: "도구 설계 및 UI / Pei-Fang Wu",
+    customNameTitle: "✏️ 사용자 지정 매질",
+    customNameDesc: "지형이나 매질을 입력하세요:",
+    customNamePlh: "예: 콘크리트 기둥",
+    customFricTitle: "⚙️ 마찰 계수 설정",
+    fricTip: "💡 <b>팁:</b><br><span style='color:var(--bad)'>0.3</span> = 높은 마찰<br><span style='color:var(--safe)'>0.9</span> = 낮은 마찰",
+    fricPlh: "0.1 ~ 1.0 입력",
+    cancel: "취소",
+    confirmName: "확인",
+    confirmFric: "적용",
+    thCodT: "🔄 방향 전환점 (COD)",
+    thCodD: "로프 진행 방향을 바꾸는 지점. 각도에 따라 받는 힘이 결정됩니다.",
+    thFricT: "🛡️ 마찰력 (Friction)",
+    thFricD: "올릴 때는 부담을 늘리는 '적', 내릴 때는 제동을 돕는 '친구'입니다.",
+    thMultT: "🚨 도르래 증폭 효과",
+    thMultD: "고효율 도르래에서 각도가 작을 때(0°), 하중의 2배(200%)를 견디게 됩니다!",
+    collapse: "🔼 접기",
+    pwaDesc: "홈 화면에 추가하여 전체 화면으로 경험하세요:",
+    pwaAnd: "🤖 안드로이드 (Android)",
+    pwaIOS: "🍎 아이폰 (iOS)",
+    pwaStep1: "브라우저에서 링크 열기",
+    pwaStep2: "상단 '⋮' 탭",
+    pwaStep3: "'홈 화면에 추가' 선택",
+    pwaStep4: "'추가' 탭하여 설치",
+    pwaStep5: "반드시 <b>Safari</b> 사용",
+    pwaStep6: "하단의 '공유' 아이콘 탭",
+    pwaStep7: "'홈 화면에 추가' 선택",
+    pwaStep8: "'추가' 탭",
+    installBtn: "📥 앱 설치",
+    disclaimer: "<strong style='color: var(--bad); font-size: 14px;'>⚠️ 면책 조항:</strong><br>이론적 추정치입니다. 실제 거칠기에 따라 달라집니다. 전문 교관을 따르세요.<br><br><span style='color:var(--warn);'>※ 본 앱은 1기기 라이선스입니다. 기기 변경 시 비밀번호 재발급 및 고객 지원은 제공되지 않습니다. 개발 지원을 위해 재구매를 부탁드립니다.</span>",
+    vipTitle: "🔒 PRO 기능 잠금 해제",
+    vipEnable1: "기능 활성화: '",
+    vipEnable2: "'!",
+    vipProOnly: "이 기능은 PRO 전용입니다.<br>영구적으로 잠금 해제하세요!",
+    vipDisclaimer: "⚠️ 주의: 본 앱은 1기기 라이선스입니다. 기기 변경 시 고객 지원이 제공되지 않으니 재구매 바랍니다.",
+    vipStoreBtn: "🛒 PRO 스토어로 이동",
+    vipHint: "💡 참고: 키 획득 방법은 하단 설명란 참조하세요",
+    vipHasPwd: "비밀번호가 있으신가요?",
+    vipPwdPlh: "VIP 비밀번호 입력",
+    vipCancel: "나중에",
+    vipUnlock: "잠금 해제 🔓",
+    vipErrPwd: "❌ 비밀번호가 올바르지 않습니다.",
+    vipStateUnlocked: "🛡️ 상태: 잠금 해제됨",
+    vipStateDesc: "사령관 콘솔 마스터 키 입력:",
+    cmdTitle: "👑 사령관 콘솔",
+    cmdExpToday: "👉 오늘의 체험 코드",
+    cmdExpTmrw: "👉 내일의 체험 코드",
+    cmdPerm: "👉 🌟 영구 코드",
+    cmdLogout: "로그아웃",
+    cmdClose: "닫기",
+    toastAuthSuccess: "🎉 인증 성공!",
+    toastTrialSuccess: "⏱️ 체험판 활성화!",
+    toastLogout: "🔄 로그아웃 되었습니다.",
+    supTitle: "💬 문제 신고",
+    supDesc: "버그나 오류를 발견하셨나요?<br><br>아래 버튼을 눌러 피드백을 보내주세요!",
+    supLater: "나중에",
+    supGo: "폼 작성하기",
+    featCam: "📷 AR 카메라 오버레이",
+    featCamDesc: "실제 현장에 샌드박스를 겹쳐 각도를 계산하세요!",
+    featPhoto: "📁 사진 오버레이",
+    featPhotoDesc: "사진을 가져와 시뮬레이션을 진행하세요!",
+    featShot: "📸 전술 스크린샷",
+    featShotDesc: "워터마크 없는 고해상도 리포트를 저장하세요!",
+    featFric: "⚙️ 동적 마찰력 연산",
+    featFricDesc: "모든 마찰력을 잠금 해제하세요!",
+    featAction: "🕹️ 올리기/내리기 엔진",
+    featActionDesc: "장력 2배 효과를 실제처럼 시뮬레이션하세요!",
+    shotFmtTitle: "📸 스크린샷 형식",
+    shotFmtDesc: "어떤 배경을 원하십니까?",
+    shotFmtDark: "⬛ 기본 어두운 배경",
+    shotFmtTrans: "🏁 투명 배경 (PPT용)"
+  },
+  fr: {
+    appTitle: "Simulateur de Déviation",
+    ground: "Sol Ground",
+    distExt: "Étendu au sol",
+    groundOp: "Op. au sol",
+    loadW: "Charge (W)",
+    always1x: "Toujours = 1x",
+    anchorTension: "Tension Opérateur",
+    codForce: "Force COD",
+    terrainLabel: "🏕️ Terrain & Environnement",
+    btnTree: "🌳 Arbre",
+    btnSteel: "🏗️ Acier",
+    btnNone: "⬛ Vide",
+    frictionLabel: "🛡️ Type de friction (COD)",
+    btnCustom: "✏️ Personnalisé",
+    directPull: " Direct",
+    btnFricCara: "🪝 Mousqueton",
+    btnFricPull: "⚙️ Poulie",
+    btnFricPad: "🛏️ Protège-corde",
+    btnFricRoller: "🛞 Rouleau",
+    lblRoof: "Toit",
+    lblWall: "Mur Extérieur",
+    lblParapet: "Parapet",
+    actionLabel: "🕹️ Action du Système",
+    btnStat: "⏸️ Statique",
+    btnHaul: "⬆️ Hissage",
+    btnLow: "⬇️ Descente",
+    maLabel: "⚙️ Avantage Mécanique (MA)",
+    eduDefault: "📍 Glissez la « Déviation » ou l'« Op. au sol » pour aligner les forces.",
+    sceneTree: "Arbre",
+    sceneSteel: "Acier",
+    sceneNone: "Déviation",
+    nameUpdated: "Nom modifié en :",
+    fricUpdated: "Friction définie sur :",
+    fricInvalid: "❌ Entrez un nombre valide entre 0 et 1",
+    edu_static: "⏸️ <b>Aucune friction en statique.</b><br>L'opérateur maintient une force égale à la charge ({T}kg).",
+    edu_haul_base: "🥵 <b>Forte friction ! Très fatigant.</b><br>Il faut exercer <b>{T}kg</b> la force pour hisser (MA {ma}:1) !",
+    edu_haul_cara: "🪝🤨 <b>Friction moyenne sur {name}.</b><br>Il faut exercer <b>{T}kg</b> la force (MA {ma}:1).",
+    edu_haul_pull: "⚙️😎 <b>Haute efficacité !</b><br>L'opérateur n'exerce que <b>{T}kg</b> la force (MA {ma}:1).",
+    edu_low_base: "🛡️ <b>Friction utile pour freiner !</b><br>L'opérateur contrôle avec seulement <b>{T}kg</b> (MA {ma}:1).",
+    edu_low_cara: "🪝🛡️ <b>Freinage moyen.</b><br>L'opérateur retient <b>{T}kg</b> en sécurité (MA {ma}:1).",
+    edu_low_pull: "⚙️⚠️ <b>Très glissant ! Prudence.</b><br>Aucun freinage. L'opérateur retient la charge ({T}kg) (MA {ma}:1).",
+    edu_warning: "<br><br>🚨 <b>Effet Multiplicateur :</b> Angle trop fermé ! Risque de rupture !",
+    multLabel: "({m}x Charge)",
+    menuSet: "Paramètres et Guide",
+    menuSup: "Support et Infos",
+    menuSponsor: "Soutenir / Comment obtenir la clé",
+    menuLang: "Langue / Language",
+    menu1: "Théorie et Principes",
+    menu3: "Partager le lien",
+    menu4: "Vérifier les MAJ",
+    menu5: "Signaler un Problème",
+    menuOp: "Manuel du Système",
+    menuInfo: "Info de Version",
+    menuPWA: "Ajouter à l'écran",
+    op1: "Glissez l'<b>Op. au sol</b> pour simuler les forces dynamiquement.",
+    op2: "Cliquez sur <b>Terrain & Environnement</b> pour basculer.",
+    op3: "Changez la <b>Friction</b> pour voir l'impact.",
+    op4: "Cliquez sur <b>✏️ Personnalisé</b> pour définir manuellement.",
+    op5: "Basculez <b>Action du Système</b> pour comparer Statique/Hissage/Descente.",
+    devTitle: "Simulateur Déviation PRO",
+    devTeam: "Développé par <span style='color:var(--warn);'>SunMoon Team</span>",
+    devT1: "Ingénierie et Architecture / Shih-Feng Hsu",
+    devT2: "Design UI/UX / Pei-Fang Wu",
+    customNameTitle: "✏️ Nom personnalisé",
+    customNameDesc: "Entrez un nom de terrain :",
+    customNamePlh: "ex. Pilier en béton",
+    customFricTitle: "⚙️ Friction personnalisée",
+    fricTip: "💡 <b>Astuce :</b><br><span style='color:var(--bad)'>0.3</span> = Forte Friction<br><span style='color:var(--safe)'>0.9</span> = Faible Friction",
+    fricPlh: "Entrer un nombre 0.1 ~ 1.0",
+    cancel: "Annuler",
+    confirmName: "Confirmer",
+    confirmFric: "Appliquer",
+    thCodT: "🔄 Déviation (COD)",
+    thCodD: "Point modifiant la direction de la corde. La force subie dépend de l'angle.",
+    thFricT: "🛡️ Friction",
+    thFricD: "Ennemi lors du hissage, allié pour freiner la descente.",
+    thMultT: "🚨 Effet Multiplicateur",
+    thMultD: "Avec un angle très fermé (0°), le COD subit 2x la charge (200%) !",
+    collapse: "🔼 Fermer",
+    pwaDesc: "Ajouter à l'écran d'accueil pour une expérience immersive :",
+    pwaAnd: "🤖 Android",
+    pwaIOS: "🍎 iOS (iPhone)",
+    pwaStep1: "Ouvrez le lien dans le navigateur",
+    pwaStep2: "Appuyez sur '⋮' dans le menu",
+    pwaStep3: "Sélectionnez 'Ajouter à l'écran d'accueil'",
+    pwaStep4: "Appuyez sur 'Installer'",
+    pwaStep5: "Utilisez obligatoirement <b>Safari</b>",
+    pwaStep6: "Appuyez sur 'Partager' en bas",
+    pwaStep7: "Sélectionnez 'Sur l'écran d'accueil'",
+    pwaStep8: "Appuyez sur 'Ajouter'",
+    installBtn: "📥 Installer l'APP",
+    disclaimer: "<strong style='color: var(--bad); font-size: 14px;'>⚠️ Avertissement :</strong><br>Moyennes théoriques. Suivez toujours les instructeurs professionnels.<br><br><span style='color:var(--warn);'>* Licence pour un seul appareil. Aucun service client pour le remplacement d'appareil. Veuillez racheter pour nous soutenir.</span>",
+    vipTitle: "🔒 Fonction PRO",
+    vipEnable1: "Activer '",
+    vipEnable2: "' !",
+    vipProOnly: "Soutenez l'équipe SunMoon pour tout débloquer !",
+    vipDisclaimer: "⚠️ Note : Licence pour un seul appareil. Aucun support pour changement d'appareil. Veuillez racheter.",
+    vipStoreBtn: "🛒 Aller à la boutique PRO",
+    vipHint: "💡 Note : Pour obtenir la clé, voir ci-dessous",
+    vipHasPwd: "Vous avez un mot de passe ?",
+    vipPwdPlh: "Entrer le mot de passe",
+    vipCancel: "Plus tard",
+    vipUnlock: "Débloquer 🔓",
+    vipErrPwd: "❌ Mot de passe incorrect.",
+    vipStateUnlocked: "🛡️ Système : Débloqué",
+    vipStateDesc: "Clef maîtresse (Console Commandant) :",
+    cmdTitle: "👑 Console Commandant",
+    cmdExpToday: "👉 Code d'essai d'aujourd'hui",
+    cmdExpTmrw: "👉 Code de demain",
+    cmdPerm: "👉 🌟 Code Permanent",
+    cmdLogout: "Déconnexion",
+    cmdClose: "Fermer",
+    toastAuthSuccess: "🎉 Succès !",
+    toastTrialSuccess: "⏱️ Essai activé !",
+    toastLogout: "🔄 Déconnecté.",
+    supTitle: "💬 Signaler un Problème",
+    supDesc: "Un bug ou une suggestion ?<br><br>Cliquez ci-dessous pour remplir le formulaire !",
+    supLater: "Plus tard",
+    supGo: "Formulaire",
+    featCam: "📷 Caméra AR",
+    featCamDesc: "Superposez la simulation sur la scène réelle !",
+    featPhoto: "📁 Superposition Photo",
+    featPhotoDesc: "Importez des photos pour simuler sur site !",
+    featFric: "⚙️ Friction Dynamique",
+    featFricDesc: "Débloquez toutes les frictions !",
+    featAction: "🕹️ Moteur Hissage/Descente",
+    featActionDesc: "Simulez les pics extrêmes liés aux frictions !",
+    shotFmtTitle: "📸 Format de Capture",
+    shotFmtDesc: "Quel fond souhaitez-vous ?",
+    shotFmtDark: "⬛ Fond Sombre",
+    shotFmtTrans: "🏁 Transparent (PPT)"
+  },
+  de: {
+    appTitle: "Umlenkung Simulator",
+    ground: "Boden",
+    distExt: "Verlängert zum Boden",
+    groundOp: "Boden Op.",
+    loadW: "Last (W)",
+    always1x: "Immer = 1x",
+    anchorTension: "Zugkraft",
+    codForce: "COD Kraft",
+    terrainLabel: "🏕️ Gelände & Umgebung",
+    btnTree: "🌳 Baum",
+    btnSteel: "🏗️ Stahl",
+    btnNone: "⬛ Leer",
+    frictionLabel: "🛡️ COD Reibungstyp",
+    btnCustom: "✏️ Eigene",
+    directPull: " Direkt",
+    btnFricCara: "🪝 Karabiner",
+    btnFricPull: "⚙️ Rolle",
+    btnFricPad: "🛏️ Kantenschutz",
+    btnFricRoller: "🛞 Rolle",
+    lblRoof: "Dachboden",
+    lblWall: "Außenwand",
+    lblParapet: "Brüstung",
+    actionLabel: "🕹️ Systemaktion",
+    btnStat: "⏸️ Statisch",
+    btnHaul: "⬆️ Heben",
+    btnLow: "⬇️ Ablassen",
+    maLabel: "⚙️ Mechanischer Vorteil (MA)",
+    eduDefault: "📍 Ziehen Sie die 'Boden Op.', um die Kraftänderungen zu beobachten.",
+    sceneTree: "Baum",
+    sceneSteel: "Stahl",
+    sceneNone: "Umlenkung",
+    nameUpdated: "Name geändert zu:",
+    fricUpdated: "Reibung eingestellt auf:",
+    fricInvalid: "❌ Gültige Zahl zwischen 0 und 1 eingeben",
+    edu_static: "⏸️ <b>Keine Reibung bei statischer Verriegelung.</b><br>Kraft ist gleich der Last ({T}kg).",
+    edu_haul_base: "🥵 <b>Hohe Reibung! Sehr anstrengend.</b><br>Bediener benötigt <b>{T}kg</b> Kraft (MA {ma}:1)!",
+    edu_haul_cara: "🪝🤨 <b>Mittlere Reibung ({name}).</b><br>Erfordert <b>{T}kg</b> Kraft (MA {ma}:1).",
+    edu_haul_pull: "⚙️😎 <b>Hohe Effizienz! Mühelos.</b><br>Bediener benötigt nur <b>{T}kg</b> Kraft (MA {ma}:1).",
+    edu_low_base: "🛡️ <b>Reibung fungiert als natürliche Bremse!</b><br>Kontrolle mit <b>{T}kg</b> (MA {ma}:1).",
+    edu_low_cara: "🪝🛡️ <b>Mittlere Bremskraft.</b><br>Hält <b>{T}kg</b> zum sicheren Ablassen (MA {ma}:1).",
+    edu_low_pull: "⚙️⚠️ <b>Sehr rutschig! Vorsicht.</b><br>Keine Bremswirkung. Fast die gesamte Last ({T}kg) halten.",
+    edu_warning: "<br><br>🚨 <b>Rollen-Multiplikatoreffekt:</b> Bruchgefahr bei spitzem Winkel!",
+    multLabel: "({m}x Last)",
+    menuSet: "Einstellungen & Handbuch",
+    menuSup: "Support & Infos",
+    menuSponsor: "Team unterstützen / Schlüssel erhalten",
+    menuLang: "Sprache / Language",
+    menu1: "Theorie & Prinzipien",
+    menu3: "Link teilen",
+    menu4: "Updates prüfen",
+    menu5: "Fehler melden",
+    menuOp: "Systemhandbuch",
+    menuInfo: "Versionsinfo",
+    menuPWA: "Zum Startbildschirm",
+    op1: "Ziehen Sie die <b>Boden Op.</b>, um Kräfte zu simulieren.",
+    op2: "Klicken Sie auf <b>Gelände & Umgebung</b> für Szenenwechsel.",
+    op3: "Wechseln Sie den <b>COD Reibungstyp</b>, um die Belastung zu sehen.",
+    op4: "Klicken Sie auf <b>✏️ Eigene</b> für eigene Eingaben.",
+    op5: "Schalten Sie die <b>Systemaktion</b> um.",
+    devTitle: "Umlenkung Simulator PRO",
+    devTeam: "Entwickelt von <span style='color:var(--warn);'>SunMoon Team</span>",
+    devT1: "Technik & Architektur / Shih-Feng Hsu",
+    devT2: "UI/UX Design / Pei-Fang Wu",
+    customNameTitle: "✏️ Eigener Name",
+    customNameDesc: "Objektnamen eingeben:",
+    customNamePlh: "z.B. Betonpfeiler",
+    customFricTitle: "⚙️ Eigene Reibung",
+    fricTip: "💡 <b>Tipp:</b><br><span style='color:var(--bad)'>0.3</span> = Hohe Reibung<br><span style='color:var(--safe)'>0.9</span> = Niedrige Reibung",
+    fricPlh: "0.1 ~ 1.0",
+    cancel: "Abbrechen",
+    confirmName: "Bestätigen",
+    confirmFric: "Anwenden",
+    thCodT: "🔄 Umlenkung (COD)",
+    thCodD: "Punkt, an dem das Seil die Richtung ändert.",
+    thFricT: "🛡️ Reibung",
+    thFricD: "Erhöht die Kraft beim Heben, hilft beim Bremsen (Ablassen).",
+    thMultT: "🚨 Rollen-Multiplikatoreffekt",
+    thMultD: "Bei spitzem Winkel trägt COD 2x die Last (200%)!",
+    collapse: "🔼 Schließen",
+    pwaDesc: "Zum Startbildschirm hinzufügen:",
+    pwaAnd: "🤖 Android",
+    pwaIOS: "🍎 iOS (iPhone)",
+    pwaStep1: "Link im Browser öffnen",
+    pwaStep2: "Tippen Sie auf '⋮' im Menü",
+    pwaStep3: "Wählen Sie 'Zum Startbildschirm hinzufügen'",
+    pwaStep4: "Tippen Sie auf 'Installieren'",
+    pwaStep5: "Nutzen Sie unbedingt <b>Safari</b>",
+    pwaStep6: "Tippen Sie unten auf 'Teilen'",
+    pwaStep7: "Wählen Sie 'Zum Home-Bildschirm'",
+    pwaStep8: "Tippen Sie auf 'Hinzufügen'",
+    installBtn: "📥 APP Installieren",
+    disclaimer: "<strong style='color: var(--bad); font-size: 14px;'>⚠️ Haftungsausschluss:</strong><br>Theoretische Durchschnittswerte. Folgen Sie Ausbildern.<br><br><span style='color:var(--warn);'>* Ein-Gerät-Lizenz. Kein Kundensupport bei Gerätewechsel. Bitte unterstützen Sie uns durch Neukauf.</span>",
+    vipTitle: "🔒 PRO Funktion",
+    vipEnable1: "Aktiviere '",
+    vipEnable2: "'!",
+    vipProOnly: "Unterstützen Sie uns, um alles freizuschalten!",
+    vipDisclaimer: "⚠️ Hinweis: Ein-Gerät-Lizenz. Kein Support bei Gerätewechsel. Bitte neu kaufen.",
+    vipStoreBtn: "🛒 Zum PRO Store",
+    vipHint: "💡 Hinweis: Schlüssel erhalten, siehe unten",
+    vipHasPwd: "Haben Sie ein Passwort?",
+    vipPwdPlh: "VIP Passwort",
+    vipCancel: "Später",
+    vipUnlock: "Entsperren 🔓",
+    vipErrPwd: "❌ Falsches Passwort.",
+    vipStateUnlocked: "🛡️ System: Entsperrt",
+    vipStateDesc: "Commander-Schlüssel:",
+    cmdTitle: "👑 Commander Konsole",
+    cmdExpToday: "👉 Heutiger Testcode",
+    cmdExpTmrw: "👉 Morgiger Testcode",
+    cmdPerm: "👉 🌟 Permanenter Code",
+    cmdLogout: "Abmelden",
+    cmdClose: "Schließen",
+    toastAuthSuccess: "🎉 Erfolgreich!",
+    toastTrialSuccess: "⏱️ Testversion aktiviert!",
+    toastLogout: "🔄 Abgemeldet.",
+    supTitle: "💬 Fehler melden",
+    supDesc: "Fehler gefunden oder Vorschläge?",
+    supLater: "Später",
+    supGo: "Zum Formular",
+    featCam: "📷 AR Kamera",
+    featCamDesc: "Überlagern Sie die reale Rettungsszene!",
+    featPhoto: "📁 Foto Überlagerung",
+    featPhotoDesc: "Importieren Sie Standortfotos für die Simulation!",
+    featFric: "⚙️ Dynamische Reibung",
+    featFricDesc: "Schalten Sie alle Reibungstypen frei!",
+    featAction: "🕹️ Hebe- & Ablass-Engine",
+    featActionDesc: "Simulieren Sie extreme Spannungsspitzen!",
+    featShot: "📸 Taktischer Screenshot",
+    featShotDesc: "Export in hoher Auflösung ohne Wasserzeichen!",
+    shotFmtTitle: "📸 Screenshot-Format",
+    shotFmtDesc: "Welchen Hintergrund bevorzugen Sie?",
+    shotFmtDark: "⬛ Dunkler Hintergrund",
+    shotFmtTrans: "🏁 Transparent (Für PPT)"
+  },
+  es: {
+    appTitle: "Simulador de Desviación",
+    ground: "Suelo",
+    distExt: "Extendido al suelo",
+    groundOp: "Op. al suelo",
+    loadW: "Carga (W)",
+    always1x: "Siempre = 1x",
+    anchorTension: "Tensión Anclaje",
+    codForce: "Fuerza COD",
+    terrainLabel: "🏕️ Terreno y Entorno",
+    btnTree: "🌳 Árbol",
+    btnSteel: "🏗️ Acero",
+    btnNone: "⬛ Vacío",
+    frictionLabel: "🛡️ Tipo de fricción (COD)",
+    btnCustom: "✏️ Personalizado",
+    directPull: " Directo",
+    btnFricCara: "🪝 Mosquetón",
+    btnFricPull: "⚙️ Polea",
+    btnFricPad: "🛏️ Protector",
+    btnFricRoller: "🛞 Rodillo",
+    lblRoof: "Techo",
+    lblWall: "Muro Exterior",
+    lblParapet: "Parapeto",
+    actionLabel: "🕹️ Acción del Sistema",
+    btnStat: "⏸️ Estático",
+    btnHaul: "⬆️ Izado",
+    btnLow: "⬇️ Descenso",
+    maLabel: "⚙️ Ventaja Mecánica (MA)",
+    eduDefault: "📍 Arrastre 'Op. al suelo' en la caja de arena para observar fuerzas.",
+    sceneTree: "Árbol",
+    sceneSteel: "Acero",
+    sceneNone: "Desviación",
+    nameUpdated: "Nombre cambiado a:",
+    fricUpdated: "Fricción cambiada a:",
+    fricInvalid: "❌ Ingrese un número válido entre 0 y 1",
+    edu_static: "⏸️ <b>Cero fricción en estático.</b><br>Fuerza igual a la carga ({T}kg).",
+    edu_haul_base: "🥵 <b>¡Alta fricción! Muy agotador.</b><br>¡Necesita <b>{T}kg</b> fuerza con MA {ma}:1!",
+    edu_haul_cara: "🪝🤨 <b>Fricción media en {name}.</b><br>Requiere <b>{T}kg</b> fuerza con MA {ma}:1.",
+    edu_haul_pull: "⚙️😎 <b>¡Alta eficiencia!</b><br>Solo necesita <b>{T}kg</b> fuerza con MA {ma}:1.",
+    edu_low_base: "🛡️ <b>¡La fricción actúa como freno!</b><br>Controla con solo <b>{T}kg</b> con MA {ma}:1.",
+    edu_low_cara: "🪝🛡️ <b>Fuerza de frenado media.</b><br>Sostiene <b>{T}kg</b> para bajar con MA {ma}:1.",
+    edu_low_pull: "⚙️⚠️ <b>¡Muy resbaladizo! Precaución.</b><br>Debe sostener casi toda la carga ({T}kg).",
+    edu_warning: "<br><br>🚨 <b>Efecto Multiplicador:</b> ¡Ángulo muy agudo! ¡Riesgo de falla!",
+    multLabel: "({m}x Carga)",
+    menuSet: "Ajustes y Guía",
+    menuSup: "Soporte e Información",
+    menuSponsor: "Apoyar / Cómo obtener la clave",
+    menuLang: "Idioma / Language",
+    menu1: "Teoría y Principios",
+    menu3: "Compartir Enlace",
+    menu4: "Buscar Actualizaciones",
+    menu5: "Reportar Problema",
+    menuOp: "Manual del Sistema",
+    menuInfo: "Info de Versión",
+    menuPWA: "Añadir a la Pantalla",
+    op1: "Arrastre la <b>Op. al suelo</b> para simular fuerzas dinámicamente.",
+    op2: "Haga clic en <b>Terreno y Entorno</b> para cambiar.",
+    op3: "Cambie el <b>Tipo de fricción</b> para observar el impacto.",
+    op4: "Haga clic en <b>✏️ Personalizado</b> para definir manualmente.",
+    op5: "Alterne <b>Acción del Sistema</b> para comparar Estático/Izado/Descenso.",
+    devTitle: "Simulador Desviación PRO",
+    devTeam: "Desarrollado por <span style='color:var(--warn);'>SunMoon Team</span>",
+    devT1: "Ingeniería y Arquitectura / Shih-Feng Hsu",
+    devT2: "Diseño UI/UX / Pei-Fang Wu",
+    customNameTitle: "✏️ Nombre personalizado",
+    customNameDesc: "Ingrese el nombre del terreno:",
+    customNamePlh: "ej. Pilar de hormigón",
+    customFricTitle: "⚙️ Fricción personalizada",
+    fricTip: "💡 <b>Consejo:</b><br><span style='color:var(--bad)'>0.3</span> = Alta Fricción<br><span style='color:var(--safe)'>0.9</span> = Baja Fricción",
+    fricPlh: "Ingrese 0.1 ~ 1.0",
+    cancel: "Cancelar",
+    confirmName: "Confirmar",
+    confirmFric: "Aplicar",
+    thCodT: "🔄 Desviación (COD)",
+    thCodD: "Punto que cambia la dirección de la cuerda. La fuerza depende del ángulo.",
+    thFricT: "🛡️ Fricción",
+    thFricD: "Enemigo al izar, amigo para frenar al bajar.",
+    thMultT: "🚨 Efecto Multiplicador",
+    thMultD: "Con un ángulo muy cerrado (0°), el COD soporta 2x la carga (200%)!",
+    collapse: "🔼 Cerrar",
+    pwaDesc: "Añadir a la pantalla de inicio para experiencia completa:",
+    pwaAnd: "🤖 Android",
+    pwaIOS: "🍎 iOS (iPhone)",
+    pwaStep1: "Abra el enlace en el navegador",
+    pwaStep2: "Toque '⋮' en el menú",
+    pwaStep3: "Seleccione 'Añadir a la pantalla de inicio'",
+    pwaStep4: "Toque 'Instalar'",
+    pwaStep5: "Debe usar el navegador <b>Safari</b>",
+    pwaStep6: "Toque el icono 'Compartir' en la parte inferior",
+    pwaStep7: "Desplácese y seleccione 'Añadir a la pantalla de inicio'",
+    pwaStep8: "Toque 'Añadir'",
+    installBtn: "📥 Instalar APP",
+    disclaimer: "<strong style='color: var(--bad); font-size: 14px;'>⚠️ Descargo de responsabilidad:</strong><br>Promedios teóricos. Siga a los instructores profesionales.<br><br><span style='color:var(--warn);'>* Licencia para un solo dispositivo. No hay soporte para reemplazo de dispositivos. Por favor, compre de nuevo para apoyarnos.</span>",
+    vipTitle: "🔒 Función PRO",
+    vipEnable1: "Habilitar '",
+    vipEnable2: "'",
+    vipProOnly: "¡Apoya al equipo SunMoon para desbloquear todas las funciones!",
+    vipDisclaimer: "⚠️ Nota: Licencia para un dispositivo. No hay soporte para cambios de teléfono. Vuelva a comprar.",
+    vipStoreBtn: "🛒 Ir a la Tienda PRO",
+    vipHint: "💡 Nota: Para obtener la clave, consulte abajo",
+    vipHasPwd: "¿Tienes una contraseña?",
+    vipPwdPlh: "Ingresa la contraseña",
+    vipCancel: "Más Tarde",
+    vipUnlock: "Desbloquear 🔓",
+    vipErrPwd: "❌ Contraseña incorrecta.",
+    vipStateUnlocked: "🛡️ Sistema: Desbloqueado",
+    vipStateDesc: "Clave maestra de consola:",
+    cmdTitle: "👑 Consola de Comandante",
+    cmdExpToday: "👉 Código de Prueba de Hoy",
+    cmdExpTmrw: "👉 Código de Prueba de Mañana",
+    cmdPerm: "👉 🌟 Código Permanente",
+    cmdLogout: "Cerrar sesión",
+    cmdClose: "Cerrar",
+    toastAuthSuccess: "🎉 ¡Autenticación exitosa!",
+    toastTrialSuccess: "⏱️ ¡Prueba activada!",
+    toastLogout: "🔄 Sesión cerrada.",
+    supTitle: "💬 Reportar Problema",
+    supDesc: "¿Encontraste un error o tienes sugerencias?<br><br>¡Haz clic abajo para llenar el formulario!",
+    supLater: "Más Tarde",
+    supGo: "Ir al Formulario",
+    featCam: "📷 Cámara AR",
+    featCamDesc: "¡Superponga la simulación en la escena de rescate real!",
+    featPhoto: "📁 Foto Superpuesta",
+    featPhotoDesc: "¡Importe fotos del sitio para simulación realista!",
+    featFric: "⚙️ Fricción Dinámica",
+    featFricDesc: "¡Desbloquea fricción de todos!",
+    featAction: "🕹️ Motor de Izado/Descenso",
+    featActionDesc: "¡Simula picos extremos de fuerza!",
+    featShot: "📸 Captura Táctica",
+    featShotDesc: "¡Exportación en alta resolución sin marca de agua!",
+    shotFmtTitle: "📸 Formato de Captura",
+    shotFmtDesc: "¿Qué fondo necesitas?",
+    shotFmtDark: "⬛ Fondo Oscuro",
+    shotFmtTrans: "🏁 Transparente (Para PPT)"
+  },
+  pt: {
+    appTitle: "Simulador de Desvio",
+    ground: "Solo",
+    distExt: "Estendido ao solo",
+    groundOp: "Op. Solo",
+    loadW: "Carga (W)",
+    always1x: "Sempre = 1x",
+    anchorTension: "Tensão Ancoragem",
+    codForce: "Força COD",
+    terrainLabel: "🏕️ Terreno e Ambiente",
+    btnTree: "🌳 Árvore",
+    btnSteel: "🏗️ Aço",
+    btnNone: "⬛ Vazio",
+    frictionLabel: "🛡️ Tipo de atrito (COD)",
+    btnCustom: "✏️ Personalizado",
+    directPull: " Direto",
+    btnFricCara: "🪝 Mosquetão",
+    btnFricPull: "⚙️ Polia",
+    btnFricPad: "🛏️ Protetor",
+    btnFricRoller: "🛞 Rolo",
+    lblRoof: "Teto",
+    lblWall: "Parede Externa",
+    lblParapet: "Parapeito",
+    actionLabel: "🕹️ Ação do Sistema",
+    btnStat: "⏸️ Estático",
+    btnHaul: "⬆️ Içamento",
+    btnLow: "⬇️ Descida",
+    maLabel: "⚙️ Vantagem Mecânica (MA)",
+    eduDefault: "📍 Arraste 'Op. Solo' para observar as forças.",
+    sceneTree: "Árvore",
+    sceneSteel: "Aço",
+    sceneNone: "Desvio",
+    nameUpdated: "Nome alterado para:",
+    fricUpdated: "Atrito definido para:",
+    fricInvalid: "❌ Insira um número válido entre 0 e 1",
+    edu_static: "⏸️ <b>Zero atrito em estático.</b><br>Força igual à carga ({T}kg).",
+    edu_haul_base: "🥵 <b>Alto atrito! Muito cansativo.</b><br>Precisa de <b>{T}kg</b> força com MA {ma}:1!",
+    edu_haul_cara: "🪝🤨 <b>Atrito médio em {name}.</b><br>Requer <b>{T}kg</b> força com MA {ma}:1.",
+    edu_haul_pull: "⚙️😎 <b>Alta eficiência!</b><br>Requer apenas <b>{T}kg</b> força com MA {ma}:1.",
+    edu_low_base: "🛡️ <b>Atrito atua como freio!</b><br>Controla com apenas <b>{T}kg</b> com MA {ma}:1.",
+    edu_low_cara: "🪝🛡️ <b>Força de frenagem média.</b><br>Segura <b>{T}kg</b> para descer com MA {ma}:1.",
+    edu_low_pull: "⚙️⚠️ <b>Muito escorregadio! Cuidado.</b><br>Segura quase toda a carga ({T}kg).",
+    edu_warning: "<br><br>🚨 <b>Efeito Multiplicador:</b> Ângulo muito agudo! Risco de falha!",
+    multLabel: "({m}x Carga)",
+    menuSet: "Configurações e Guia",
+    menuSup: "Suporte e Informações",
+    menuSponsor: "Apoiar / Como obter a chave",
+    menuLang: "Idioma / Language",
+    menu1: "Teoria e Princípios",
+    menu3: "Compartilhar Link",
+    menu4: "Verificar Atualizações",
+    menu5: "Relatar um Problema",
+    menuOp: "Manual do Sistema",
+    menuInfo: "Info da Versão",
+    menuPWA: "Adicionar à Tela Inicial",
+    op1: "Arraste a <b>Op. Solo</b> para simular forças dinamicamente.",
+    op2: "Clique em <b>Terreno e Ambiente</b> para alternar.",
+    op3: "Mude o <b>Tipo de Atrito</b> para observar o impacto.",
+    op4: "Clique em <b>✏️ Personalizado</b> para definir manualmente.",
+    op5: "Alterne <b>Ação do Sistema</b> para comparar Estático/Içamento/Descida.",
+    devTitle: "Simulador Desvio PRO",
+    devTeam: "Desenvolvido por <span style='color:var(--warn);'>SunMoon Team</span>",
+    devT1: "Engenharia e Arquitetura / Shih-Feng Hsu",
+    devT2: "Design UI/UX / Pei-Fang Wu",
+    customNameTitle: "✏️ Nome personalizado",
+    customNameDesc: "Insira o nome do terreno:",
+    customNamePlh: "ex. Pilar de concreto",
+    customFricTitle: "⚙️ Atrito personalizado",
+    fricTip: "💡 <b>Dica:</b><br><span style='color:var(--bad)'>0.3</span> = Alto Atrito<br><span style='color:var(--safe)'>0.9</span> = Baixo Atrito",
+    fricPlh: "Insira 0.1 ~ 1.0",
+    cancel: "Cancelar",
+    confirmName: "Confirmar",
+    confirmFric: "Aplicar",
+    thCodT: "🔄 Desvio (COD)",
+    thCodD: "Ponto que muda a direção da corda. A força depende do ângulo.",
+    thFricT: "🛡️ Atrito",
+    thFricD: "Inimigo ao içar, amigo para frear ao descer.",
+    thMultT: "🚨 Efeito Multiplicador",
+    thMultD: "Com um ângulo muito agudo (0°), o COD suporta 2x a carga (200%)!",
+    collapse: "🔼 Fechar",
+    pwaDesc: "Adicione à tela inicial para uma experiência imersiva:",
+    pwaAnd: "🤖 Android",
+    pwaIOS: "🍎 iOS (iPhone)",
+    pwaStep1: "Abra o link no navegador",
+    pwaStep2: "Toque em '⋮' no menu",
+    pwaStep3: "Selecione 'Adicionar à tela inicial'",
+    pwaStep4: "Toque em 'Instalar'",
+    pwaStep5: "Use o navegador <b>Safari</b>",
+    pwaStep6: "Toque no ícone 'Compartir' na parte inferior",
+    pwaStep7: "Selecione 'Adicionar à Tela de Início'",
+    pwaStep8: "Toque em 'Adicionar'",
+    installBtn: "📥 Instalar APP",
+    disclaimer: "<strong style='color: var(--bad); font-size: 14px;'>⚠️ Aviso Legal:</strong><br>Médias teóricas. Siga os instrutores profissionais.<br><br><span style='color:var(--warn);'>* Licença para dispositivo único. Sem suporte para troca de aparelho. Por favor, compre novamente.</span>",
+    vipTitle: "🔒 Recurso PRO",
+    vipEnable1: "Ativar '",
+    vipEnable2: "'",
+    vipProOnly: "Apoie a Equipe SunMoon para desbloquear todos os recursos!",
+    vipDisclaimer: "⚠️ Atenção: Licença para um dispositivo. Sem suporte para trocas de aparelho. Compre novamente.",
+    vipStoreBtn: "🛒 Ir para a Loja PRO",
+    vipHint: "💡 Nota: Para obter a chave, consulte abaixo",
+    vipHasPwd: "Tem uma senha?",
+    vipPwdPlh: "Digite a senha VIP",
+    vipCancel: "Mais tarde",
+    vipUnlock: "Desbloquear 🔓",
+    vipErrPwd: "❌ Senha incorreta.",
+    vipStateUnlocked: "🛡️ Sistema: Desbloqueado",
+    vipStateDesc: "Chave mestre (Console):",
+    cmdTitle: "👑 Console do Comandante",
+    cmdExpToday: "👉 Código de Teste de Hoje",
+    cmdExpTmrw: "👉 Código de Teste de Amanhã",
+    cmdPerm: "👉 🌟 Código Permanente",
+    cmdLogout: "Sair",
+    cmdClose: "Fechar",
+    toastAuthSuccess: "🎉 Autenticação bem-sucedida!",
+    toastTrialSuccess: "⏱️ Teste ativado!",
+    toastLogout: "🔄 Desconectado.",
+    supTitle: "💬 Relatar Problema",
+    supDesc: "Encontrou um erro ou tem sugestões?<br><br>Clique abaixo para preencher o formulário e nos ajudar a melhorar!",
+    supLater: "Mais tarde",
+    supGo: "Ir para Formulário",
+    featCam: "📷 Câmera AR",
+    featCamDesc: "Sobreponha a simulação na cena real de resgate!",
+    featPhoto: "📁 Foto Sobreposta",
+    featPhotoDesc: "Importe fotos do local para simulação realista!",
+    featFric: "⚙️ Atrito Dinâmico",
+    featFricDesc: "Desbloqueie todos os atritos!",
+    featAction: "🕹️ Motor de Içamento/Descida",
+    featActionDesc: "Simule picos extremos de força da vida real!",
+    featShot: "📸 Captura Táctica",
+    featShotDesc: "Exportação em alta resolução sem marca d'água!",
+    shotFmtTitle: "📸 Formato de Captura",
+    shotFmtDesc: "Qual fundo você prefere?",
+    shotFmtDark: "⬛ Fundo Escuro",
+    shotFmtTrans: "🏁 Transparente (PPT)"
   }
 };
 
-const availableLangs = ['zh'];
-let currentLang = 'zh';
+const availableLangs = ['zh', 'en', 'ja', 'ko', 'fr', 'de', 'es', 'pt'];
+let currentLang = localStorage.getItem('sunmoon_lang');
+
+if (!currentLang) {
+    const browserLang = navigator.language || navigator.userLanguage;
+    const shortLang = browserLang.substring(0, 2).toLowerCase();
+    if (availableLangs.includes(shortLang)) {
+        currentLang = shortLang;
+    } else {
+        currentLang = 'zh';
+    }
+    localStorage.setItem('sunmoon_lang', currentLang);
+}
 
 function t(key) {
     return i18n[currentLang][key] || i18n['zh'][key] || key;
@@ -475,6 +1437,7 @@ function applyTranslations() {
 function changeLang(selectedLang) {
     if(availableLangs.includes(selectedLang)) {
         currentLang = selectedLang;
+        localStorage.setItem('sunmoon_lang', currentLang);
         applyTranslations();
     }
 }
@@ -512,6 +1475,28 @@ function triggerFlash(el) {
 </script>
 
 <div id="status-bar-protector" data-html2canvas-ignore="true"></div>
+
+<!-- 💡 將畫面控制台移出操作框，改為全域浮動面板，不受雙擊隱藏影響 -->
+<div id="cameraControls" style="display:none; position: fixed; top: 70px; left: 10px; flex-direction: column; background: rgba(0,0,0,0.75); padding: 8px 12px; border-radius: 10px; border: 1px solid var(--warn); z-index: 9990; backdrop-filter: blur(8px); box-shadow: 0 8px 25px rgba(0,0,0,0.6); min-width: 150px;" data-html2canvas-ignore="true">
+    <div id="camCtrlHeader" style="display:flex; justify-content:space-between; align-items:center; cursor:move; margin-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:4px; user-select:none;">
+        <span style="font-size:12px; font-weight:bold; color:var(--warn);">🎛️ 畫面控制台</span>
+        <span id="camCtrlToggle" style="cursor:pointer; font-size:12px; padding:2px 6px;">▼</span>
+    </div>
+    <div id="camCtrlBody" style="display:flex; flex-direction:column; gap:10px;">
+        <div class="control-slider-wrap">
+            <span>📄白紙</span>
+            <input type="range" id="sliderWhite" min="0" max="0.9" step="0.1" value="0.2">
+        </div>
+        <div class="control-slider-wrap">
+            <span>🔍縮放</span>
+            <input type="range" id="sliderZoom" min="1" max="3" step="0.1" value="1">
+        </div>
+        <div class="control-slider-wrap">
+            <span>🪢繩粗</span>
+            <input type="range" id="sliderRope" min="2" max="12" step="1" value="6">
+        </div>
+    </div>
+</div>
 
 <div id="bg-layer">
   <div id="media-container">
@@ -649,28 +1634,6 @@ function triggerFlash(el) {
       </div>
 
       <div class="svgWrap" id="svgWrap">
-        <!-- AR 控制台面板 (已加入繩粗設定) -->
-        <div id="cameraControls" class="capture-hide" style="display:none; position: absolute; top: 10px; left: 10px; flex-direction: column; background: rgba(0,0,0,0.75); padding: 8px 12px; border-radius: 10px; border: 1px solid var(--warn); z-index: 100; backdrop-filter: blur(8px); box-shadow: 0 8px 25px rgba(0,0,0,0.6); min-width: 150px;">
-            <div id="camCtrlHeader" style="display:flex; justify-content:space-between; align-items:center; cursor:move; margin-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:4px; user-select:none;">
-                <span style="font-size:12px; font-weight:bold; color:var(--warn);">🎛️ 畫面控制台</span>
-                <span id="camCtrlToggle" style="cursor:pointer; font-size:12px; padding:2px 6px;">▼</span>
-            </div>
-            <div id="camCtrlBody" style="display:flex; flex-direction:column; gap:10px;">
-                <div class="control-slider-wrap">
-                    <span>📄白紙</span>
-                    <input type="range" id="sliderWhite" min="0" max="0.9" step="0.1" value="0.2">
-                </div>
-                <div class="control-slider-wrap">
-                    <span>🔍縮放</span>
-                    <input type="range" id="sliderZoom" min="1" max="3" step="0.1" value="1">
-                </div>
-                <div class="control-slider-wrap">
-                    <span>🪢繩粗</span>
-                    <input type="range" id="sliderRope" min="2" max="12" step="1" value="6">
-                </div>
-            </div>
-        </div>
-
         <svg id="canvas" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet">
           <g id="buildingScene" style="display:none;">
               <path id="buildingPath" d="" fill="#334155" stroke="#1e293b" stroke-width="2" />
@@ -813,7 +1776,6 @@ function triggerFlash(el) {
     </div> 
     
     <div class="menu-list capture-hide">
-      <!-- 選單區域保持不變 -->
       <details class="main-accordion" id="settingsAccordion">
         <summary><div style="display:flex; align-items:center; gap:8px;"><span class="menu-icon">⚙️</span> <span data-i18n="menuSet" style="color: var(--warn);">系統設定與操作指南</span></div></summary>
         <div class="menu-group">
@@ -821,7 +1783,14 @@ function triggerFlash(el) {
           <div class="menu-action-btn" style="border-bottom: 1px solid rgba(150,150,150,0.1); justify-content: space-between;">
             <div class="menu-header-left"><span class="menu-icon">🌍</span><span data-i18n="menuLang">語言設定 / Language</span></div>
             <select id="langSelect" onchange="changeLang(this.value)" style="background: rgba(255,255,255,0.05); border: 1px solid var(--line); color: var(--text); border-radius: 6px; padding: 4px 8px; font-size: 13px; font-weight: bold; outline: none; cursor: pointer;">
-              <option value="zh">繁體中文</option>
+              <option value="zh">🇹🇼 繁中</option>
+              <option value="en">🇺🇸 EN</option>
+              <option value="ja">🇯🇵 日本語</option>
+              <option value="ko">🇰🇷 한국어</option>
+              <option value="fr">🇫🇷 Français</option>
+              <option value="de">🇩🇪 Deutsch</option>
+              <option value="es">🇪🇸 Español</option>
+              <option value="pt">🇵🇹 Português</option>
             </select>
           </div>
 
@@ -897,7 +1866,7 @@ function triggerFlash(el) {
             <div class="menu-content">
               <div style="text-align: center; margin-bottom: 15px;">
                 <span data-i18n="devTitle" style="display:inline-block; background:var(--safe); color:#0a1410; font-weight:bold; padding:4px 14px; border-radius:20px; font-size:13px; letter-spacing:0.5px; box-shadow: 0 2px 6px rgba(74,222,128,0.3);">下方固定點架設儀 專業正式版</span>
-                <div style="font-size: 11px; color: var(--muted); margin-top: 8px; font-family: monospace;">Version 6.8.0</div>
+                <div style="font-size: 11px; color: var(--muted); margin-top: 8px; font-family: monospace;">Version 6.9.0</div>
               </div>
               <p style="margin-top: 0; margin-bottom: 6px; font-weight: bold; color: var(--text); text-align: center;" data-i18n="devTeam">本工具由 <span style="color:var(--warn);">散木團隊</span> 開發製作</p>
               <p style="margin-top: 0; margin-bottom: 4px; font-size: 13px; text-align: center;" data-i18n="devT1">教學架構與工程判斷／徐世豐</p>
@@ -1190,7 +2159,7 @@ let gridVisible = true;
 document.getElementById('sliderWhite').addEventListener('input', (e) => { whiteOverlay.style.opacity = e.target.value; });
 document.getElementById('sliderZoom').addEventListener('input', (e) => { mediaContainer.style.transform = `scale(${e.target.value})`; });
 
-// 💡 新增：繩粗微調滑桿的事件監聽
+// 💡 繩粗微調滑桿的事件監聽
 document.getElementById('sliderRope').addEventListener('input', (e) => {
     let w = parseInt(e.target.value);
     els.ropeLoad.setAttribute('stroke-width', w);
@@ -1214,14 +2183,14 @@ let isDraggingCtrl = false, ctrlStartX, ctrlStartY, ctrlInitialLeft, ctrlInitial
 const ctrlHeader = document.getElementById('camCtrlHeader');
 
 const startCtrlDrag = (e) => {
-    if (e.target.id === 'camCtrlToggle') return; 
+    if (e.target.id === 'camCtrlToggle' || e.target.tagName.toLowerCase() === 'input') return; 
     isDraggingCtrl = true;
     ctrlStartX = e.touches ? e.touches[0].clientX : e.clientX;
     ctrlStartY = e.touches ? e.touches[0].clientY : e.clientY;
     
-    const style = window.getComputedStyle(cameraControls);
-    ctrlInitialLeft = parseInt(style.left, 10) || 0;
-    ctrlInitialTop = parseInt(style.top, 10) || 0;
+    const rect = cameraControls.getBoundingClientRect();
+    ctrlInitialLeft = rect.left;
+    ctrlInitialTop = rect.top;
     
     if (e.cancelable) e.preventDefault();
 };
@@ -1248,12 +2217,12 @@ window.addEventListener('touchend', stopCtrlDrag);
 function resetCameraControls() {
     document.getElementById('sliderWhite').value = 0.2;
     document.getElementById('sliderZoom').value = 1;
-    // 預設不重置繩粗，讓使用者保留手感
     whiteOverlay.style.opacity = 0.2; 
     mediaContainer.style.transform = 'scale(1)';
     cameraControls.style.display = 'none';
+    cameraControls.style.position = 'fixed';
     cameraControls.style.left = '10px';
-    cameraControls.style.top = '10px';
+    cameraControls.style.top = '70px';
     document.getElementById('camCtrlBody').style.display = 'flex';
     document.getElementById('camCtrlToggle').textContent = '▼';
 }
@@ -1339,11 +2308,12 @@ function loadImage(event) {
 }
 function toggleGrid() { gridVisible = !gridVisible; gridOverlay.style.opacity = gridVisible ? "0.5" : "0"; }
 
+// 💡 截圖引擎核心修正：使用 taking-screenshot 類別，保留面板與數據，僅隱藏按鈕！
 async function doTakeScreenshot(isTransparent) {
   document.getElementById('shotFormatModal').style.display = 'none';
   const target = document.body;
   
-  target.classList.add('capture-mode');
+  target.classList.add('taking-screenshot');
   if (isTransparent) {
       target.classList.add('capture-transparent');
   }
@@ -1352,8 +2322,7 @@ async function doTakeScreenshot(isTransparent) {
   const placeholders = [];
   
   inputs.forEach(inp => {
-      // 判斷是否為不需要被隱藏的輸入框
-      if(inp.closest('.capture-hide') && !inp.closest('.topbar') && !inp.closest('.icon-bar')) return;
+      // 避免隱藏不該隱藏的輸入框（例如 W 的重量輸入）
       if(inp.closest('[data-html2canvas-ignore]')) return;
       const span = document.createElement('span');
       span.textContent = inp.value;
@@ -1364,7 +2333,6 @@ async function doTakeScreenshot(isTransparent) {
   await new Promise(r => setTimeout(r, 100));
   
   let tempCanvas = null;
-  // 如果是透明去背模式，我們連相機/照片的背景都不要擷取
   if (!isTransparent && stream && videoTrack && video.style.opacity === "1") {
       tempCanvas = document.createElement('canvas');
       tempCanvas.width = video.videoWidth;
@@ -1393,12 +2361,6 @@ async function doTakeScreenshot(isTransparent) {
         useCORS: true, 
         ignoreElements: (el) => {
             if (el.hasAttribute('data-html2canvas-ignore')) return true;
-            if (el.classList && el.classList.contains('capture-hide')) {
-                if (el.classList.contains('topbar') || el.classList.contains('icon-bar')) {
-                    return false; 
-                }
-                return true; 
-            }
             return false;
         }
     });
@@ -1414,7 +2376,7 @@ async function doTakeScreenshot(isTransparent) {
   
   if (tempCanvas) { tempCanvas.remove(); video.style.opacity = '1'; }
   placeholders.forEach(p => { p.inp.style.display = ''; p.span.remove(); }); 
-  target.classList.remove('capture-mode');
+  target.classList.remove('taking-screenshot');
   target.classList.remove('capture-transparent');
 }
 
@@ -1731,8 +2693,6 @@ function updateEngine() {
         if (els.buildingScene) els.buildingScene.style.display = 'none';
     }
 
-    // 💡 樹幹絕對綁定引擎：根據 P 點 X/Y 座標即時渲染樹幹位置，並聰明翻轉
-    // 修復邏輯：地面操作在右側 (A.x >= P.x) 時，樹枝往右長 (scaleX=1)；在左側時往左長 (scaleX=-1)。
     if (currentScene === 'tree') {
         let isRight = A.x >= P.x;
         let scaleX = isRight ? 1 : -1;
@@ -1960,7 +2920,7 @@ if ('serviceWorker' in navigator && ['http:', 'https:'].includes(window.location
 }
 
 function checkForUpdates() {
-    if (confirm(t('updateMsg'))) {
+    if (confirm(t('updateMsg') || '確定要檢查更新嗎？')) {
         const wrapper = document.getElementById('scroll-wrapper');
         if (wrapper) wrapper.scrollTo({ top: 0, behavior: 'smooth' });
         
