@@ -1783,14 +1783,14 @@ function triggerFlash(el) {
           <div class="menu-action-btn" style="border-bottom: 1px solid rgba(150,150,150,0.1); justify-content: space-between;">
             <div class="menu-header-left"><span class="menu-icon">🌍</span><span data-i18n="menuLang">語言設定 / Language</span></div>
             <select id="langSelect" onchange="changeLang(this.value)" style="background: rgba(255,255,255,0.05); border: 1px solid var(--line); color: var(--text); border-radius: 6px; padding: 4px 8px; font-size: 13px; font-weight: bold; outline: none; cursor: pointer;">
-              <option value="zh">🇹🇼 繁中</option>
-              <option value="en">🇺🇸 EN</option>
-              <option value="ja">🇯🇵 日本語</option>
-              <option value="ko">🇰🇷 한국어</option>
-              <option value="fr">🇫🇷 Français</option>
-              <option value="de">🇩🇪 Deutsch</option>
-              <option value="es">🇪🇸 Español</option>
-              <option value="pt">🇵🇹 Português</option>
+              <option value="zh">繁體中文</option>
+              <option value="en">English</option>
+              <option value="ja">日本語</option>
+              <option value="ko">한국어</option>
+              <option value="fr">Français</option>
+              <option value="de">Deutsch</option>
+              <option value="es">Español</option>
+              <option value="pt">Português</option>
             </select>
           </div>
 
@@ -2361,6 +2361,7 @@ async function doTakeScreenshot(isTransparent) {
         useCORS: true, 
         ignoreElements: (el) => {
             if (el.hasAttribute('data-html2canvas-ignore')) return true;
+            if (el.classList && el.classList.contains('menu-list')) return true;
             return false;
         }
     });
@@ -2833,16 +2834,20 @@ window.addEventListener('mousemove', processDrag);
 window.addEventListener('touchend', () => isDragging = false);
 window.addEventListener('mouseup', () => isDragging = false);
 
-// 雙擊進入沉浸觀察模式
+// 雙擊進入沉浸觀察模式 (全域觸發)
 let lastTapTime = 0;
-els.svgWrap.addEventListener('pointerdown', (e) => {
-    // 只有點擊背景(不是在拖曳控制點)時才觸發
-    if (e.target.id === 'canvas' || e.target.tagName === 'svg') {
-        const now = Date.now();
-        if (now - lastTapTime < 300) {
-            document.body.classList.toggle('capture-mode');
-            showToast(document.body.classList.contains('capture-mode') ? "👁️ 純淨觀察模式 (雙擊還原)" : "🎛️ 控制面板已還原", "safe");
-        }
+document.addEventListener('pointerdown', (e) => {
+    // 排除互動元素，避免點擊按鈕時誤觸隱藏
+    if (e.target.closest('button, input, label, select, details, summary, .draggable-anchor, .icon-btn, .toggle-btn, .primary-btn, #cameraControls')) {
+        return;
+    }
+    
+    const now = Date.now();
+    if (now - lastTapTime < 300) {
+        document.body.classList.toggle('capture-mode');
+        showToast(document.body.classList.contains('capture-mode') ? "👁️ 純淨觀察模式 (雙擊還原)" : "🎛️ 控制面板已還原", "safe");
+        lastTapTime = 0;
+    } else {
         lastTapTime = now;
     }
 });
