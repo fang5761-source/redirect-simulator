@@ -2381,6 +2381,11 @@ const startCtrlDrag = (e) => {
     ctrlInitialLeft = rect.left;
     ctrlInitialTop = rect.top;
     
+    // 💡 拔除底部錨點鎖定，防止像口香糖一樣被拉長
+    cameraControls.style.bottom = 'auto';
+    cameraControls.style.top = ctrlInitialTop + 'px';
+    cameraControls.style.left = ctrlInitialLeft + 'px';
+    
     if (e.cancelable) e.preventDefault();
 };
 
@@ -2402,6 +2407,41 @@ window.addEventListener('mousemove', doCtrlDrag);
 window.addEventListener('touchmove', doCtrlDrag, {passive: false});
 window.addEventListener('mouseup', stopCtrlDrag);
 window.addEventListener('touchend', stopCtrlDrag);
+
+// 💡 雙指縮放 (Pinch-to-Zoom) 捷徑功能
+let initialPinchDistance = null;
+let initialPinchZoom = 1;
+
+window.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length === 2) {
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        initialPinchDistance = Math.hypot(dx, dy);
+        initialPinchZoom = parseFloat(document.getElementById('sliderZoom').value) || 1;
+    }
+}, {passive: false});
+
+window.addEventListener('touchmove', (e) => {
+    if (e.touches && e.touches.length === 2 && initialPinchDistance) {
+        if (e.cancelable) e.preventDefault(); // 防止雙指滑動時觸發網頁原生捲動
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        const currentDistance = Math.hypot(dx, dy);
+        
+        const scale = currentDistance / initialPinchDistance;
+        let newZoom = initialPinchZoom * scale;
+        newZoom = Math.max(1, Math.min(3, newZoom)); // 限制縮放範圍在 1 到 3 之間
+        
+        document.getElementById('sliderZoom').value = newZoom.toFixed(2);
+        document.getElementById('media-container').style.transform = `scale(${newZoom})`;
+    }
+}, {passive: false});
+
+window.addEventListener('touchend', (e) => {
+    if (e.touches && e.touches.length < 2) {
+        initialPinchDistance = null;
+    }
+});
 
 const floatTools = document.getElementById('floating-tools');
 const floatDragHandle = document.getElementById('float-drag-handle');
@@ -2545,7 +2585,7 @@ function loadImage(event) {
 }
 function toggleGrid() { gridVisible = !gridVisible; gridOverlay.style.opacity = gridVisible ? "0.15" : "0"; }
 
-// 💡 截圖引擎核心修正：雙層融合截圖法 (完美解耦 AR 鏡頭變形 Bug，並保留數據面板)
+// 💡 截圖引擎核心修正：雙層融合截圖法 + 友軍工程師完美座標換算法
 async function doTakeScreenshot(isTransparent) {
   document.getElementById('shotFormatModal').style.display = 'none';
   const target = document.body;
@@ -2553,7 +2593,6 @@ async function doTakeScreenshot(isTransparent) {
   
   if (scrollWrap) scrollWrap.scrollTop = 0;
   
-  // 1. 隱藏背景層，完全阻絕引擎碰觸鏡頭與相片，防止變形
   const bgLayer = document.getElementById('bg-layer');
   const gridLayer = document.getElementById('grid-overlay');
   bgLayer.style.display = 'none';
@@ -2577,7 +2616,6 @@ async function doTakeScreenshot(isTransparent) {
   await new Promise(r => setTimeout(r, 150));
 
   try {
-    // 2. 讓引擎只專心擷取「純淨去背」的 UI 儀表板與數據沙盤
     const uiCanvas = await html2canvas(document.body, { 
         backgroundColor: null, 
         scale: 2, 
@@ -2590,7 +2628,6 @@ async function doTakeScreenshot(isTransparent) {
         }
     });
 
-    // 3. 建立原生畫布，手動完美合成「背景 + 數據UI」
     const finalCanvas = document.createElement('canvas');
     finalCanvas.width = uiCanvas.width;
     finalCanvas.height = uiCanvas.height;
@@ -2603,33 +2640,27 @@ async function doTakeScreenshot(isTransparent) {
         const videoEl = document.getElementById('bg-video');
         const imageEl = document.getElementById('bg-image');
         const zoom = parseFloat(document.getElementById('sliderZoom').value) || 1;
-        // html2canvas 的 scale 值，finalCanvas 尺寸 = 螢幕尺寸 × canvasScale
         const canvasScale = finalCanvas.width / window.innerWidth;
 
-        // 手動計算完美等比例填充 (Object-fit: cover)
-        // 核心修正：以螢幕的真實像素空間(window.innerWidth/Height)為基準計算 cover 裁切，
-        // 再統一乘以 canvasScale 對應到畫布座標，確保背景與 SVG UI 兩層的縮放基準點完全一致。
         function drawMedia(el, rawW, rawH) {
             if (!rawW || !rawH) return;
             let srcW = rawW, srcH = rawH;
             let rotate = false;
             const isPortrait = window.innerHeight > window.innerWidth;
             
-            // 防禦 iOS 原生鏡頭橫向 Bug：強制轉正
             if (el.tagName === 'VIDEO' && isPortrait && rawW > rawH) {
                 srcW = rawH; 
                 srcH = rawW;
                 rotate = true;
             }
 
-            // 以螢幕尺寸為 cover 填滿目標（而非 finalCanvas 尺寸）
+            // 💡 友軍工程師神救援：先在 1x 螢幕座標系算好裁切與置中
             const screenW = window.innerWidth;
             const screenH = window.innerHeight;
             const sX = screenW / srcW;
             const sY = screenH / srcH;
             const coverScale = Math.max(sX, sY) * zoom;
             
-            // 在螢幕座標系中的繪製尺寸與偏移（object-fit: cover + transform-origin: center）
             const drawW = srcW * coverScale;
             const drawH = srcH * coverScale;
             const dX = (screenW - drawW) / 2;
@@ -2637,10 +2668,9 @@ async function doTakeScreenshot(isTransparent) {
 
             ctx.save();
             if (rotate) {
-                // 旋轉後以螢幕中心為軸點，再乘以 canvasScale 換算到畫布座標
                 ctx.translate(finalCanvas.width / 2, finalCanvas.height / 2);
                 ctx.rotate(90 * Math.PI / 180);
-                // 旋轉後 srcW/srcH 已互換，繪製時以交換後的尺寸計算
+                // 💡 最後再整體放大 canvasScale 倍數，完美對位！
                 ctx.drawImage(el,
                     -(srcH * coverScale * canvasScale) / 2,
                     -(srcW * coverScale * canvasScale) / 2,
@@ -2648,7 +2678,7 @@ async function doTakeScreenshot(isTransparent) {
                     srcW * coverScale * canvasScale
                 );
             } else {
-                // 直接將螢幕座標乘以 canvasScale 換算到畫布座標
+                // 💡 也是最後再放大 canvasScale 倍數
                 ctx.drawImage(el,
                     dX * canvasScale,
                     dY * canvasScale,
@@ -2665,18 +2695,16 @@ async function doTakeScreenshot(isTransparent) {
             drawMedia(imageEl, imageEl.naturalWidth, imageEl.naturalHeight);
         }
 
-        // 疊加白紙效果
         const whiteOp = parseFloat(document.getElementById('sliderWhite').value) || 0;
         if (whiteOp > 0) {
             ctx.fillStyle = `rgba(255, 255, 255, ${whiteOp})`;
             ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
         }
 
-        // 疊加網格
         if (gridVisible) {
             ctx.strokeStyle = 'rgba(19, 42, 27, 0.15)';
-            ctx.lineWidth = 1 * uiCanvas.width / window.innerWidth;
-            const gridSize = 20 * uiCanvas.width / window.innerWidth;
+            ctx.lineWidth = 1 * canvasScale;
+            const gridSize = 20 * canvasScale;
             ctx.beginPath();
             for(let x = 0; x <= finalCanvas.width; x += gridSize) { ctx.moveTo(x, 0); ctx.lineTo(x, finalCanvas.height); }
             for(let y = 0; y <= finalCanvas.height; y += gridSize) { ctx.moveTo(0, y); ctx.lineTo(finalCanvas.width, y); }
@@ -2684,7 +2712,6 @@ async function doTakeScreenshot(isTransparent) {
         }
     }
 
-    // 4. 將去背的 UI 數據儀表板蓋在完美的背景上！
     ctx.drawImage(uiCanvas, 0, 0);
     
     document.getElementById('shotPreviewImg').src = finalCanvas.toDataURL('image/png');
@@ -2695,7 +2722,6 @@ async function doTakeScreenshot(isTransparent) {
       showToast("❌ 截圖失敗，請稍後再試！", "bad"); 
   }
   
-  // 5. 復原背景與 UI
   bgLayer.style.display = '';
   gridLayer.style.display = '';
   placeholders.forEach(p => { p.inp.style.display = ''; p.span.remove(); }); 
