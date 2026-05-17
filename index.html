@@ -130,37 +130,27 @@
   }
   .capture-mode #floating-tools { display: flex !important; }
 
-  /* 💡 截圖專用模式：保留標題、數據儀表板、省力比 MA 與 教學說明 */
+  /* 💡 截圖專用模式：保留標題、數據儀表板、完整操作設定與教學說明，解除 body 限制以便完全擷取 */
+  html.taking-screenshot, body.taking-screenshot { height: auto !important; overflow: visible !important; position: relative !important; }
+  .taking-screenshot #scroll-wrapper { height: auto !important; overflow: visible !important; position: relative !important; }
+  .taking-screenshot #bg-layer, .taking-screenshot #grid-overlay { position: absolute !important; top: 0 !important; left: 0 !important; }
+
+  .taking-screenshot .capture-hide {
+      opacity: 1 !important;
+      visibility: visible !important;
+  }
+
   .taking-screenshot .icon-bar,
   .taking-screenshot .menu-list,
-  .taking-screenshot #floating-tools {
+  .taking-screenshot #floating-tools,
+  .taking-screenshot button[onclick^="openCustom"] {
       display: none !important;
-      opacity: 0 !important;
-      visibility: hidden !important;
-      pointer-events: none !important;
   }
   
   .taking-screenshot .topbar,
-  .taking-screenshot .dashboard {
-      display: flex !important;
-      opacity: 1 !important;
-      visibility: visible !important;
-  }
-  
+  .taking-screenshot .dashboard,
   .taking-screenshot .control-deck {
       display: flex !important;
-      opacity: 1 !important;
-      visibility: visible !important;
-      background: transparent !important;
-      border: none !important;
-      padding: 0 !important;
-  }
-  
-  .taking-screenshot .control-deck .control-row:not(#maRow) {
-      display: none !important;
-  }
-  
-  .taking-screenshot #maRow {
       opacity: 1 !important;
       visibility: visible !important;
   }
@@ -172,8 +162,8 @@
   }
 
   .taking-screenshot .card {
-      background: rgba(15, 30, 22, 0.5) !important; 
-      border-color: transparent !important;
+      background: var(--card) !important; 
+      border-color: var(--line) !important;
       box-shadow: none !important;
   }
   
@@ -2559,11 +2549,12 @@ function loadImage(event) {
 
 function toggleGrid() { gridVisible = !gridVisible; gridOverlay.style.opacity = gridVisible ? "0.5" : "0"; }
 
-// 💡 截圖引擎核心修正：強制保留面板、省力比 MA 與 數據，自動捕捉相簿或相機的像素圖
+// 💡 截圖引擎核心修正：強制解除視窗高度限制，並凍結背景尺寸以防止相片變形
 async function doTakeScreenshot(isTransparent) {
   document.getElementById('shotFormatModal').style.display = 'none';
   const target = document.body;
   
+  document.documentElement.classList.add('taking-screenshot');
   target.classList.add('taking-screenshot');
   if (isTransparent) {
       target.classList.add('capture-transparent');
@@ -2579,21 +2570,35 @@ async function doTakeScreenshot(isTransparent) {
       span.style.color = 'var(--text)'; span.style.fontSize = '18px'; span.style.fontWeight = 'bold'; span.style.fontFamily = 'monospace'; span.style.margin = '0 2px';
       inp.style.display = 'none'; inp.parentNode.insertBefore(span, inp); placeholders.push({ span, inp });
   });
+
+  // 💡 凍結背景圖層的長寬，避免因 body height 改變而觸發 object-fit: cover 的重新計算 (解決截圖相片變形問題)
+  const bgLayer = document.getElementById('bg-layer');
+  const gridLayer = document.getElementById('grid-overlay');
+  const svgWrap = document.getElementById('svgWrap');
   
-  await new Promise(r => setTimeout(r, 100));
+  const vh = window.innerHeight;
+  const vw = window.innerWidth;
+  
+  const origBgHeight = bgLayer.style.height;
+  const origBgWidth = bgLayer.style.width;
+  const origGridHeight = gridLayer.style.height;
+  const origGridWidth = gridLayer.style.width;
+  const origSvgHeight = svgWrap.style.height;
+  
+  bgLayer.style.height = vh + 'px';
+  bgLayer.style.width = vw + 'px';
+  gridLayer.style.height = vh + 'px';
+  gridLayer.style.width = vw + 'px';
+  svgWrap.style.height = svgWrap.getBoundingClientRect().height + 'px';
+  
+  await new Promise(r => setTimeout(r, 150));
   
   let tempCanvas = null;
-  let targetMedia = null;
-
-  if (!isTransparent) {
-      if (video.style.opacity === "1" && stream && videoTrack) targetMedia = video;
-      else if (image.style.opacity === "1" && image.src) targetMedia = image;
-  }
-
-  if (targetMedia) {
+  // 💡 僅當使用實境「相機」時才需要 tempCanvas 抓取 video 幀數；若為「相片」則讓 html2canvas 原生抓取，避免失真
+  if (!isTransparent && video.style.opacity === "1" && stream && videoTrack) {
       tempCanvas = document.createElement('canvas');
-      tempCanvas.width = targetMedia.tagName === 'VIDEO' ? targetMedia.videoWidth : targetMedia.naturalWidth;
-      tempCanvas.height = targetMedia.tagName === 'VIDEO' ? targetMedia.videoHeight : targetMedia.naturalHeight;
+      tempCanvas.width = video.videoWidth;
+      tempCanvas.height = video.videoHeight;
       
       if (tempCanvas.width > 0 && tempCanvas.height > 0) {
           tempCanvas.style.position = 'absolute';
@@ -2610,19 +2615,21 @@ async function doTakeScreenshot(isTransparent) {
           ctx.scale(zoomVal, zoomVal);
           ctx.translate(-tempCanvas.width/2, -tempCanvas.height/2);
           
-          ctx.drawImage(targetMedia, 0, 0, tempCanvas.width, tempCanvas.height);
+          ctx.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
           document.getElementById('media-container').appendChild(tempCanvas);
-          targetMedia.style.opacity = '0';
+          video.style.opacity = '0';
       } else {
           tempCanvas = null;
       }
   }
 
   try {
-    const canvas = await html2canvas(target, { 
+    const canvas = await html2canvas(document.body, { 
         backgroundColor: isTransparent ? null : (document.body.classList.contains('camera-mode') ? '#0a1410' : '#0a1410'), 
         scale: 2, 
-        useCORS: true, 
+        useCORS: true,
+        windowWidth: vw,
+        windowHeight: document.body.scrollHeight,
         ignoreElements: (el) => {
             if (el.hasAttribute('data-html2canvas-ignore')) return true;
             if (el.classList && el.classList.contains('menu-list')) return true;
@@ -2639,10 +2646,19 @@ async function doTakeScreenshot(isTransparent) {
   }
   
   if (tempCanvas) { tempCanvas.remove(); }
-  if (targetMedia) { targetMedia.style.opacity = '1'; }
+  if (stream) { video.style.opacity = '1'; }
   placeholders.forEach(p => { p.inp.style.display = ''; p.span.remove(); }); 
+  
   target.classList.remove('taking-screenshot');
+  document.documentElement.classList.remove('taking-screenshot');
   target.classList.remove('capture-transparent');
+  
+  // 💡 恢復背景與畫布尺寸
+  bgLayer.style.height = origBgHeight;
+  bgLayer.style.width = origBgWidth;
+  gridLayer.style.height = origGridHeight;
+  gridLayer.style.width = origGridWidth;
+  svgWrap.style.height = origSvgHeight;
 }
 
 // 核心變更：全地形場景與高空介質引擎
