@@ -749,7 +749,7 @@ const i18n = {
     featPhotoDesc: "現場の写真をインポートし、最もリアルな荷重シミュレーションを行います！",
     featShot: "📸 戦術スクリーンショット",
     featShotDesc: "透かしのない高解像度の戦術レポートを出力！",
-    featFric: "⚙️ 動力摩擦力計算",
+    featFric: "⚙️ 動的摩擦力計算",
     featFricDesc: "すべての摩擦係数を解放します！",
     featAction: "🕹️ 引き上げ・ロワリングエンジン",
     featActionDesc: "摩擦による張力倍増効果をリアルにシミュレーション！",
@@ -1388,7 +1388,7 @@ const i18n = {
     spStoreBtn: "Ir a Tienda PRO 🛒",
     shotPreviewTitle: "📸 Captura Generada",
     shotPreviewTip: "<b>Mantén presionada</b> la imagen para Guardar o Compartir",
-    btnReturn: "Volver",
+    btnReturn: "Voltar",
     camCtrlTitle: "🎛️ Controles de Cámara",
     camCtrlOpacity: "📄 Opacidad",
     camCtrlZoom: "🔍 Zoom",
@@ -1545,7 +1545,7 @@ const i18n = {
     shotPreviewTip: "<b>Pressione e segure</b> a imagem para Salvar ou Compartilhar",
     btnReturn: "Voltar",
     camCtrlTitle: "🎛️ Controles da Câmera",
-    camCtrlOpacity: "📄 Opacidade",
+    camCtrlOpacity: "📄 Opacidad",
     camCtrlZoom: "🔍 Zoom",
     camCtrlRope: "🪢 Corda",
     loadModalTitle: "⚖️ Ajuste Rápido Carga (W)",
@@ -1635,6 +1635,25 @@ function triggerFlash(el) {
     void el.offsetWidth;
     el.classList.add('val-flash');
 }
+
+// 💡 修復未定義的分享及更新函式
+function checkForUpdates() {
+    showToast("🔄 正在檢查更新並重新載入...", "safe");
+    setTimeout(() => {
+        window.location.reload();
+    }, 1000);
+}
+
+function shareApp() {
+    if (navigator.share) {
+        navigator.share({
+            title: document.title,
+            url: window.location.href
+        }).catch(console.error);
+    } else {
+        showToast("🔗 請直接複製瀏覽器網址分享", "safe");
+    }
+}
 </script>
 
 <div id="status-bar-protector" data-html2canvas-ignore="true"></div>
@@ -1688,7 +1707,7 @@ function triggerFlash(el) {
 <div id="shotModal" class="modal-overlay" data-html2canvas-ignore="true" style="z-index: 10000; flex-direction:column; justify-content:center; align-items:center;">
   <div class="modal-box" style="padding: 15px; max-width: 95%; max-height: 90vh; display:flex; flex-direction:column; gap:10px;">
     <h3 style="color:var(--safe); margin:0;" data-i18n="shotPreviewTitle">📸 戰術截圖已生成</h3>
-    <p style="font-size:13px; color:var(--muted); margin:0;" data-i18n="shotPreviewTip">請 <b>長按圖片</b> 或使用下方按鈕進行儲存</p>
+    <p style="font-size:13px; color:var(--muted); margin:0;" data-i18n="shotPreviewTip">請 <b>長按下方圖片</b> 選擇「儲存圖片」或「分享」</p>
     <div style="flex:1; overflow-y:auto; border-radius:8px; border:2px solid var(--line); background:#ccc; -webkit-overflow-scrolling: touch; display: flex; justify-content: center; align-items: center;">
         <img id="shotPreviewImg" src="" style="max-width: 100%; max-height: 100%; display: block; margin: auto; -webkit-touch-callout: default !important; -webkit-user-select: auto !important; user-select: auto !important; pointer-events: auto !important; touch-action: auto !important;">
     </div>
@@ -1816,7 +1835,6 @@ function triggerFlash(el) {
             <text x="390" y="375" fill="rgba(255,255,255,0.2)" font-size="12" font-weight="bold" text-anchor="end" data-i18n="ground">地面 Ground</text>
           </g>
 
-          <!-- 💡 確保樹幹跟樹枝都能正確向上生長並翻轉 -->
           <g id="bgTree" class="env-bg" stroke="none" fill="rgba(139, 90, 43, 0.25)">
              <path d="M -110 1000 C -110 200 -90 -200 -90 -1000 L -30 -1000 C -30 200 -50 1000 -50 1000 Z" />
              <path d="M -35 15 Q 15 0 90 -50 L 100 -20 Q 20 35 -40 75 Z" />
@@ -2044,7 +2062,7 @@ function triggerFlash(el) {
             </div>
           </details>
 
-          <div class="menu-action-btn" id="shareBtnAction" style="border-bottom: 1px solid rgba(150,150,150,0.1);">
+          <div class="menu-action-btn" id="shareBtnAction" onclick="shareApp()" style="border-bottom: 1px solid rgba(150,150,150,0.1);">
             <div class="menu-header-left"><span class="menu-icon">🔗</span><span data-i18n="menu3">分享系統連結</span></div>
             <span class="menu-arrow">❯</span>
           </div>
