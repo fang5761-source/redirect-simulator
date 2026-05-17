@@ -2603,37 +2603,58 @@ async function doTakeScreenshot(isTransparent) {
         const videoEl = document.getElementById('bg-video');
         const imageEl = document.getElementById('bg-image');
         const zoom = parseFloat(document.getElementById('sliderZoom').value) || 1;
+        // html2canvas 的 scale 值，finalCanvas 尺寸 = 螢幕尺寸 × canvasScale
+        const canvasScale = finalCanvas.width / window.innerWidth;
 
         // 手動計算完美等比例填充 (Object-fit: cover)
+        // 核心修正：以螢幕的真實像素空間(window.innerWidth/Height)為基準計算 cover 裁切，
+        // 再統一乘以 canvasScale 對應到畫布座標，確保背景與 SVG UI 兩層的縮放基準點完全一致。
         function drawMedia(el, rawW, rawH) {
             if (!rawW || !rawH) return;
-            let w = rawW, h = rawH;
+            let srcW = rawW, srcH = rawH;
             let rotate = false;
             const isPortrait = window.innerHeight > window.innerWidth;
             
             // 防禦 iOS 原生鏡頭橫向 Bug：強制轉正
             if (el.tagName === 'VIDEO' && isPortrait && rawW > rawH) {
-                w = rawH; 
-                h = rawW;
+                srcW = rawH; 
+                srcH = rawW;
                 rotate = true;
             }
 
-            const sX = finalCanvas.width / w;
-            const sY = finalCanvas.height / h;
-            const scale = Math.max(sX, sY) * zoom;
+            // 以螢幕尺寸為 cover 填滿目標（而非 finalCanvas 尺寸）
+            const screenW = window.innerWidth;
+            const screenH = window.innerHeight;
+            const sX = screenW / srcW;
+            const sY = screenH / srcH;
+            const coverScale = Math.max(sX, sY) * zoom;
             
-            const drawW = w * scale;
-            const drawH = h * scale;
-            const dX = (finalCanvas.width - drawW) / 2;
-            const dY = (finalCanvas.height - drawH) / 2;
+            // 在螢幕座標系中的繪製尺寸與偏移（object-fit: cover + transform-origin: center）
+            const drawW = srcW * coverScale;
+            const drawH = srcH * coverScale;
+            const dX = (screenW - drawW) / 2;
+            const dY = (screenH - drawH) / 2;
 
             ctx.save();
             if (rotate) {
+                // 旋轉後以螢幕中心為軸點，再乘以 canvasScale 換算到畫布座標
                 ctx.translate(finalCanvas.width / 2, finalCanvas.height / 2);
                 ctx.rotate(90 * Math.PI / 180);
-                ctx.drawImage(el, -(rawW * scale) / 2, -(rawH * scale) / 2, rawW * scale, rawH * scale);
+                // 旋轉後 srcW/srcH 已互換，繪製時以交換後的尺寸計算
+                ctx.drawImage(el,
+                    -(srcH * coverScale * canvasScale) / 2,
+                    -(srcW * coverScale * canvasScale) / 2,
+                    srcH * coverScale * canvasScale,
+                    srcW * coverScale * canvasScale
+                );
             } else {
-                ctx.drawImage(el, dX, dY, drawW, drawH);
+                // 直接將螢幕座標乘以 canvasScale 換算到畫布座標
+                ctx.drawImage(el,
+                    dX * canvasScale,
+                    dY * canvasScale,
+                    drawW * canvasScale,
+                    drawH * canvasScale
+                );
             }
             ctx.restore();
         }
