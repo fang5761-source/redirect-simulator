@@ -100,17 +100,6 @@
 
   .card { width:100%; background:var(--card); border:2px solid var(--line); border-radius:16px; padding: 10px; box-shadow:0 10px 30px rgba(0,0,0,.5); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); transition: border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease; }
   .card.camera-mode { background: transparent !important; border-color: rgba(255,255,255,0.2) !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; box-shadow: none !important; }
-
-  .taking-screenshot .topbar,
-  .taking-screenshot .icon-bar,
-  .taking-screenshot #cameraControls {
-      opacity: 0 !important;
-      visibility: hidden !important;
-      pointer-events: none !important;
-  }
-  .taking-screenshot .menu-list {
-      display: none !important; 
-  }
   
   .capture-mode .capture-hide { 
       opacity: 0 !important;
@@ -123,12 +112,21 @@
       box-shadow: none !important;
   }
 
+  /* 💡 截圖專用模式 (保留設定面版，僅隱藏頂部與按鈕，維持座標) */
+  .taking-screenshot .topbar,
+  .taking-screenshot .icon-bar {
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+  }
+  .taking-screenshot .menu-list {
+      display: none !important;
+  }
+  
   .capture-transparent { background-color: transparent !important; }
   .capture-transparent #bg-layer, 
   .capture-transparent #grid-overlay { display: none !important; }
   .capture-transparent .card { background: transparent !important; border-color: transparent !important; box-shadow: none !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
-  .capture-transparent .dash-box { background: transparent !important; border-color: transparent !important; }
-  .capture-transparent .edu-wrap { background: transparent !important; border-color: transparent !important; }
   .capture-transparent .app-container { filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.8)) !important; }
 
   .topbar { display: flex; align-items: center; margin-bottom: 8px; width: 100%; justify-content: space-between; }
@@ -311,7 +309,7 @@
 </script>
 
 <script>
-// 💡 V6.11.0 全修復滿血版 (包含完整的8國語言與所有控制功能)
+// 💡 V6.9.0
 const i18n = {
   zh: {
     appTitle: "下方固定點架設儀 (全地形)",
@@ -446,27 +444,7 @@ const i18n = {
     shotFmtTitle: "📸 選擇截圖格式",
     shotFmtDesc: "請問您需要哪種背景格式？",
     shotFmtDark: "⬛ 標準深色背景",
-    shotFmtTrans: "🏁 透明去背 (適合放入 PPT)",
-    spIntro: "本工具為散木團隊精心開發。若這套沙盤對您的實務與教學有幫助，歡迎自由隨喜給予我們一點實質鼓勵，這將化為我們開發下一套救援系統的核心動力！",
-    spBank: "🏦 銀行與郵局轉帳 (可免海外手續費)",
-    spBankYF: "永豐銀行 (代碼 807) • 戶名：吳佩芳",
-    spBankPost: "中華郵政 (代碼 700) • 戶名：吳佩芳",
-    spCopyYF: "📋 複製永豐帳號",
-    spCopyPost: "📋 複製郵局帳號",
-    spTip: "💡 匯款後請直接到下方自動販賣機領取金鑰 (費用填 0 元即可)",
-    spTip2: "✏️ 提醒：請在匯款備註欄填寫 APP 名稱",
-    spStore: "🛒 專業版自動販賣機 (支援刷卡)",
-    spStoreDesc: "熟悉的販賣機！支援 Apple Pay 與信用卡",
-    spStoreBtn: "前往自動販賣機 🛒",
-    shotPreviewTitle: "📸 戰術截圖已生成",
-    shotPreviewTip: "請 <b>長按下方圖片</b> 選擇「儲存圖片」或「分享」",
-    btnReturn: "返回系統",
-    camCtrlTitle: "🎛️ 畫面控制台",
-    camCtrlOpacity: "📄白紙",
-    camCtrlZoom: "🔍縮放",
-    camCtrlRope: "🪢繩粗",
-    loadModalTitle: "⚖️ 快速設定負載 (W)",
-    loadModalDesc: "請輸入新的負載重量 (kg)："
+    shotFmtTrans: "🏁 透明去背 (適合放入 PPT)"
   },
   en: {
     appTitle: "Redirect Simulator",
@@ -514,8 +492,8 @@ const i18n = {
     multLabel: "({m}x Load)",
     menuSet: "Settings & Guide",
     menuSup: "Support & Dev Info",
-    menuSponsor: "Support Team / Key",
-    menuLang: "Language",
+    menuSponsor: "Support Team / How to Get Key",
+    menuLang: "Language Setting",
     menu1: "Theory & Principles",
     menu3: "Share Link",
     menu4: "Check Updates",
@@ -560,7 +538,7 @@ const i18n = {
     pwaStep7: "Scroll down and select 'Add to Home Screen'",
     pwaStep8: "Tap 'Add' to create the shortcut",
     installBtn: "📥 Install APP",
-    disclaimer: "<strong style='color: var(--bad); font-size: 14px;'>⚠️ Disclaimer:</strong><br>Friction coefficients are theoretical averages. Rigging and safety MUST be determined by professional instructors. <br><br><span style='color:var(--warn);'>* Single-device license. No customer support or code replacement for lost/changed devices. Please repurchase.</span>",
+    disclaimer: "<strong style='color: var(--bad); font-size: 14px;'>⚠️ Disclaimer:</strong><br>Friction coefficients are theoretical averages. Real-world surface roughness alters actual friction. Rigging and safety MUST be determined by professional instructors. <br><br><span style='color:var(--warn);'>* Single-device license. No customer support or code replacement for lost/changed devices. Please repurchase.</span>",
     vipTitle: "🔒 PRO Feature Unlock",
     vipEnable1: "You are about to enable '",
     vipEnable2: "'!",
@@ -601,27 +579,7 @@ const i18n = {
     shotFmtTitle: "📸 Screenshot Format",
     shotFmtDesc: "Which background format do you need?",
     shotFmtDark: "⬛ Standard Dark Background",
-    shotFmtTrans: "🏁 Transparent (Best for PPT)",
-    spIntro: "Developed by SunMoon Team. If this simulator helps your teaching, feel free to support us! Your encouragement drives our next rescue system development.",
-    spBank: "🏦 Bank & Postal Transfer",
-    spBankYF: "SinoPac Bank (807) • Name: Wu Pei-Fang",
-    spBankPost: "Chunghwa Post (700) • Name: Wu Pei-Fang",
-    spCopyYF: "📋 Copy SinoPac Account",
-    spCopyPost: "📋 Copy Postal Account",
-    spTip: "💡 After transferring, please get your key from the store below (Enter $0)",
-    spTip2: "✏️ Note: Please mention the APP name in the transfer remark",
-    spStore: "🛒 PRO Store (Credit Card Supported)",
-    spStoreDesc: "Supports Apple Pay & Credit Cards",
-    spStoreBtn: "Go to PRO Store 🛒",
-    shotPreviewTitle: "📸 Screenshot Generated",
-    shotPreviewTip: "<b>Long press</b> the image below to Save or Share",
-    btnReturn: "Return",
-    camCtrlTitle: "🎛️ Camera Controls",
-    camCtrlOpacity: "📄Opacity",
-    camCtrlZoom: "🔍Zoom",
-    camCtrlRope: "🪢Rope",
-    loadModalTitle: "⚖️ Quick Set Load (W)",
-    loadModalDesc: "Enter new load weight (kg):"
+    shotFmtTrans: "🏁 Transparent (Best for PPT)"
   },
   ja: {
     appTitle: "リダイレクト砂盤 (全地形)",
@@ -756,27 +714,7 @@ const i18n = {
     shotFmtTitle: "📸 スクリーンショット形式",
     shotFmtDesc: "背景フォーマットを選択してください",
     shotFmtDark: "⬛ 標準ダーク背景",
-    shotFmtTrans: "🏁 透過 (PPT向け)",
-    spIntro: "SunMoonチームが開発。お役に立ちましたら、ぜひ支援をお願いします！",
-    spBank: "🏦 銀行振込",
-    spBankYF: "SinoPac銀行 (807) • Pei-Fang Wu",
-    spBankPost: "中華郵政 (700) • Pei-Fang Wu",
-    spCopyYF: "📋 銀行口座をコピー",
-    spCopyPost: "📋 郵貯口座をコピー",
-    spTip: "💡 振込後、下のストアからキーを取得してください(価格0を入力)。",
-    spTip2: "✏️ 注意: 振込備考欄にAPP名を入力してください。",
-    spStore: "🛒 PRO ストア (カード/Apple Pay)",
-    spStoreDesc: "ここでキーを取得！",
-    spStoreBtn: "ストアへ行く 🛒",
-    shotPreviewTitle: "📸 画像が生成されました",
-    shotPreviewTip: "画像を<b>長押し</b>して「保存」または「共有」",
-    btnReturn: "システムに戻る",
-    camCtrlTitle: "🎛️ 表示コントロール",
-    camCtrlOpacity: "📄 背景透過",
-    camCtrlZoom: "🔍 ズーム",
-    camCtrlRope: "🪢 ロープ太さ",
-    loadModalTitle: "⚖️ 負荷設定 (W)",
-    loadModalDesc: "新しい負荷 (kg) を入力："
+    shotFmtTrans: "🏁 透過 (PPT向け)"
   },
   ko: {
     appTitle: "하단 고정점 시뮬레이터",
@@ -911,27 +849,7 @@ const i18n = {
     shotFmtTitle: "📸 스크린샷 형식",
     shotFmtDesc: "어떤 배경을 원하십니까?",
     shotFmtDark: "⬛ 기본 어두운 배경",
-    shotFmtTrans: "🏁 투명 배경 (PPT용)",
-    spIntro: "SunMoon 팀 개발. 도움이 되셨다면 후원을 부탁드립니다!",
-    spBank: "🏦 계좌 이체",
-    spBankYF: "SinoPac 은행 (807) • Pei-Fang Wu",
-    spBankPost: "중화우정 (700) • Pei-Fang Wu",
-    spCopyYF: "📋 은행 계좌 복사",
-    spCopyPost: "📋 우체국 계좌 복사",
-    spTip: "💡 이체 후 아래 상점에서 키를 받으세요(가격 0 입력).",
-    spTip2: "✏️ 주의: 이체 메모에 앱 이름을 적어주세요.",
-    spStore: "🛒 PRO 스토어 (카드 지원)",
-    spStoreDesc: "여기서 키를 받으세요!",
-    spStoreBtn: "스토어로 이동 🛒",
-    shotPreviewTitle: "📸 스크린샷 생성 완료",
-    shotPreviewTip: "이미지를 <b>길게 눌러</b> 저장하거나 공유하세요",
-    btnReturn: "돌아가기",
-    camCtrlTitle: "🎛️ 화면 제어",
-    camCtrlOpacity: "📄 불투명도",
-    camCtrlZoom: "🔍 확대",
-    camCtrlRope: "🪢 로프 두께",
-    loadModalTitle: "⚖️ 하중 설정 (W)",
-    loadModalDesc: "새 하중 (kg) 입력:"
+    shotFmtTrans: "🏁 투명 배경 (PPT용)"
   },
   fr: {
     appTitle: "Simulateur de Déviation",
@@ -1064,27 +982,7 @@ const i18n = {
     shotFmtTitle: "📸 Format de Capture",
     shotFmtDesc: "Quel fond souhaitez-vous ?",
     shotFmtDark: "⬛ Fond Sombre",
-    shotFmtTrans: "🏁 Transparent (PPT)",
-    spIntro: "Développé par l'équipe SunMoon. Si ce simulateur vous aide, n'hésitez pas à nous soutenir !",
-    spBank: "🏦 Virement Bancaire",
-    spBankYF: "SinoPac Bank (807) • Nom: Wu Pei-Fang",
-    spBankPost: "Chunghwa Post (700) • Nom: Wu Pei-Fang",
-    spCopyYF: "📋 Copier Compte SinoPac",
-    spCopyPost: "📋 Copier Compte Postal",
-    spTip: "💡 Après le transfert, obtenez votre clé dans la boutique ($0)",
-    spTip2: "✏️ Note: Veuillez mentionner le nom de l'APP lors du transfert",
-    spStore: "🛒 Boutique PRO (Cartes bancaires)",
-    spStoreDesc: "Accepte Apple Pay et Cartes de crédit",
-    spStoreBtn: "Boutique PRO 🛒",
-    shotPreviewTitle: "📸 Capture générée",
-    shotPreviewTip: "<b>Appuyez longuement</b> sur l'image pour l'enregistrer ou la partager",
-    btnReturn: "Retour",
-    camCtrlTitle: "🎛️ Contrôles Caméra",
-    camCtrlOpacity: "📄 Opacité",
-    camCtrlZoom: "🔍 Zoom",
-    camCtrlRope: "🪢 Corde",
-    loadModalTitle: "⚖️ Réglage Rapide Charge (W)",
-    loadModalDesc: "Entrez le nouveau poids (kg) :"
+    shotFmtTrans: "🏁 Transparent (PPT)"
   },
   de: {
     appTitle: "Umlenkung Simulator",
@@ -1219,27 +1117,7 @@ const i18n = {
     shotFmtTitle: "📸 Screenshot-Format",
     shotFmtDesc: "Welchen Hintergrund bevorzugen Sie?",
     shotFmtDark: "⬛ Dunkler Hintergrund",
-    shotFmtTrans: "🏁 Transparent (Für PPT)",
-    spIntro: "Entwickelt vom SunMoon-Team. Wenn es hilft, unterstützen Sie uns!",
-    spBank: "🏦 Banküberweisung",
-    spBankYF: "SinoPac Bank (807) • Name: Wu Pei-Fang",
-    spBankPost: "Chunghwa Post (700) • Name: Wu Pei-Fang",
-    spCopyYF: "📋 SinoPac Konto kopieren",
-    spCopyPost: "📋 Postkonto kopieren",
-    spTip: "💡 Nach der Überweisung holen Sie Ihren Schlüssel im Store ($0)",
-    spTip2: "✏️ Hinweis: Bitte APP-Namen im Verwendungszweck angeben",
-    spStore: "🛒 PRO Store (Kreditkarte)",
-    spStoreDesc: "Unterstützt Apple Pay & Kreditkarten",
-    spStoreBtn: "Zum PRO Store 🛒",
-    shotPreviewTitle: "📸 Screenshot erstellt",
-    shotPreviewTip: "Bild <b>gedrückt halten</b> zum Speichern oder Teilen",
-    btnReturn: "Zurück",
-    camCtrlTitle: "🎛️ Kamerasteuerung",
-    camCtrlOpacity: "📄 Deckkraft",
-    camCtrlZoom: "🔍 Zoom",
-    camCtrlRope: "🪢 Seildicke",
-    loadModalTitle: "⚖️ Last einstellen (W)",
-    loadModalDesc: "Neues Gewicht (kg) eingeben:"
+    shotFmtTrans: "🏁 Transparent (Für PPT)"
   },
   es: {
     appTitle: "Simulador de Desviación",
@@ -1374,27 +1252,7 @@ const i18n = {
     shotFmtTitle: "📸 Formato de Captura",
     shotFmtDesc: "¿Qué fondo necesitas?",
     shotFmtDark: "⬛ Fondo Oscuro",
-    shotFmtTrans: "🏁 Transparente (Para PPT)",
-    spIntro: "Desarrollado por SunMoon. Si te ayuda en tus clases, ¡apóyanos!",
-    spBank: "🏦 Transferencia Bancaria",
-    spBankYF: "SinoPac Bank (807) • Nombre: Wu Pei-Fang",
-    spBankPost: "Chunghwa Post (700) • Nombre: Wu Pei-Fang",
-    spCopyYF: "📋 Copiar Cuenta SinoPac",
-    spCopyPost: "📋 Copiar Cuenta Postal",
-    spTip: "💡 Tras transferir, obtén tu clave en la tienda ($0)",
-    spTip2: "✏️ Nota: Menciona el nombre de la APP en el concepto",
-    spStore: "🛒 Tienda PRO (Tarjeta de Crédito)",
-    spStoreDesc: "Soporta Apple Pay y Tarjetas",
-    spStoreBtn: "Ir a Tienda PRO 🛒",
-    shotPreviewTitle: "📸 Captura Generada",
-    shotPreviewTip: "<b>Mantén presionada</b> la imagen para Guardar o Compartir",
-    btnReturn: "Voltar",
-    camCtrlTitle: "🎛️ Controles de Cámara",
-    camCtrlOpacity: "📄 Opacidad",
-    camCtrlZoom: "🔍 Zoom",
-    camCtrlRope: "🪢 Cuerda",
-    loadModalTitle: "⚖️ Ajuste Rápido Carga (W)",
-    loadModalDesc: "Ingresa el nuevo peso (kg):"
+    shotFmtTrans: "🏁 Transparente (Para PPT)"
   },
   pt: {
     appTitle: "Simulador de Desvio",
@@ -1442,7 +1300,7 @@ const i18n = {
     multLabel: "({m}x Carga)",
     menuSet: "Configurações e Guia",
     menuSup: "Suporte e Informações",
-    menuSponsor: "Apoiar / Chave",
+    menuSponsor: "Apoiar / Como obter a chave",
     menuLang: "Idioma / Language",
     menu1: "Teoria e Princípios",
     menu3: "Compartilhar Link",
@@ -1529,27 +1387,7 @@ const i18n = {
     shotFmtTitle: "📸 Formato de Captura",
     shotFmtDesc: "Qual fundo você prefere?",
     shotFmtDark: "⬛ Fundo Escuro",
-    shotFmtTrans: "🏁 Transparente (PPT)",
-    spIntro: "Desenvolvido pela SunMoon Team. Se este app ajuda, apoie-nos!",
-    spBank: "🏦 Transferência Bancária",
-    spBankYF: "SinoPac Bank (807) • Nome: Wu Pei-Fang",
-    spBankPost: "Chunghwa Post (700) • Nome: Wu Pei-Fang",
-    spCopyYF: "📋 Copiar Conta SinoPac",
-    spCopyPost: "📋 Copiar Conta Postal",
-    spTip: "💡 Após transferir, pegue a chave na loja ($0)",
-    spTip2: "✏️ Nota: Mencione o nome do APP no conceito",
-    spStore: "🛒 Loja PRO (Cartão de Crédito)",
-    spStoreDesc: "Suporta Apple Pay e Cartões",
-    spStoreBtn: "Ir para a Loja PRO 🛒",
-    shotPreviewTitle: "📸 Captura Gerada",
-    shotPreviewTip: "<b>Pressione e segure</b> a imagem para Salvar ou Compartilhar",
-    btnReturn: "Voltar",
-    camCtrlTitle: "🎛️ Controles da Câmera",
-    camCtrlOpacity: "📄 Opacidad",
-    camCtrlZoom: "🔍 Zoom",
-    camCtrlRope: "🪢 Corda",
-    loadModalTitle: "⚖️ Ajuste Rápido Carga (W)",
-    loadModalDesc: "Digite o novo peso (kg):"
+    shotFmtTrans: "🏁 Transparente (PPT)"
   }
 };
 
@@ -1625,8 +1463,7 @@ window.copyAccount = function(elementId) {
   dummy.select();
   document.execCommand('copy');
   document.body.removeChild(dummy);
-  const txt = i18n[currentLang] && i18n[currentLang].toastCopied ? i18n[currentLang].toastCopied : '📋 帳號已複製！感謝您的心意！';
-  showToast(txt, 'safe');
+  showToast('📋 帳號已複製！感謝您的心意！', 'safe');
 };
 
 function triggerFlash(el) {
@@ -1635,46 +1472,27 @@ function triggerFlash(el) {
     void el.offsetWidth;
     el.classList.add('val-flash');
 }
-
-// 💡 修復未定義的分享及更新函式
-function checkForUpdates() {
-    showToast("🔄 正在檢查更新並重新載入...", "safe");
-    setTimeout(() => {
-        window.location.reload();
-    }, 1000);
-}
-
-function shareApp() {
-    if (navigator.share) {
-        navigator.share({
-            title: document.title,
-            url: window.location.href
-        }).catch(console.error);
-    } else {
-        showToast("🔗 請直接複製瀏覽器網址分享", "safe");
-    }
-}
 </script>
 
 <div id="status-bar-protector" data-html2canvas-ignore="true"></div>
 
-<!-- 💡 畫面控制台移出操作框，改為全域浮動面板 -->
+<!-- 💡 將畫面控制台移出操作框，改為全域浮動面板，不受雙擊隱藏影響 -->
 <div id="cameraControls" style="display:none; position: fixed; top: 70px; left: 10px; flex-direction: column; background: rgba(0,0,0,0.75); padding: 8px 12px; border-radius: 10px; border: 1px solid var(--warn); z-index: 9990; backdrop-filter: blur(8px); box-shadow: 0 8px 25px rgba(0,0,0,0.6); min-width: 150px;" data-html2canvas-ignore="true">
     <div id="camCtrlHeader" style="display:flex; justify-content:space-between; align-items:center; cursor:move; margin-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:4px; user-select:none;">
-        <span style="font-size:12px; font-weight:bold; color:var(--warn);" data-i18n="camCtrlTitle">🎛️ 畫面控制台</span>
+        <span style="font-size:12px; font-weight:bold; color:var(--warn);">🎛️ 畫面控制台</span>
         <span id="camCtrlToggle" style="cursor:pointer; font-size:12px; padding:2px 6px;">▼</span>
     </div>
     <div id="camCtrlBody" style="display:flex; flex-direction:column; gap:10px;">
         <div class="control-slider-wrap">
-            <span data-i18n="camCtrlOpacity">📄白紙</span>
+            <span>📄白紙</span>
             <input type="range" id="sliderWhite" min="0" max="0.9" step="0.1" value="0.2">
         </div>
         <div class="control-slider-wrap">
-            <span data-i18n="camCtrlZoom">🔍縮放</span>
+            <span>🔍縮放</span>
             <input type="range" id="sliderZoom" min="1" max="3" step="0.1" value="1">
         </div>
         <div class="control-slider-wrap">
-            <span data-i18n="camCtrlRope">🪢繩粗</span>
+            <span>🪢繩粗</span>
             <input type="range" id="sliderRope" min="2" max="12" step="1" value="6">
         </div>
     </div>
@@ -1698,35 +1516,30 @@ function shareApp() {
     <div style="display:flex; flex-direction:column; gap:10px;">
       <button class="primary-btn btn-unlock" onclick="doTakeScreenshot(false)" style="margin:0; background:var(--card); color:var(--text); border:1px solid var(--line);" data-i18n="shotFmtDark">⬛ 標準深色背景</button>
       <button class="primary-btn btn-unlock" onclick="doTakeScreenshot(true)" style="margin:0; background:var(--safe); color:#0a1410;" data-i18n="shotFmtTrans">🏁 透明去背 (適合放入 PPT)</button>
-      <button class="primary-btn btn-cancel" onclick="document.getElementById('shotFormatModal').style.display='none'" style="margin:0; background:transparent; color:var(--muted);" data-i18n="cancel">取消返回</button>
+      <button class="primary-btn btn-cancel" onclick="document.getElementById('shotFormatModal').style.display='none'" style="margin:0; background:transparent; color:var(--muted);">取消返回</button>
     </div>
   </div>
 </div>
 
-<!-- 💡 截圖長按儲存核心防卡死修復：加入 iOS 專用觸控開放指令與實體按鈕 -->
 <div id="shotModal" class="modal-overlay" data-html2canvas-ignore="true" style="z-index: 10000; flex-direction:column; justify-content:center; align-items:center;">
   <div class="modal-box" style="padding: 15px; max-width: 95%; max-height: 90vh; display:flex; flex-direction:column; gap:10px;">
-    <h3 style="color:var(--safe); margin:0;" data-i18n="shotPreviewTitle">📸 戰術截圖已生成</h3>
-    <p style="font-size:13px; color:var(--muted); margin:0;" data-i18n="shotPreviewTip">請 <b>長按下方圖片</b> 選擇「儲存圖片」或「分享」</p>
-    <div style="flex:1; overflow-y:auto; border-radius:8px; border:2px solid var(--line); background:#ccc; -webkit-overflow-scrolling: touch; display: flex; justify-content: center; align-items: center;">
-        <img id="shotPreviewImg" src="" style="max-width: 100%; max-height: 100%; display: block; margin: auto; -webkit-touch-callout: default !important; -webkit-user-select: auto !important; user-select: auto !important; pointer-events: auto !important; touch-action: auto !important;">
+    <h3 style="color:var(--safe); margin:0;">📸 戰術截圖已生成</h3>
+    <p style="font-size:13px; color:var(--muted); margin:0;">請 <b>長按下方圖片</b> 選擇「儲存圖片」或「分享」</p>
+    <div style="flex:1; overflow-y:auto; border-radius:8px; border:2px solid var(--line); background:#ccc;">
+        <img id="shotPreviewImg" src="" style="width: 100%; display: block; object-fit: contain;">
     </div>
-    <div style="display: flex; gap: 8px; flex-shrink:0;">
-        <button class="primary-btn btn-unlock" onclick="downloadScreenshot()" style="margin:0; flex:1; font-size:14px;">📥 下載圖片</button>
-        <button class="primary-btn btn-unlock" onclick="shareScreenshot()" style="margin:0; flex:1; font-size:14px; background:var(--tagline); color:#fff; border:none;">📤 快速分享</button>
-    </div>
-    <button class="primary-btn btn-cancel" onclick="document.getElementById('shotModal').style.display='none'" style="margin:0; flex-shrink:0;" data-i18n="btnReturn">返回系統</button>
+    <button class="primary-btn btn-cancel" onclick="document.getElementById('shotModal').style.display='none'" style="margin:0; flex-shrink:0;">返回系統</button>
   </div>
 </div>
 
 <div id="loadModal" class="modal-overlay" data-html2canvas-ignore="true">
   <div class="modal-box">
-    <h3 style="color:var(--text); margin-top:0;" data-i18n="loadModalTitle">⚖️ 快速設定負載 (W)</h3>
-    <p style="font-size:13px; color:var(--muted); margin-bottom:12px;" data-i18n="loadModalDesc">請輸入新的負載重量 (kg)：</p>
+    <h3 style="color:var(--text); margin-top:0;">⚖️ 快速設定負載 (W)</h3>
+    <p style="font-size:13px; color:var(--muted); margin-bottom:12px;">請輸入新的負載重量 (kg)：</p>
     <input type="number" id="loadInput" class="pwd-input" placeholder="例如：100" step="10" min="10" style="letter-spacing: normal;">
     <div class="modal-btn-group">
-      <button class="primary-btn btn-cancel" onclick="document.getElementById('loadModal').style.display='none'" data-i18n="cancel">取消返回</button>
-      <button class="primary-btn btn-unlock" onclick="confirmLoadChange()" data-i18n="confirmFric">確認套用</button>
+      <button class="primary-btn btn-cancel" onclick="document.getElementById('loadModal').style.display='none'">取消返回</button>
+      <button class="primary-btn btn-unlock" onclick="confirmLoadChange()">確認套用</button>
     </div>
   </div>
 </div>
@@ -1885,7 +1698,7 @@ function shareApp() {
         </svg>
       </div>
 
-      <div class="dashboard">
+      <div class="dashboard capture-hide">
           <div class="dash-box" style="border-top: 3px solid var(--text);">
               <span class="lbl" data-i18n="loadW">負載端 (W)</span>
               <div style="display:flex; align-items:center; gap:2px;">
@@ -1905,7 +1718,7 @@ function shareApp() {
           <div class="dash-box" id="dashBranch" style="border-top: 3px solid var(--bad);">
               <span class="lbl" style="display:flex; align-items:center; gap:4px;">
                   <span id="lblBranchName">樹幹</span><span data-i18n="codForce">(COD)受力</span>
-                  <button class="capture-hide" onclick="customName()" style="background:transparent; border:1px solid var(--muted); color:var(--muted); border-radius:4px; padding:0px 4px; font-size:10px; cursor:pointer;" title="點擊自訂介質名稱" data-i18n="btnCustom">✏️自訂</button>
+                  <button onclick="customName()" style="background:transparent; border:1px solid var(--muted); color:var(--muted); border-radius:4px; padding:0px 4px; font-size:10px; cursor:pointer;" title="點擊自訂介質名稱" data-i18n="btnCustom">✏️自訂</button>
               </span>
               <span class="val" id="txtBranchForce" style="color:var(--bad);">-- kg</span>
               <span class="sub" id="txtBranchMult">--</span>
@@ -2053,7 +1866,7 @@ function shareApp() {
             <div class="menu-content">
               <div style="text-align: center; margin-bottom: 15px;">
                 <span data-i18n="devTitle" style="display:inline-block; background:var(--safe); color:#0a1410; font-weight:bold; padding:4px 14px; border-radius:20px; font-size:13px; letter-spacing:0.5px; box-shadow: 0 2px 6px rgba(74,222,128,0.3);">下方固定點架設儀 專業正式版</span>
-                <div style="font-size: 11px; color: var(--muted); margin-top: 8px; font-family: monospace;">Version 6.11.0 (修復版)</div>
+                <div style="font-size: 11px; color: var(--muted); margin-top: 8px; font-family: monospace;">Version 6.9.0</div>
               </div>
               <p style="margin-top: 0; margin-bottom: 6px; font-weight: bold; color: var(--text); text-align: center;" data-i18n="devTeam">本工具由 <span style="color:var(--warn);">散木團隊</span> 開發製作</p>
               <p style="margin-top: 0; margin-bottom: 4px; font-size: 13px; text-align: center;" data-i18n="devT1">教學架構與工程判斷／徐世豐</p>
@@ -2062,7 +1875,7 @@ function shareApp() {
             </div>
           </details>
 
-          <div class="menu-action-btn" id="shareBtnAction" onclick="shareApp()" style="border-bottom: 1px solid rgba(150,150,150,0.1);">
+          <div class="menu-action-btn" id="shareBtnAction" style="border-bottom: 1px solid rgba(150,150,150,0.1);">
             <div class="menu-header-left"><span class="menu-icon">🔗</span><span data-i18n="menu3">分享系統連結</span></div>
             <span class="menu-arrow">❯</span>
           </div>
@@ -2081,37 +1894,37 @@ function shareApp() {
       </details>
 
       <details class="main-accordion" style="margin-top: 10px;">
-        <summary><div style="display:flex; align-items:center; gap:8px;"><span class="menu-icon">☕</span> <span data-i18n="menuSponsor" style="color: var(--warn);">請團隊喝咖啡 / 取得金鑰</span></div></summary>
+        <summary><div style="display:flex; align-items:center; gap:8px;"><span class="menu-icon">☕</span> <span data-i18n="menuSponsor" style="color: var(--warn);">請團隊喝咖啡 / 取得金鑰方式</span></div></summary>
         <div class="menu-group" style="padding: 15px;">
-          <p style="font-size: 13.5px; color: var(--text); margin-top: 0; margin-bottom: 15px; line-height: 1.6; text-align: justify;" data-i18n="spIntro">本工具為散木團隊精心開發。若這套沙盤對您的實務與教學有幫助，歡迎自由隨喜給予我們一點實質鼓勵，這將化為我們開發下一套救援系統的核心動力！</p>
+          <p style="font-size: 13.5px; color: var(--text); margin-top: 0; margin-bottom: 15px; line-height: 1.6; text-align: justify;">本工具為散木團隊精心開發。若這套沙盤對您的實務與教學有幫助，歡迎自由隨喜給予我們一點實質鼓勵，這將化為我們開發下一套救援系統的核心動力！</p>
           
           <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--safe); border-radius: 8px; padding: 12px; margin-bottom: 12px;">
-            <div style="color: var(--safe); font-weight: bold; font-size: 13px; margin-bottom: 8px;" data-i18n="spBank">🏦 銀行與郵局轉帳 (可免海外手續費)</div>
+            <div style="color: var(--safe); font-weight: bold; font-size: 13px; margin-bottom: 8px;">🏦 銀行與郵局轉帳 (可免海外手續費)</div>
             
             <div style="background:rgba(255,255,255,0.05); padding:8px; border-radius:6px; margin-bottom:8px;">
-              <div style="font-size: 13px; color: var(--muted); margin-bottom: 4px;" data-i18n="spBankYF">永豐銀行 (代碼 807) • 戶名：吳佩芳</div>
+              <div style="font-size: 13px; color: var(--muted); margin-bottom: 4px;">永豐銀行 (代碼 807) • 戶名：吳佩芳</div>
               <div style="font-size: 18px; color: var(--text); font-family: monospace; letter-spacing: 1px; font-weight: bold; margin-bottom: 8px;" id="bankAccount">20401800252531</div>
-              <button type="button" onclick="window.copyAccount('bankAccount')" style="width: 100%; background: var(--safe); color: #0a1410; border: none; padding: 6px; border-radius: 4px; font-size: 13px; font-weight: bold; cursor: pointer;" data-i18n="spCopyYF">📋 複製永豐帳號</button>
+              <button type="button" onclick="window.copyAccount('bankAccount')" style="width: 100%; background: var(--safe); color: #0a1410; border: none; padding: 6px; border-radius: 4px; font-size: 13px; font-weight: bold; cursor: pointer;">📋 複製永豐帳號</button>
             </div>
 
             <div style="background:rgba(255,255,255,0.05); padding:8px; border-radius:6px; margin-bottom:8px;">
-              <div style="font-size: 13px; color: var(--muted); margin-bottom: 4px;" data-i18n="spBankPost">中華郵政 (代碼 700) • 戶名：吳佩芳</div>
+              <div style="font-size: 13px; color: var(--muted); margin-bottom: 4px;">中華郵政 (代碼 700) • 戶名：吳佩芳</div>
               <div style="font-size: 18px; color: var(--text); font-family: monospace; letter-spacing: 1px; font-weight: bold; margin-bottom: 8px;" id="postAccount">24415000144326</div>
-              <button type="button" onclick="window.copyAccount('postAccount')" style="width: 100%; background: var(--safe); color: #0a1410; border: none; padding: 6px; border-radius: 4px; font-size: 13px; font-weight: bold; cursor: pointer;" data-i18n="spCopyPost">📋 複製郵局帳號</button>
+              <button type="button" onclick="window.copyAccount('postAccount')" style="width: 100%; background: var(--safe); color: #0a1410; border: none; padding: 6px; border-radius: 4px; font-size: 13px; font-weight: bold; cursor: pointer;">📋 複製郵局帳號</button>
             </div>
 
             <div style="font-size: 12.5px; color: var(--warn); margin-bottom: 4px; line-height: 1.5;">
-              <span data-i18n="spTip">💡 匯款後請直接到下方自動販賣機領取金鑰 (費用填 0 元即可)</span><br>
-              <span style="color: var(--text);" data-i18n="spTip2">✏️ 提醒：請在匯款備註欄填寫 APP 名稱</span>
+              💡 匯款後請直接到下方自動販賣機領取金鑰 (費用填 0 元即可)<br>
+              <span style="color: var(--text);">✏️ 提醒：請在匯款備註欄填寫 APP 名稱</span>
             </div>
           </div>
 
           <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--line); border-radius: 8px; padding: 12px;">
             <div style="text-align: left; margin-bottom: 12px;">
-              <div style="color: var(--text); font-weight: bold; font-size: 13px; margin-bottom: 4px;" data-i18n="spStore">🛒 專業版自動販賣機 (支援刷卡)</div>
-              <div style="font-size: 12px; color: var(--muted);" data-i18n="spStoreDesc">熟悉的販賣機！支援 Apple Pay 與信用卡</div>
+              <div style="color: var(--text); font-weight: bold; font-size: 13px; margin-bottom: 4px;">🛒 專業版自動販賣機 (支援刷卡)</div>
+              <div style="font-size: 12px; color: var(--muted);">熟悉的販賣機！支援 Apple Pay 與信用卡</div>
             </div>
-            <button type="button" onclick="window.open('https://fang5761.gumroad.com/l/redirect-simulator', '_blank')" style="width: 100%; background: var(--line); color: var(--text); border: none; padding: 10px; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer;" data-i18n="spStoreBtn">前往自動販賣機 🛒</button>
+            <button type="button" onclick="window.open('https://fang5761.gumroad.com/l/redirect-simulator', '_blank')" style="width: 100%; background: var(--line); color: var(--text); border: none; padding: 10px; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer;">前往自動販賣機 🛒</button>
           </div>
           
           <button type="button" class="btn-collapse-inner" onclick="const p = this.closest('details'); if(p) p.removeAttribute('open');" data-i18n="collapse">🔼 收起說明</button>
@@ -2495,52 +2308,11 @@ function loadImage(event) {
 }
 function toggleGrid() { gridVisible = !gridVisible; gridOverlay.style.opacity = gridVisible ? "0.5" : "0"; }
 
-// 💡 截圖引擎核心重寫：完整畫面防裁切 + 儀表板與說明完美入鏡！
+// 💡 截圖引擎核心修正：使用 taking-screenshot 類別，保留面板與數據，僅隱藏按鈕！
 async function doTakeScreenshot(isTransparent) {
   document.getElementById('shotFormatModal').style.display = 'none';
   const target = document.body;
-  const htmlEl = document.documentElement;
   
-  // 修復上下被裁切：徹底解除 html, body, scroll-wrapper 的高度與固定限制
-  const wrapper = document.getElementById('scroll-wrapper');
-  const bgLayer = document.getElementById('bg-layer');
-  
-  // 1. 紀錄捲動位置並強制歸零，防止畫面上方被切掉
-  const oldScrollTop = wrapper.scrollTop;
-  wrapper.scrollTop = 0;
-  window.scrollTo(0, 0);
-
-  const oldHtmlPos = htmlEl.style.position;
-  const oldHtmlH = htmlEl.style.height;
-  const oldHtmlOv = htmlEl.style.overflow;
-  const oldBodyPos = target.style.position;
-  const oldBodyInset = target.style.inset;
-  const oldBodyH = target.style.height;
-  const oldBodyOv = target.style.overflow;
-  const oldWrapH = wrapper.style.height;
-  const oldWrapOv = wrapper.style.overflow;
-  const oldWrapPos = wrapper.style.position;
-
-  // 2. 紀錄背景實際高度，防止照片被過度拉伸變形
-  const currentBgHeight = bgLayer.offsetHeight;
-  const oldBgPos = bgLayer.style.position;
-  const oldBgH = bgLayer.style.height;
-
-  htmlEl.style.position = 'relative';
-  htmlEl.style.height = 'auto';
-  htmlEl.style.overflow = 'visible';
-  target.style.position = 'relative';
-  target.style.inset = 'auto';
-  target.style.height = 'auto';
-  target.style.overflow = 'visible';
-  wrapper.style.height = 'auto';
-  wrapper.style.overflow = 'visible';
-  wrapper.style.position = 'relative';
-
-  // 3. 鎖定背景層高度為螢幕可視高度
-  bgLayer.style.position = 'absolute';
-  bgLayer.style.height = currentBgHeight + 'px';
-
   target.classList.add('taking-screenshot');
   if (isTransparent) {
       target.classList.add('capture-transparent');
@@ -2558,7 +2330,7 @@ async function doTakeScreenshot(isTransparent) {
       inp.style.display = 'none'; inp.parentNode.insertBefore(span, inp); placeholders.push({ span, inp });
   });
   
-  await new Promise(r => setTimeout(r, 300)); // 增加一點延遲確保重新排版完成
+  await new Promise(r => setTimeout(r, 100));
   
   let tempCanvas = null;
   if (!isTransparent && stream && videoTrack && video.style.opacity === "1") {
@@ -2587,8 +2359,6 @@ async function doTakeScreenshot(isTransparent) {
         backgroundColor: isTransparent ? null : (document.body.classList.contains('camera-mode') ? '#0a1410' : '#0a1410'), 
         scale: 2, 
         useCORS: true, 
-        scrollY: 0, // 強制從最頂端捕捉，治好斷頭症狀
-        windowHeight: target.scrollHeight, 
         ignoreElements: (el) => {
             if (el.hasAttribute('data-html2canvas-ignore')) return true;
             if (el.classList && el.classList.contains('menu-list')) return true;
@@ -2609,52 +2379,6 @@ async function doTakeScreenshot(isTransparent) {
   placeholders.forEach(p => { p.inp.style.display = ''; p.span.remove(); }); 
   target.classList.remove('taking-screenshot');
   target.classList.remove('capture-transparent');
-  
-  // 4. 復原高度與背景限制
-  htmlEl.style.position = oldHtmlPos;
-  htmlEl.style.height = oldHtmlH;
-  htmlEl.style.overflow = oldHtmlOv;
-  target.style.position = oldBodyPos;
-  target.style.inset = oldBodyInset;
-  target.style.height = oldBodyH;
-  target.style.overflow = oldBodyOv;
-  wrapper.style.height = oldWrapH;
-  wrapper.style.overflow = oldWrapOv;
-  wrapper.style.position = oldWrapPos;
-
-  bgLayer.style.position = oldBgPos;
-  bgLayer.style.height = oldBgH;
-
-  // 5. 將畫面自動捲回您原本正在觀看的位置
-  wrapper.scrollTop = oldScrollTop;
-}
-
-// 💡 新增：手動下載與分享的輔助函數
-function downloadScreenshot() {
-    const img = document.getElementById('shotPreviewImg');
-    const link = document.createElement('a');
-    link.download = `戰術截圖_${new Date().getTime()}.png`;
-    link.href = img.src;
-    link.click();
-}
-
-async function shareScreenshot() {
-    const img = document.getElementById('shotPreviewImg');
-    try {
-        const res = await fetch(img.src);
-        const blob = await res.blob();
-        const file = new File([blob], 'screenshot.png', { type: 'image/png' });
-        if (navigator.share) {
-            await navigator.share({
-                title: '下方固定點戰術截圖',
-                files: [file]
-            });
-        } else {
-            showToast("⚠️ 您的裝置/瀏覽器不支援快速分享 API", "warn");
-        }
-    } catch(e) {
-        showToast("⚠️ 分享失敗", "bad");
-    }
 }
 
 // 核心變更：全地形場景與高空介質引擎
@@ -2990,112 +2714,257 @@ function updateEngine() {
     els.angleText.textContent = `θ ${thetaDeg.toFixed(0)}°`;
     els.angleText.setAttribute('x', P.x + 70 * Math.cos(midAng)); 
     els.angleText.setAttribute('y', P.y + 70 * Math.sin(midAng) + 6);
-
+    
     let arrowLen = 30 + multiplier * 15; 
     let arrowEnd = { x: P.x + dirForce.x * arrowLen, y: P.y + dirForce.y * arrowLen };
-
-    els.forceArrowLine.setAttribute('x1', P.x);
-    els.forceArrowLine.setAttribute('y1', P.y);
-    els.forceArrowLine.setAttribute('x2', arrowEnd.x);
-    els.forceArrowLine.setAttribute('y2', arrowEnd.y);
-
-    let headAngle = Math.atan2(dirForce.y, dirForce.x);
-    let headSize = 10;
-    let p1 = { x: arrowEnd.x + headSize * Math.cos(headAngle + 5*Math.PI/6), y: arrowEnd.y + headSize * Math.sin(headAngle + 5*Math.PI/6) };
-    let p2 = { x: arrowEnd.x + headSize * Math.cos(headAngle - 5*Math.PI/6), y: arrowEnd.y + headSize * Math.sin(headAngle - 5*Math.PI/6) };
-    els.forceArrowHead.setAttribute('points', `${arrowEnd.x},${arrowEnd.y} ${p1.x},${p1.y} ${p2.x},${p2.y}`);
-
-    // 更新數據儀表板
-    els.txtAnchorTension.textContent = T_operator_pull.toFixed(1) + " kg";
-    els.txtAnchorMult.textContent = t('multLabel').replace('{m}', (T_operator_pull / W).toFixed(2));
-
-    els.txtBranchForce.textContent = Force.toFixed(1) + " kg";
-    els.txtBranchMult.textContent = t('multLabel').replace('{m}', multiplier.toFixed(2));
-
-    // 更新教學面板
-    let eduKey = 'edu_' + currentAction + '_' + (currentMode === 'base' ? 'base' : (currentMode === 'carabiner' ? 'cara' : 'pull'));
-    if (currentAction === 'static') eduKey = 'edu_static';
-    if (!i18n[currentLang][eduKey]) eduKey = 'edu_' + currentAction + '_base'; // 防錯處理
-
-    let eduText = t(eduKey)
-        .replace('{name}', getSceneName())
-        .replace('{T}', T_operator_pull.toFixed(1))
-        .replace('{ma}', currentMA);
-
-    if (multiplier > 1.8) {
-        eduText += t('edu_warning');
+    els.forceArrowLine.setAttribute('x1', P.x); els.forceArrowLine.setAttribute('y1', P.y);
+    els.forceArrowLine.setAttribute('x2', arrowEnd.x); els.forceArrowLine.setAttribute('y2', arrowEnd.y);
+    
+    let headAng = Math.atan2(dirForce.y, dirForce.x);
+    let h1 = { x: arrowEnd.x - 12 * Math.cos(headAng - 0.5), y: arrowEnd.y - 12 * Math.sin(headAng - 0.5) };
+    let h2 = { x: arrowEnd.x - 12 * Math.cos(headAng + 0.5), y: arrowEnd.y - 12 * Math.sin(headAng + 0.5) };
+    els.forceArrowHead.setAttribute('points', `${arrowEnd.x},${arrowEnd.y} ${h1.x},${h1.y} ${h2.x},${h2.y}`);
+    
+    if (A.y < P.y + 150 && currentAction !== 'static') {
+        els.distanceIndicator.style.opacity = '1';
+        els.distLine.setAttribute('x1', 0); els.distLine.setAttribute('y1', 25);
+        els.distLine.setAttribute('x2', 0); els.distLine.setAttribute('y2', 400 - A.y + 50);
+        els.distText.setAttribute('x', 0); els.distText.setAttribute('y', 40);
+    } else {
+        els.distanceIndicator.style.opacity = '0';
     }
+
+    let eduText = "";
+    let eduColor = "var(--safe)";
+    let eduBg = "rgba(74, 222, 128, 0.1)";
+    
+    let mName = getSceneName();
+    let mIcon = scenes[currentScene].icon;
+
+    if (currentMode === 'carabiner') { mName = t('btnFricCara').replace(/🪝\s*/, ''); mIcon = '🪝'; }
+    else if (currentMode === 'pulley') { mName = t('btnFricPull').replace(/⚙️\s*/, ''); mIcon = '⚙️'; }
+    else if (currentMode === 'pad') { mName = t('btnFricPad').replace(/🛏️\s*/, ''); mIcon = '🛏️'; }
+    else if (currentMode === 'roller') { mName = t('btnFricRoller').replace(/🛞\s*/, ''); mIcon = '🛞'; }
+    
+    if (currentAction === 'static') {
+        eduText = t('edu_static').replace('{T}', T_operator_pull.toFixed(0));
+        eduColor = "var(--text)"; eduBg = "rgba(255,255,255,0.05)";
+    } else if (currentAction === 'haul') {
+        if (currentE < 0.6) {
+            eduText = `${mIcon}` + t('edu_haul_base').replace(/{name}/g, mName).replace('{ma}', currentMA).replace('{T}', T_operator_pull.toFixed(0));
+            eduColor = "var(--bad)"; eduBg = "rgba(239, 68, 68, 0.15)";
+        } else if (currentE >= 0.6 && currentE < 0.9) {
+            eduText = `${mIcon}` + t('edu_haul_cara').replace(/{name}/g, mName).replace('{ma}', currentMA).replace('{T}', T_operator_pull.toFixed(0));
+            eduColor = "var(--warn)"; eduBg = "rgba(251, 191, 36, 0.15)";
+        } else {
+            eduText = `${mIcon}` + t('edu_haul_pull').replace(/{name}/g, mName).replace('{ma}', currentMA).replace('{T}', T_operator_pull.toFixed(0));
+            eduColor = "var(--safe)"; eduBg = "rgba(74, 222, 128, 0.15)";
+        }
+    } else if (currentAction === 'lower') {
+        if (currentE < 0.6) {
+            eduText = `${mIcon}` + t('edu_low_base').replace(/{name}/g, mName).replace('{ma}', currentMA).replace('{T}', T_operator_pull.toFixed(0));
+        } else if (currentE >= 0.6 && currentE < 0.9) {
+            eduText = `${mIcon}` + t('edu_low_cara').replace(/{name}/g, mName).replace('{ma}', currentMA).replace('{T}', T_operator_pull.toFixed(0));
+        } else {
+            eduText = `${mIcon}` + t('edu_low_pull').replace(/{name}/g, mName).replace('{ma}', currentMA).replace('{T}', T_operator_pull.toFixed(0));
+            eduColor = "var(--bad)"; eduBg = "rgba(239, 68, 68, 0.15)";
+        }
+    }
+
+    if (thetaDeg < 60 && multiplier >= 2) {
+        eduText += t('edu_warning').replace(/{name}/g, mName);
+        eduColor = "var(--bad)"; eduBg = "rgba(239, 68, 68, 0.15)";
+    }
+
     els.eduPanel.innerHTML = eduText;
+    els.eduPanel.style.borderColor = eduColor;
+    els.eduPanel.style.background = eduBg;
+
+    let forceColor = "var(--safe)";
+    if (multiplier >= 2.5) forceColor = "var(--bad)";
+    else if (multiplier >= 1.8) forceColor = "var(--warn)";
+    
+    els.forceArrowLine.setAttribute('stroke', forceColor);
+    els.forceArrowHead.setAttribute('fill', forceColor);
+    
+    els.txtAnchorTension.textContent = `${T_operator_pull.toFixed(0)} kg`;
+    els.txtAnchorMult.textContent = t('multLabel').replace('{m}', (T_operator_pull/W).toFixed(1));
+    
+    els.txtBranchForce.textContent = `${Force.toFixed(0)} kg`;
+    els.txtBranchForce.style.color = forceColor;
+    els.txtBranchMult.textContent = t('multLabel').replace('{m}', multiplier.toFixed(1));
+    els.dashBranch.style.borderTopColor = forceColor;
 }
 
-// 拖曳觸控神經網路
-let activeDrag = null;
-
-svgEl.addEventListener('pointerdown', (e) => {
-    let pt = svgEl.createSVGPoint();
-    pt.x = e.clientX; 
-    pt.y = e.clientY;
-    let svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse());
-    
-    if (Math.hypot(svgP.x - P.x, svgP.y - P.y) < 30) {
-        activeDrag = 'P';
-    } else if (Math.hypot(svgP.x - A.x, svgP.y - A.y) < 40) {
-        activeDrag = 'A';
-    }
-});
-
-window.addEventListener('pointermove', (e) => {
-    if (!activeDrag) return;
-    
-    let pt = svgEl.createSVGPoint();
-    pt.x = e.clientX; 
-    pt.y = e.clientY;
-    let svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse());
-    
-    if (activeDrag === 'P') {
-        P.x = svgP.x;
-        P.y = Math.min(Math.max(svgP.y, 40), 200); 
-    } else if (activeDrag === 'A') {
-        A.x = svgP.x;
-        A.y = Math.min(Math.max(svgP.y, 100), 380); 
-    }
-    updateEngine();
-});
-
-window.addEventListener('pointerup', () => {
-    activeDrag = null;
-});
-
-// 負載快速設定
 inLoad.addEventListener('input', updateEngine);
-inLoad.addEventListener('click', () => {
-    document.getElementById('loadInput').value = inLoad.value;
-    document.getElementById('loadModal').style.display = 'flex';
-    setTimeout(() => document.getElementById('loadInput').focus(), 100);
+
+let pt = svgEl.createSVGPoint();
+function getSVGPos(e) { pt.x = e.touches ? e.touches[0].clientX : e.clientX; pt.y = e.touches ? e.touches[0].clientY : e.clientY; return pt.matrixTransform(svgEl.getScreenCTM().inverse()); }
+
+let isDragging = false;
+let draggingNode = null; 
+
+function startDragA(e) { draggingNode = 'A'; isDragging = true; if(e.type === 'touchstart' && e.cancelable) { e.preventDefault(); } }
+els.anchorGroup.addEventListener('mousedown', startDragA);
+els.anchorGroup.addEventListener('touchstart', startDragA, {passive: false});
+
+function startDragP(e) { draggingNode = 'P'; isDragging = true; if(e.type === 'touchstart' && e.cancelable) { e.preventDefault(); } }
+els.redirectNode.addEventListener('mousedown', startDragP);
+els.redirectNode.addEventListener('touchstart', startDragP, {passive: false});
+
+function processDrag(e) {
+  if(!isDragging) return;
+  if(e.cancelable) e.preventDefault(); 
+  let pos = getSVGPos(e);
+  
+  if (!pos || isNaN(pos.x) || isNaN(pos.y)) return; 
+
+  if (draggingNode === 'A') {
+      A.x = Math.max(-100, Math.min(500, pos.x));
+      A.y = Math.max(-50, Math.min(450, pos.y));
+  } else if (draggingNode === 'P') {
+      P.x = Math.max(-100, Math.min(500, pos.x));
+      P.y = Math.max(-50, Math.min(450, pos.y));
+  }
+  updateEngine();
+}
+
+window.addEventListener('touchmove', processDrag, {passive: false});
+window.addEventListener('mousemove', processDrag);
+window.addEventListener('touchend', () => isDragging = false);
+window.addEventListener('mouseup', () => isDragging = false);
+
+// 雙擊進入沉浸觀察模式 (全域觸發)
+let lastTapTime = 0;
+document.addEventListener('pointerdown', (e) => {
+    // 排除互動元素，避免點擊按鈕時誤觸隱藏
+    if (e.target.closest('button, input, label, select, details, summary, .draggable-anchor, .icon-btn, .toggle-btn, .primary-btn, #cameraControls')) {
+        return;
+    }
+    
+    const now = Date.now();
+    if (now - lastTapTime < 300) {
+        document.body.classList.toggle('capture-mode');
+        showToast(document.body.classList.contains('capture-mode') ? "👁️ 純淨觀察模式 (雙擊還原)" : "🎛️ 控制面板已還原", "safe");
+        lastTapTime = 0;
+    } else {
+        lastTapTime = now;
+    }
 });
+
+// 長按負載 W 觸發快捷設定
+let loadHoldTimer = null;
+function startLoadHold(e) {
+    if(e.cancelable) e.preventDefault();
+    loadHoldTimer = setTimeout(() => {
+        document.getElementById('loadInput').value = inLoad.value;
+        document.getElementById('loadModal').style.display = 'flex';
+        setTimeout(() => document.getElementById('loadInput').focus(), 100);
+    }, 600);
+}
+function clearLoadHold() {
+    if(loadHoldTimer) clearTimeout(loadHoldTimer);
+}
+els.loadGroup.addEventListener('touchstart', startLoadHold, {passive: false});
+els.loadGroup.addEventListener('touchend', clearLoadHold);
+els.loadGroup.addEventListener('touchmove', clearLoadHold);
+els.loadGroup.addEventListener('mousedown', startLoadHold);
+els.loadGroup.addEventListener('mouseup', clearLoadHold);
+els.loadGroup.addEventListener('mouseleave', clearLoadHold);
 
 function confirmLoadChange() {
-    let val = parseFloat(document.getElementById('loadInput').value);
-    if(val >= 10) {
-        inLoad.value = val;
+    let newW = parseFloat(document.getElementById('loadInput').value);
+    if(!isNaN(newW) && newW > 0) {
+        inLoad.value = newW;
         updateEngine();
-        triggerFlash(els.txtAnchorTension);
-        triggerFlash(els.txtBranchForce);
+        showToast(`⚖️ 負載已更新為 ${newW} kg`, "safe");
     }
     document.getElementById('loadModal').style.display = 'none';
 }
 
 function resetEngine() {
-    P = { x: 120, y: 80 };
-    A = { x: 340, y: 360 };
-    updateEngine();
+  P = { x: 120, y: 80 }; 
+  A = { x: 340, y: 360 }; 
+  // 觸發畫面重置，預設繩粗也會被更新，但保留滑桿手感
+  let sliderRope = document.getElementById('sliderRope');
+  if(sliderRope) {
+      els.ropeLoad.setAttribute('stroke-width', sliderRope.value);
+      els.ropeAnchor.setAttribute('stroke-width', sliderRope.value);
+      els.ropeLoadBg.setAttribute('stroke-width', parseInt(sliderRope.value) + 4);
+      els.ropeAnchorBg.setAttribute('stroke-width', parseInt(sliderRope.value) + 4);
+  }
+  inLoad.value = 100;
+  setScene(document.querySelector('.toggle-btn[data-type="scene"][data-val="tree"]'), 'tree');
+  document.querySelector('.toggle-btn[data-type="action"][data-val="static"]').click();
 }
 
-// 啟動翻譯與計算引擎
-window.onload = () => {
-    applyTranslations();
-    updateEngine();
-};
+setTimeout(() => { applyTranslations(); resetEngine(); }, 100);
+
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault(); deferredPrompt = e;
+    const installBtn = document.getElementById('installAppBtn');
+    if (installBtn) {
+        installBtn.style.display = 'block';
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) { deferredPrompt.prompt(); const { outcome } = await deferredPrompt.userChoice; if (outcome === 'accepted') installBtn.style.display = 'none'; deferredPrompt = null; }
+        });
+    }
+});
+
+if ('serviceWorker' in navigator && ['http:', 'https:'].includes(window.location.protocol)) {
+  window.addEventListener('load', () => {
+    try {
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => { reg.update(); })
+        .catch(err => console.warn('Service Worker 註冊失敗:', err));
+    } catch(err) {
+      console.error('Service Worker 錯誤:', err);
+    }
+  });
+}
+
+function checkForUpdates() {
+    if (confirm(t('updateMsg') || '確定要檢查更新嗎？')) {
+        const wrapper = document.getElementById('scroll-wrapper');
+        if (wrapper) wrapper.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        showToast("🔄 系統更新中，為您重新載入...", "warn");
+        if ('caches' in window) {
+          caches.keys().then((names) => {
+            names.forEach(name => caches.delete(name));
+          });
+        }
+        setTimeout(() => {
+            window.location.href = window.location.href.split('?')[0] + '?v=' + new Date().getTime(); 
+        }, 1000);
+    }
+}
+
+const shareBtnAction = document.getElementById('shareBtnAction');
+if(shareBtnAction) {
+    shareBtnAction.addEventListener('click', async () => {
+      const shareData = { title: '轉向點受力分析儀', text: '推薦這套散木團隊專屬的黑科技！結合實境相機與動態摩擦力引擎，快來試試！', url: window.location.href };
+      try {
+        if (navigator.share) { await navigator.share(shareData); } 
+        else { const dummy = document.createElement('input'); document.body.appendChild(dummy); dummy.value = window.location.href; dummy.select(); document.execCommand('copy'); document.body.removeChild(dummy); showToast('🔗 網址已複製，您可以貼上分享給其他人囉！', 'safe'); }
+      } catch (err) { }
+    });
+}
+
+const menuGroups = document.querySelectorAll('.menu-group');
+menuGroups.forEach(group => {
+  const items = group.querySelectorAll('details.menu-item');
+  items.forEach(item => {
+    item.addEventListener('toggle', function() {
+      if (this.open) {
+        group.classList.add('has-open-item');
+        items.forEach(other => { if (other !== this && other.open) other.removeAttribute('open'); });
+        setTimeout(() => { this.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 50);
+      } else { const anyOpen = Array.from(items).some(i => i.open); if (!anyOpen) group.classList.remove('has-open-item'); }
+    });
+  });
+});
 </script>
 </body>
 </html>
