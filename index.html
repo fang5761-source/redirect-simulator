@@ -133,8 +133,7 @@
   /* 💡 截圖專用模式：保留標題、數據儀表板、完整操作設定與教學說明，解除 body 限制以便完全擷取 */
   html.taking-screenshot, body.taking-screenshot { height: auto !important; overflow: visible !important; position: relative !important; }
   .taking-screenshot #scroll-wrapper { height: auto !important; overflow: visible !important; position: relative !important; }
-  .taking-screenshot #bg-layer, .taking-screenshot #grid-overlay { position: absolute !important; top: 0 !important; left: 0 !important; }
-
+  
   .taking-screenshot .capture-hide {
       opacity: 1 !important;
       visibility: visible !important;
@@ -363,7 +362,7 @@
 </script>
 
 <script>
-// 💡 V6.9.3 (修復相簿背景疊圖、完善截圖教育區塊)
+// 💡 V6.9.5 (完整版修復程式碼截斷、凍結截圖尺寸修復相片拉長變形，並確保底圖完美透亮)
 const i18n = {
   zh: {
     appTitle: "下方固定點架設儀 (全地形)",
@@ -913,7 +912,7 @@ const i18n = {
     pwaStep7: "'홈 화면에 추가' 선택",
     pwaStep8: "'추가' 탭",
     installBtn: "📥 앱 설치",
-    disclaimer: "<strong style='color: var(--bad); font-size: 14px;'>⚠️ 면책 조항:</strong><br>이론적 추정치입니다. 실제 거칠기에 따라 달라집니다. 전문 교관을 따르세요.<br><br><span style='color:var(--warn);'>※ 본 앱은 1기기 라이선스입니다. 기기 변경 시 비밀번호 재발급 및 고객 지원은 제공되지 않습니다. 개발 지원을 위해 재구매를 부탁드립니다.</span>",
+    disclaimer: "<strong style='color: var(--bad); font 소 size: 14px;'>⚠️ 면책 조항:</strong><br>이론적 추정치입니다. 실제 거칠기에 따라 달라집니다. 전문 교관을 따르세요.<br><br><span style='color:var(--warn);'>※ 본 앱은 1기기 라이선스입니다. 기기 변경 시 비밀번호 재발급 및 고객 지원은 제공되지 않습니다. 개발 지원을 위해 재구매를 부탁드립니다.</span>",
     vipTitle: "🔒 PRO 기능 잠금 해제",
     vipEnable1: "기능 활성화: '",
     vipEnable2: "'!",
@@ -1349,7 +1348,7 @@ const i18n = {
     confirmName: "Confirmar",
     confirmFric: "Aplicar",
     thCodT: "🔄 Desviación (COD)",
-    thCodD: "Punto que cambia la dirección de la cuerda. La fuerza depende del ángulo.",
+    thCodD: "Ponto que cambia la dirección de la cuerda. La fuerza depende del ángulo.",
     thFricT: "🛡️ Fricción",
     thFricD: "Enemigo al izar, amigo para frenar al bajar.",
     thMultT: "🚨 Efecto Multiplicador",
@@ -2064,7 +2063,7 @@ function triggerFlash(el) {
             <div class="menu-content">
               <div style="text-align: center; margin-bottom: 15px;">
                 <span data-i18n="devTitle" style="display:inline-block; background:var(--safe); color:#0a1410; font-weight:bold; padding:4px 14px; border-radius:20px; font-size:13px; letter-spacing:0.5px; box-shadow: 0 2px 6px rgba(74,222,128,0.3);">下方固定點架設儀 專業正式版</span>
-                <div style="font-size: 11px; color: var(--muted); margin-top: 8px; font-family: monospace;">Version 6.9.3</div>
+                <div style="font-size: 11px; color: var(--muted); margin-top: 8px; font-family: monospace;">Version 6.9.5</div>
               </div>
               <p style="margin-top: 0; margin-bottom: 6px; font-weight: bold; color: var(--text); text-align: center;" data-i18n="devTeam">本工具由 <span style="color:var(--warn);">散木團隊</span> 開發製作</p>
               <p style="margin-top: 0; margin-bottom: 4px; font-size: 13px; text-align: center;" data-i18n="devT1">教學架構與工程判斷／徐世豐</p>
@@ -2532,38 +2531,59 @@ function clearPhotoOverlay() {
     }
 }
 
-function loadImage(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        if (stream) { 
-            stream.getTracks().forEach(track => track.stop()); stream = null; videoTrack = null; 
-            video.style.opacity = "0"; btnCamera.classList.remove('active'); 
-            torchOn = false; btnFlashlight.classList.remove('active');
-        }
-        image.src = e.target.result;
-        image.style.opacity = "1";
-        const btnPhoto = document.querySelector('label[title="載入照片"]');
-        if(btnPhoto) btnPhoto.classList.add('active');
-        
-        document.getElementById('mainCard').classList.add('camera-mode'); 
-        document.body.classList.add('camera-mode');
-        document.documentElement.classList.add('camera-mode');
-        
-        resetCameraControls();
-        cameraControls.style.display = 'flex';
-    };
-    reader.readAsDataURL(file);
+function loadImage(event) { 
+  const file = event.target.files[0]; 
+  if (file) { 
+    if(stream) toggleCamera(); 
+    const reader = new FileReader(); 
+    reader.onload = function(e) { 
+      image.src = e.target.result; image.style.opacity = "1"; 
+      document.getElementById('mainCard').classList.add('camera-mode'); 
+      document.body.classList.add('camera-mode');
+      document.documentElement.classList.add('camera-mode');
+      document.querySelector('label[title="載入照片"]').classList.add('active');
+      
+      resetCameraControls();
+      cameraControls.style.display = 'flex';
+    }; reader.readAsDataURL(file); 
+  } 
 }
-
 function toggleGrid() { gridVisible = !gridVisible; gridOverlay.style.opacity = gridVisible ? "0.5" : "0"; }
 
-// 💡 截圖引擎核心修正：強制解除視窗高度限制，並凍結背景尺寸以防止相片變形
+// 💡 截圖引擎核心修正：凍結背景維度，確保比例不會因 body 延展而變形，並移除 canvas 轉換
 async function doTakeScreenshot(isTransparent) {
   document.getElementById('shotFormatModal').style.display = 'none';
   const target = document.body;
+  const scrollWrap = document.getElementById('scroll-wrapper');
   
+  // 讓捲動軸歸零，確保絕對定位捕捉時頂部是對齊的
+  if (scrollWrap) scrollWrap.scrollTop = 0;
+  
+  // 1. 在加上 taking-screenshot 類別之前，先記錄原始視覺維度
+  const bgLayer = document.getElementById('bg-layer');
+  const gridLayer = document.getElementById('grid-overlay');
+  const svgWrap = document.getElementById('svgWrap');
+  
+  const bgRect = bgLayer.getBoundingClientRect();
+  const gridRect = gridLayer.getBoundingClientRect();
+  const svgRect = svgWrap.getBoundingClientRect();
+  
+  // 2. 將原本依賴 100% 的尺寸，硬性凍結為當前的真實像素，防止 body 高度變長時被拉伸
+  bgLayer.style.setProperty('height', bgRect.height + 'px', 'important');
+  bgLayer.style.setProperty('width', bgRect.width + 'px', 'important');
+  bgLayer.style.setProperty('position', 'absolute', 'important');
+  bgLayer.style.setProperty('top', '0px', 'important');
+  bgLayer.style.setProperty('left', '0px', 'important');
+
+  gridLayer.style.setProperty('height', gridRect.height + 'px', 'important');
+  gridLayer.style.setProperty('width', gridRect.width + 'px', 'important');
+  gridLayer.style.setProperty('position', 'absolute', 'important');
+  gridLayer.style.setProperty('top', '0px', 'important');
+  gridLayer.style.setProperty('left', '0px', 'important');
+
+  svgWrap.style.setProperty('height', svgRect.height + 'px', 'important');
+  
+  // 3. 加上截圖類別，讓下方設定與說明區塊自然展開
   document.documentElement.classList.add('taking-screenshot');
   target.classList.add('taking-screenshot');
   if (isTransparent) {
@@ -2580,57 +2600,34 @@ async function doTakeScreenshot(isTransparent) {
       span.style.color = 'var(--text)'; span.style.fontSize = '18px'; span.style.fontWeight = 'bold'; span.style.fontFamily = 'monospace'; span.style.margin = '0 2px';
       inp.style.display = 'none'; inp.parentNode.insertBefore(span, inp); placeholders.push({ span, inp });
   });
-
-  // 💡 凍結背景圖層的長寬，避免因 body height 改變而觸發 object-fit: cover 的重新計算 (解決截圖相片變形問題)
-  const bgLayer = document.getElementById('bg-layer');
-  const gridLayer = document.getElementById('grid-overlay');
-  const svgWrap = document.getElementById('svgWrap');
-  
-  const vh = window.innerHeight;
-  const vw = window.innerWidth;
-  
-  const origBgHeight = bgLayer.style.height;
-  const origBgWidth = bgLayer.style.width;
-  const origGridHeight = gridLayer.style.height;
-  const origGridWidth = gridLayer.style.width;
-  const origSvgHeight = svgWrap.style.height;
-  
-  bgLayer.style.height = vh + 'px';
-  bgLayer.style.width = vw + 'px';
-  gridLayer.style.height = vh + 'px';
-  gridLayer.style.width = vw + 'px';
-  svgWrap.style.height = svgWrap.getBoundingClientRect().height + 'px';
   
   await new Promise(r => setTimeout(r, 150));
   
-  let tempCanvas = null;
-  // 💡 僅當使用實境「相機」時才需要 tempCanvas 抓取 video 幀數；若為「相片」則讓 html2canvas 原生抓取，避免失真
+  let tempImg = null;
+
+  // 💡 只有影片(Camera)必須被畫到 canvas 上才能截圖。照片(img)可以直接被 html2canvas 原生捕捉，絕不能轉換，否則 object-fit 會失效！
   if (!isTransparent && video.style.opacity === "1" && stream && videoTrack) {
-      tempCanvas = document.createElement('canvas');
-      tempCanvas.width = video.videoWidth;
-      tempCanvas.height = video.videoHeight;
+      const canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
       
-      if (tempCanvas.width > 0 && tempCanvas.height > 0) {
-          tempCanvas.style.position = 'absolute';
-          tempCanvas.style.top = '0';
-          tempCanvas.style.left = '0';
-          tempCanvas.style.width = '100%';
-          tempCanvas.style.height = '100%';
-          tempCanvas.style.objectFit = 'cover';
-          tempCanvas.style.zIndex = '-1';
-          
-          const zoomVal = parseFloat(document.getElementById('sliderZoom').value);
-          const ctx = tempCanvas.getContext('2d');
-          ctx.translate(tempCanvas.width/2, tempCanvas.height/2);
-          ctx.scale(zoomVal, zoomVal);
-          ctx.translate(-tempCanvas.width/2, -tempCanvas.height/2);
-          
-          ctx.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
-          document.getElementById('media-container').appendChild(tempCanvas);
-          video.style.opacity = '0';
-      } else {
-          tempCanvas = null;
-      }
+      tempImg = document.createElement('img');
+      tempImg.src = canvas.toDataURL('image/png');
+      tempImg.style.position = 'absolute';
+      tempImg.style.top = '0';
+      tempImg.style.left = '0';
+      tempImg.style.width = '100%';
+      tempImg.style.height = '100%';
+      tempImg.style.objectFit = 'cover';
+      tempImg.style.zIndex = '-1';
+      
+      const zoomVal = document.getElementById('sliderZoom').value;
+      if (zoomVal !== "1") tempImg.style.transform = `scale(${zoomVal})`;
+      
+      document.getElementById('media-container').appendChild(tempImg);
+      video.style.opacity = '0';
   }
 
   try {
@@ -2638,8 +2635,7 @@ async function doTakeScreenshot(isTransparent) {
         backgroundColor: isTransparent ? null : (document.body.classList.contains('camera-mode') ? '#0a1410' : '#0a1410'), 
         scale: 2, 
         useCORS: true,
-        windowWidth: vw,
-        windowHeight: document.body.scrollHeight,
+        windowWidth: window.innerWidth, // 鎖定寬度，讓文字等比例折行
         ignoreElements: (el) => {
             if (el.hasAttribute('data-html2canvas-ignore')) return true;
             if (el.classList && el.classList.contains('menu-list')) return true;
@@ -2655,20 +2651,27 @@ async function doTakeScreenshot(isTransparent) {
       showToast("❌ 截圖失敗，請稍後再試！", "bad"); 
   }
   
-  if (tempCanvas) { tempCanvas.remove(); }
-  if (stream) { video.style.opacity = '1'; }
+  // 4. 清理與恢復原本的動態尺寸設定
+  if (tempImg) { tempImg.remove(); video.style.opacity = '1'; }
   placeholders.forEach(p => { p.inp.style.display = ''; p.span.remove(); }); 
   
   target.classList.remove('taking-screenshot');
   document.documentElement.classList.remove('taking-screenshot');
   target.classList.remove('capture-transparent');
   
-  // 💡 恢復背景與畫布尺寸
-  bgLayer.style.height = origBgHeight;
-  bgLayer.style.width = origBgWidth;
-  gridLayer.style.height = origGridHeight;
-  gridLayer.style.width = origGridWidth;
-  svgWrap.style.height = origSvgHeight;
+  bgLayer.style.removeProperty('height');
+  bgLayer.style.removeProperty('width');
+  bgLayer.style.removeProperty('position');
+  bgLayer.style.removeProperty('top');
+  bgLayer.style.removeProperty('left');
+  
+  gridLayer.style.removeProperty('height');
+  gridLayer.style.removeProperty('width');
+  gridLayer.style.removeProperty('position');
+  gridLayer.style.removeProperty('top');
+  gridLayer.style.removeProperty('left');
+  
+  svgWrap.style.removeProperty('height');
 }
 
 // 核心變更：全地形場景與高空介質引擎
@@ -2916,7 +2919,6 @@ function renderRedirectNode() {
                  <circle cx="10" cy="-1" r="6" fill="#1e293b" />
                  <circle cx="0" cy="0" r="4" fill="#0a1410" />`;
     } else if (currentMode === 'custom') {
-        // 自訂模式：給予一個通用的戰術六角形節點
         html += `<polygon points="0,-12 10,-6 10,6 0,12 -10,6 -10,-6" fill="var(--safe)" stroke="#0a1410" stroke-width="2" />
                  <circle cx="0" cy="0" r="3" fill="#0a1410" />`;
     }
@@ -2975,7 +2977,6 @@ function updateEngine() {
     if (loadY < P.y + 55) loadY = P.y + 55; 
     let loadPt = { x: P.x, y: loadY };
     
-    // 背景保護黑線
     els.ropeLoadBg.setAttribute('x1', P.x); els.ropeLoadBg.setAttribute('y1', P.y);
     els.ropeLoadBg.setAttribute('x2', loadPt.x); els.ropeLoadBg.setAttribute('y2', loadPt.y);
     els.ropeLoad.setAttribute('x1', P.x); els.ropeLoad.setAttribute('y1', P.y);
@@ -3073,7 +3074,6 @@ function updateEngine() {
     else if (currentMode === 'roller') { mName = t('btnFricRoller').replace(/🛞\s*/, ''); mIcon = '🛞'; }
     else if (currentMode === 'custom') { mName = customMedium.name; mIcon = '✏️'; }
     
-    // 💡 標題列同步更新為所選介質名稱
     els.lblBranchName.textContent = mName;
 
     if (currentAction === 'static') {
@@ -3164,16 +3164,13 @@ window.addEventListener('mousemove', processDrag);
 window.addEventListener('touchend', () => isDragging = false);
 window.addEventListener('mouseup', () => isDragging = false);
 
-// 💡 重構切換淨空模式函式，供雙擊與按鈕共用
 function toggleCaptureMode() {
     document.body.classList.toggle('capture-mode');
     showToast(document.body.classList.contains('capture-mode') ? t('toastModeHide') : t('toastModeShow'), "safe");
 }
 
-// 雙擊進入沉浸觀察模式 (全域觸發)
 let lastTapTime = 0;
 document.addEventListener('pointerdown', (e) => {
-    // 排除互動元素，避免點擊按鈕時誤觸隱藏
     if (e.target.closest('button, input, label, select, details, summary, .draggable-anchor, .icon-btn, .toggle-btn, .primary-btn, #cameraControls, #floating-tools')) {
         return;
     }
@@ -3187,7 +3184,6 @@ document.addEventListener('pointerdown', (e) => {
     }
 });
 
-// 長按負載 W 觸發快捷設定
 let loadHoldTimer = null;
 function startLoadHold(e) {
     if(e.cancelable) e.preventDefault();
@@ -3220,7 +3216,6 @@ function confirmLoadChange() {
 function resetEngine() {
   P = { x: 120, y: 80 }; 
   A = { x: 340, y: 360 }; 
-  // 觸發畫面重置，預設繩粗也會被更新，但保留滑桿手感
   let sliderRope = document.getElementById('sliderRope');
   if(sliderRope) {
       els.ropeLoad.setAttribute('stroke-width', sliderRope.value);
