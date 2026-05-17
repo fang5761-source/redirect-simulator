@@ -112,33 +112,53 @@
       box-shadow: none !important;
   }
   
-  /* 在淨空模式下顯示懸浮快捷鍵 */
+  /* 💡 淨空模式下的懸浮快捷鍵 */
   #floating-tools {
       display: none;
       position: fixed;
       bottom: max(30px, calc(env(safe-area-inset-bottom) + 30px));
       right: 20px;
       flex-direction: column;
-      gap: 15px;
+      gap: 12px;
       z-index: 10000;
+      background: rgba(0,0,0,0.4);
+      padding: 6px;
+      border-radius: 30px;
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
   }
   .capture-mode #floating-tools { display: flex !important; }
 
-  /* 💡 截圖專用模式 (保留設定面版，僅隱藏頂部與按鈕，維持座標) */
-  .taking-screenshot .topbar,
-  .taking-screenshot .icon-bar {
+  /* 💡 截圖專用模式 (隱藏多餘按鈕與說明，強制保留標題與數據儀表板) */
+  .taking-screenshot .icon-bar,
+  .taking-screenshot .control-deck,
+  .taking-screenshot .edu-wrap,
+  .taking-screenshot .menu-list,
+  .taking-screenshot #floating-tools {
+      display: none !important;
       opacity: 0 !important;
       visibility: hidden !important;
       pointer-events: none !important;
   }
-  .taking-screenshot .menu-list {
-      display: none !important;
+  
+  /* 確保截圖時，即使是在淨空模式下，也強制顯示標題列與數據面板 */
+  .taking-screenshot .topbar,
+  .taking-screenshot .dashboard {
+      display: flex !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+  }
+  .taking-screenshot .card {
+      background: rgba(15, 30, 22, 0.5) !important; /* 確保截圖時有一點對比底色 */
+      border-color: transparent !important;
+      box-shadow: none !important;
   }
   
   .capture-transparent { background-color: transparent !important; }
   .capture-transparent #bg-layer, 
   .capture-transparent #grid-overlay { display: none !important; }
-  .capture-transparent .card { background: transparent !important; border-color: transparent !important; box-shadow: none !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+  .capture-transparent .card { background: transparent !important; }
   .capture-transparent .app-container { filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.8)) !important; }
 
   .topbar { display: flex; align-items: center; margin-bottom: 8px; width: 100%; justify-content: space-between; }
@@ -321,7 +341,7 @@
 </script>
 
 <script>
-// 💡 V6.9.1 (包含多國語言與 UI 防呆升級)
+// 💡 V6.9.2 (多國語言、自訂介質獨立化、截圖資料保全)
 const i18n = {
   zh: {
     appTitle: "下方固定點架設儀 (全地形)",
@@ -337,7 +357,7 @@ const i18n = {
     btnSteel: "🏗️ 鋼架空橋",
     btnNone: "⬛ 淨空",
     frictionLabel: "🛡️ 轉向點 (COD) 摩擦力介質",
-    btnCustom: "✏️ 自訂",
+    btnCustom: "✏️ 自訂設定",
     directPull: "直拉",
     btnFricCara: "🪝 鉤環",
     btnFricPull: "⚙️ 滑輪",
@@ -381,16 +401,16 @@ const i18n = {
     op1: "滑動沙盤中的 <b>轉向點</b> 與 <b>地面操作</b>，可自由拖曳對齊 AR 畫面進行推演。",
     op2: "點擊上方 <b>模擬地形與環境</b>，一鍵切換攀樹、鋼架場景或乾淨畫布。",
     op3: "切換 <b>轉向點 (COD) 摩擦力介質</b>，觀察各種實戰介質對操作者負擔的影響。",
-    op4: "點擊 <b>✏️自訂</b>，可手動設定轉向介質名稱與摩擦係數。",
+    op4: "點擊右上角 <b>✏️自訂設定</b>，可手動設定轉向介質名稱與摩擦係數，並保留於自訂兵牌上。",
     op5: "切換 <b>🕹️系統操作動作</b>，比對靜止、上拉與下放時，摩擦力帶來的截然不同效應。",
     devTitle: "下方固定點架設儀 專業正式版",
     devTeam: "本工具由 <span style='color:var(--warn);'>散木團隊</span> 開發製作",
     devT1: "教學架構與工程判斷／徐世豐",
     devT2: "工具設計與互動介面／吳佩芳（朵朵）",
-    customNameTitle: "✏️ 自訂介質名稱",
-    customNameDesc: "請輸入您要模擬的轉向地形或介質：",
-    customNamePlh: "例如：水泥柱、怪手吊臂",
-    customFricTitle: "⚙️ 自訂摩擦係數",
+    customNameTitle: "✏️ 自訂專屬介質",
+    customNameDesc: "請為您的專屬介質命名（如：怪手吊臂）：",
+    customNamePlh: "例如：怪手吊臂",
+    customFricTitle: "⚙️ 設定介質摩擦係數",
     fricTip: "💡 <b>戰術提示：</b><br><span style='color:var(--bad)'>0.3</span> = 摩擦力極大 (如: 粗糙岩壁)<br><span style='color:var(--safe)'>0.9</span> = 摩擦力極小 (如: 高效滑輪)",
     fricPlh: "輸入 0.1 ~ 1.0 之間的數字",
     cancel: "取消返回",
@@ -489,7 +509,7 @@ const i18n = {
     btnSteel: "🏗️ Truss",
     btnNone: "⬛ Blank",
     frictionLabel: "🛡️ COD Friction Type",
-    btnCustom: "✏️ Custom",
+    btnCustom: "✏️ Setup Custom",
     directPull: " Pull",
     btnFricCara: "🪝 Carabiner",
     btnFricPull: "⚙️ Pulley",
@@ -533,14 +553,14 @@ const i18n = {
     op1: "Drag the <b>Redirect Node</b> or <b>Ground OP</b> to simulate force changes dynamically.",
     op2: "Click <b>Terrain & Environment</b> to switch between scenes.",
     op3: "Change <b>COD Friction Type</b> to observe how different mediums affect the load.",
-    op4: "Click <b>✏️Custom</b> to manually set the object name and friction coefficient.",
+    op4: "Click <b>✏️Setup Custom</b> to define custom medium and coefficient.",
     op5: "Toggle <b>System Action</b> to compare the effects of friction during Static, Hauling, and Lowering.",
     devTitle: "Redirect Sandbox PRO",
     devTeam: "Developed by <span style='color:var(--warn);'>SunMoon Team</span>",
     devT1: "Engineering & Architecture / Shih-Feng Hsu",
     devT2: "UI/UX Design / Pei-Fang Wu",
-    customNameTitle: "✏️ Custom COD Name",
-    customNameDesc: "Enter the custom terrain or object name:",
+    customNameTitle: "✏️ Custom Medium",
+    customNameDesc: "Enter your custom medium name:",
     customNamePlh: "e.g., Concrete pillar",
     customFricTitle: "⚙️ Custom Friction",
     fricTip: "💡 <b>Tip:</b><br><span style='color:var(--bad)'>0.3</span> = High Friction<br><span style='color:var(--safe)'>0.9</span> = Low Friction",
@@ -641,7 +661,7 @@ const i18n = {
     btnSteel: "🏗️ 鉄骨",
     btnNone: "⬛ 空白",
     frictionLabel: "🛡️ COD 摩擦タイプ",
-    btnCustom: "✏️ カスタム",
+    btnCustom: "✏️ カスタム設定",
     directPull: " 直引き",
     btnFricCara: "🪝 カラビナ",
     btnFricPull: "⚙️ プーリー",
@@ -685,13 +705,13 @@ const i18n = {
     op1: "サンドボックス内の <b>支点</b> と <b>操作側</b> をドラッグしてシミュレーションします。",
     op2: "<b>地形と環境</b> をクリックし、環境を切り替えます。",
     op3: "<b>COD摩擦タイプ</b> を変更し、負担にどう影響するか観察します。",
-    op4: "<b>✏️カスタム</b> をクリックして、名称と摩擦係数を手動設定できます。",
+    op4: "<b>✏️カスタム設定</b> をクリックして、名称と摩擦係数を手動設定できます。",
     op5: "<b>システム動作</b> を切り替えて、静止、引き上げ、ロワリング時の摩擦を比較します。",
     devTitle: "リダイレクト砂盤 PRO",
     devTeam: "開発：<span style='color:var(--warn);'>SunMoon Team</span>",
     devT1: "アーキテクチャ・監修 / Shih-Feng Hsu",
     devT2: "UI/UX デザイン / Pei-Fang Wu",
-    customNameTitle: "✏️ COD名カスタム",
+    customNameTitle: "✏️ 専用カスタム",
     customNameDesc: "地形やオブジェクト名を入力：",
     customNamePlh: "例：コンクリート柱",
     customFricTitle: "⚙️ 摩擦係数カスタム",
@@ -1649,10 +1669,13 @@ function triggerFlash(el) {
     </div>
 </div>
 
-<!-- 💡 戰術懸浮快捷鍵：只在 capture-mode (淨空模式) 顯示 -->
+<!-- 💡 戰術懸浮快捷鍵：加入拖曳手柄 -->
 <div id="floating-tools" data-html2canvas-ignore="true">
-    <button class="icon-btn" onclick="attemptFeature('featCam', toggleCamera)" style="background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); border: 1px solid var(--safe); box-shadow: 0 4px 12px rgba(0,0,0,0.5); width: 48px; height: 48px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 20px;">📷</button>
-    <button class="icon-btn" onclick="attemptFeature('featShot', () => { document.getElementById('shotFormatModal').style.display='flex'; })" style="background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); border: 1px solid var(--safe); box-shadow: 0 4px 12px rgba(0,0,0,0.5); width: 48px; height: 48px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 20px;">📸</button>
+    <div id="float-drag-handle" style="width: 100%; height: 24px; display: flex; justify-content: center; align-items: center; cursor: grab; opacity: 0.5;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="12" r="1.5"></circle><circle cx="9" cy="5" r="1.5"></circle><circle cx="9" cy="19" r="1.5"></circle><circle cx="15" cy="12" r="1.5"></circle><circle cx="15" cy="5" r="1.5"></circle><circle cx="15" cy="19" r="1.5"></circle></svg>
+    </div>
+    <button class="icon-btn" onclick="attemptFeature('featCam', toggleCamera)" style="background: rgba(0,0,0,0.6); border: 1px solid var(--safe); box-shadow: 0 4px 12px rgba(0,0,0,0.5); width: 48px; height: 48px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 20px;">📷</button>
+    <button class="icon-btn" onclick="attemptFeature('featShot', () => { document.getElementById('shotFormatModal').style.display='flex'; })" style="background: rgba(0,0,0,0.6); border: 1px solid var(--safe); box-shadow: 0 4px 12px rgba(0,0,0,0.5); width: 48px; height: 48px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 20px;">📸</button>
 </div>
 
 <div id="bg-layer">
@@ -1739,30 +1762,25 @@ function triggerFlash(el) {
   </div>
 </div>
 
-<div id="nameModal" class="modal-overlay" data-html2canvas-ignore="true">
+<!-- 💡 整合式的自訂介質兵牌編輯器 -->
+<div id="customMediumModal" class="modal-overlay" data-html2canvas-ignore="true">
   <div class="modal-box">
-    <h3 style="color:var(--safe); margin-top:0;" data-i18n="customNameTitle">✏️ 自訂介質名稱</h3>
-    <p style="font-size:13px; color:var(--muted); margin-bottom:12px;" data-i18n="customNameDesc">請輸入您要模擬的轉向地形或介質：</p>
-    <input type="text" id="nameInput" class="pwd-input" placeholder="例如：水泥柱、怪手吊臂" data-i18n-plh="customNamePlh" style="letter-spacing: normal;">
-    <div class="modal-btn-group">
-      <button class="primary-btn btn-cancel" onclick="document.getElementById('nameModal').style.display='none'" data-i18n="cancel">取消返回</button>
-      <button class="primary-btn btn-unlock" style="background:var(--safe); color:#0a1410;" onclick="confirmCustomName()" data-i18n="confirmName">確認更改</button>
-    </div>
-  </div>
-</div>
-
-<div id="frictionModal" class="modal-overlay" data-html2canvas-ignore="true">
-  <div class="modal-box">
-    <h3 style="color:var(--warn); margin-top:0;" data-i18n="customFricTitle">⚙️ 自訂摩擦係數</h3>
-    <p style="font-size:13px; color:var(--muted); margin-bottom:12px; text-align:left; background:rgba(0,0,0,0.3); padding:10px; border-radius:8px;" data-i18n="fricTip">
+    <h3 style="color:var(--safe); margin-top:0;" data-i18n="customNameTitle">✏️ 自訂專屬介質</h3>
+    <p style="font-size:13px; color:var(--muted); margin-bottom:8px;" data-i18n="customNameDesc">請為您的專屬介質命名（如：怪手吊臂）：</p>
+    <input type="text" id="customMedName" class="pwd-input" placeholder="例如：怪手吊臂" data-i18n-plh="customNamePlh" style="letter-spacing: normal;">
+    
+    <p style="font-size:13px; color:var(--muted); margin-top:10px; margin-bottom:8px;" data-i18n="customFricTitle">⚙️ 設定介質摩擦係數</p>
+    <input type="number" id="customMedFric" class="pwd-input" placeholder="輸入 0.1 ~ 1.0" step="0.1" min="0.1" max="1.0" style="letter-spacing: normal;">
+    
+    <div style="font-size:12px; color:var(--muted); margin-bottom:15px; text-align:left; background:rgba(0,0,0,0.3); padding:10px; border-radius:8px;" data-i18n="fricTip">
       💡 <b>戰術提示：</b><br>
       <span style="color:var(--bad)">0.3</span> = 摩擦力極大 (如: 粗糙岩壁)<br>
       <span style="color:var(--safe)">0.9</span> = 摩擦力極小 (如: 高效滑輪)
-    </p>
-    <input type="number" id="frictionInput" class="pwd-input" placeholder="輸入 0.1 ~ 1.0 之間的數字" data-i18n-plh="fricPlh" step="0.1" min="0.1" max="1.0" style="letter-spacing: normal;">
+    </div>
+    
     <div class="modal-btn-group">
-      <button class="primary-btn btn-cancel" onclick="document.getElementById('frictionModal').style.display='none'" data-i18n="cancel">取消返回</button>
-      <button class="primary-btn btn-unlock" onclick="confirmCustomFriction()" data-i18n="confirmFric">確認套用</button>
+      <button class="primary-btn btn-cancel" onclick="document.getElementById('customMediumModal').style.display='none'" data-i18n="cancel">取消返回</button>
+      <button class="primary-btn btn-unlock" style="background:var(--safe); color:#0a1410;" onclick="confirmCustomMedium()" data-i18n="confirmFric">確認套用</button>
     </div>
   </div>
 </div>
@@ -1875,7 +1893,6 @@ function triggerFlash(el) {
           <div class="dash-box" id="dashBranch" style="border-top: 3px solid var(--bad);">
               <span class="lbl" style="display:flex; align-items:center; gap:4px;">
                   <span id="lblBranchName">樹幹</span><span data-i18n="codForce">(COD)受力</span>
-                  <button onclick="customName()" style="background:transparent; border:1px solid var(--muted); color:var(--muted); border-radius:4px; padding:0px 4px; font-size:10px; cursor:pointer;" title="點擊自訂介質名稱" data-i18n="btnCustom">✏️自訂</button>
               </span>
               <span class="val" id="txtBranchForce" style="color:var(--bad);">-- kg</span>
               <span class="sub" id="txtBranchMult">--</span>
@@ -1895,15 +1912,17 @@ function triggerFlash(el) {
          <div class="control-row">
             <div class="btn-group-lbl" style="display:flex; align-items:center; justify-content:center; gap:6px;">
                <span data-i18n="frictionLabel">🛡️ 轉向點 (COD) 摩擦力介質</span>
-               <button onclick="customFriction()" style="background:var(--card); border:1px solid var(--warn); color:var(--warn); border-radius:4px; padding:2px 6px; font-size:11px; cursor:pointer;" data-i18n="btnCustom">✏️ 自訂</button>
+               <button onclick="openCustomMediumModal()" style="background:var(--card); border:1px solid var(--warn); color:var(--warn); border-radius:4px; padding:2px 6px; font-size:11px; cursor:pointer;" data-i18n="btnCustom">✏️ 自訂設定</button>
             </div>
+            <!-- 💡 將摩擦力介質變為 6 個等比按鈕，專屬自訂兵牌 -->
             <div class="toggle-group" style="flex-wrap: wrap;">
-               <button class="toggle-btn active" id="btnFrictionBase" data-type="friction" data-val="0.4" onclick="setFriction(this, 'base')" style="flex: 1 1 calc(33% - 6px);">🌳 樹幹直拉</button>
-               <button class="toggle-btn" data-type="friction" data-val="0.6" onclick="setFriction(this, 'carabiner')" style="flex: 1 1 calc(33% - 6px);"><span data-i18n="btnFricCara">🪝 鉤環</span><span class="lock-icon">🔒</span></button>
-               <button class="toggle-btn" data-type="friction" data-val="0.95" onclick="setFriction(this, 'pulley')" style="flex: 1 1 calc(33% - 6px);"><span data-i18n="btnFricPull">⚙️ 滑輪</span><span class="lock-icon">🔒</span></button>
+               <button class="toggle-btn active" id="btnFrictionBase" data-type="friction" data-val="0.4" onclick="setFriction(this, 'base')" style="flex: 1 1 calc(33.333% - 6px);">🌳 樹幹直拉</button>
+               <button class="toggle-btn" data-type="friction" data-val="0.6" onclick="setFriction(this, 'carabiner')" style="flex: 1 1 calc(33.333% - 6px);"><span data-i18n="btnFricCara">🪝 鉤環</span><span class="lock-icon">🔒</span></button>
+               <button class="toggle-btn" data-type="friction" data-val="0.95" onclick="setFriction(this, 'pulley')" style="flex: 1 1 calc(33.333% - 6px);"><span data-i18n="btnFricPull">⚙️ 滑輪</span><span class="lock-icon">🔒</span></button>
                
-               <button class="toggle-btn" data-type="friction" data-val="0.5" onclick="setFriction(this, 'pad')" style="flex: 1 1 calc(48% - 6px); padding: 6px 2px;"><span data-i18n="btnFricPad">🛏️ 鋪保護墊</span><span class="lock-icon">🔒</span></button>
-               <button class="toggle-btn" data-type="friction" data-val="0.85" onclick="setFriction(this, 'roller')" style="flex: 1 1 calc(48% - 6px); padding: 6px 2px;"><span data-i18n="btnFricRoller">🛞 護角滾輪</span><span class="lock-icon">🔒</span></button>
+               <button class="toggle-btn" data-type="friction" data-val="0.5" onclick="setFriction(this, 'pad')" style="flex: 1 1 calc(33.333% - 6px); padding: 6px 2px;"><span data-i18n="btnFricPad">🛏️ 鋪墊</span><span class="lock-icon">🔒</span></button>
+               <button class="toggle-btn" data-type="friction" data-val="0.85" onclick="setFriction(this, 'roller')" style="flex: 1 1 calc(33.333% - 6px); padding: 6px 2px;"><span data-i18n="btnFricRoller">🛞 滾輪</span><span class="lock-icon">🔒</span></button>
+               <button class="toggle-btn" id="btnFrictionCustom" data-type="friction" data-val="custom" onclick="setFriction(this, 'custom')" style="flex: 1 1 calc(33.333% - 6px); padding: 6px 2px;">✏️ 自訂<span class="lock-icon">🔒</span></button>
             </div>
          </div>
 
@@ -1961,7 +1980,7 @@ function triggerFlash(el) {
                 <li style="margin-bottom: 6px;" data-i18n="op1">滑動沙盤中的 <b>轉向點</b> 與 <b>地面操作</b>，可自由拖曳對齊 AR 畫面進行推演。</li>
                 <li style="margin-bottom: 6px;" data-i18n="op2">點擊上方 <b>模擬地形與環境</b>，一鍵切換攀樹、鋼架場景或乾淨畫布。</li>
                 <li style="margin-bottom: 6px;" data-i18n="op3">切換 <b>轉向點 (COD) 摩擦力介質</b>，觀察各種實戰介質對操作者負擔的影響。</li>
-                <li style="margin-bottom: 6px;" data-i18n="op4">點擊 <b>✏️自訂</b>，可手動設定轉向介質名稱與摩擦係數。</li>
+                <li style="margin-bottom: 6px;" data-i18n="op4">點擊右上角 <b>✏️自訂設定</b>，可手動設定轉向介質名稱與摩擦係數，並保留於自訂兵牌上。</li>
                 <li style="margin-bottom: 6px;" data-i18n="op5">切換 <b>🕹️系統操作動作</b>，比對靜止、上拉與下放時，摩擦力帶來的截然不同效應。</li>
               </ul>
               <button type="button" class="btn-collapse-inner" onclick="this.closest('details').removeAttribute('open')" data-i18n="collapse">🔼 收起說明</button>
@@ -2023,7 +2042,7 @@ function triggerFlash(el) {
             <div class="menu-content">
               <div style="text-align: center; margin-bottom: 15px;">
                 <span data-i18n="devTitle" style="display:inline-block; background:var(--safe); color:#0a1410; font-weight:bold; padding:4px 14px; border-radius:20px; font-size:13px; letter-spacing:0.5px; box-shadow: 0 2px 6px rgba(74,222,128,0.3);">下方固定點架設儀 專業正式版</span>
-                <div style="font-size: 11px; color: var(--muted); margin-top: 8px; font-family: monospace;">Version 6.9.1</div>
+                <div style="font-size: 11px; color: var(--muted); margin-top: 8px; font-family: monospace;">Version 6.9.2</div>
               </div>
               <p style="margin-top: 0; margin-bottom: 6px; font-weight: bold; color: var(--text); text-align: center;" data-i18n="devTeam">本工具由 <span style="color:var(--warn);">散木團隊</span> 開發製作</p>
               <p style="margin-top: 0; margin-bottom: 4px; font-size: 13px; text-align: center;" data-i18n="devT1">教學架構與工程判斷／徐世豐</p>
@@ -2371,6 +2390,44 @@ window.addEventListener('touchmove', doCtrlDrag, {passive: false});
 window.addEventListener('mouseup', stopCtrlDrag);
 window.addEventListener('touchend', stopCtrlDrag);
 
+// 💡 懸浮快門的自由拖曳邏輯
+const floatTools = document.getElementById('floating-tools');
+const floatDragHandle = document.getElementById('float-drag-handle');
+let isDraggingFloat = false, floatStartX, floatStartY, floatTranslateX = 0, floatTranslateY = 0, currentFloatX = 0, currentFloatY = 0;
+
+const startFloatDrag = (e) => {
+    isDraggingFloat = true;
+    floatStartX = e.touches ? e.touches[0].clientX : e.clientX;
+    floatStartY = e.touches ? e.touches[0].clientY : e.clientY;
+    if (e.cancelable) e.preventDefault();
+};
+
+const doFloatDrag = (e) => {
+    if(!isDraggingFloat) return;
+    let currentX = e.touches ? e.touches[0].clientX : e.clientX;
+    let currentY = e.touches ? e.touches[0].clientY : e.clientY;
+    let dx = currentX - floatStartX;
+    let dy = currentY - floatStartY;
+    currentFloatX = floatTranslateX + dx;
+    currentFloatY = floatTranslateY + dy;
+    floatTools.style.transform = `translate(${currentFloatX}px, ${currentFloatY}px)`;
+};
+
+const stopFloatDrag = () => {
+    if(isDraggingFloat) {
+        floatTranslateX = currentFloatX;
+        floatTranslateY = currentFloatY;
+        isDraggingFloat = false;
+    }
+};
+
+floatDragHandle.addEventListener('mousedown', startFloatDrag);
+floatDragHandle.addEventListener('touchstart', startFloatDrag, {passive: false});
+window.addEventListener('mousemove', doFloatDrag);
+window.addEventListener('touchmove', doFloatDrag, {passive: false});
+window.addEventListener('mouseup', stopFloatDrag);
+window.addEventListener('touchend', stopFloatDrag);
+
 function resetCameraControls() {
     document.getElementById('sliderWhite').value = 0.2;
     document.getElementById('sliderZoom').value = 1;
@@ -2450,7 +2507,7 @@ function clearPhotoOverlay() {
 
 function toggleGrid() { gridVisible = !gridVisible; gridOverlay.style.opacity = gridVisible ? "0.5" : "0"; }
 
-// 💡 截圖引擎核心修正：使用 taking-screenshot 類別，保留面板與數據，僅隱藏按鈕！
+// 💡 截圖引擎核心修正：強制保留面板與數據，僅隱藏按鈕！
 async function doTakeScreenshot(isTransparent) {
   document.getElementById('shotFormatModal').style.display = 'none';
   const target = document.body;
@@ -2561,7 +2618,11 @@ let currentAction = 'static';
 let currentMA = 1; 
 let lastShapeData = '';
 
+// 💡 自訂介質獨立資料物件
+let customMedium = { name: "自訂", friction: 0.5 };
+
 function getSceneName() {
+    if (currentMode === 'custom') return customMedium.name;
     if (scenes[currentScene].customName) return scenes[currentScene].customName;
     return t(scenes[currentScene].i18nKey);
 }
@@ -2571,7 +2632,8 @@ function setScene(btn, sceneKey) {
     btn.classList.add('active');
     currentScene = sceneKey;
     
-    if (currentMode === 'pad' || currentMode === 'roller') {
+    // 如果原本處於會覆蓋場景的介質，自動切回直拉
+    if (currentMode === 'pad' || currentMode === 'roller' || currentMode === 'custom') {
         currentMode = 'base';
         document.querySelectorAll('.toggle-btn[data-type="friction"]').forEach(b => b.classList.remove('active'));
         document.getElementById('btnFrictionBase').classList.add('active');
@@ -2643,14 +2705,42 @@ function confirmCustomFriction() {
     }
 }
 
+// 💡 整合式的自訂介質兵牌編輯器
+function openCustomMediumModal() {
+    document.getElementById('customMedName').value = customMedium.name === "自訂" ? "" : customMedium.name;
+    document.getElementById('customMedFric').value = customMedium.friction;
+    document.getElementById('customMediumModal').style.display = 'flex';
+    setTimeout(() => document.getElementById('customMedName').focus(), 100);
+}
+
+function confirmCustomMedium() {
+    let n = document.getElementById('customMedName').value.trim() || t('btnCustom').replace('✏️ ', '');
+    let f = parseFloat(document.getElementById('customMedFric').value);
+    if (!isNaN(f) && f > 0 && f <= 1) {
+        customMedium.name = n;
+        customMedium.friction = f;
+        document.getElementById('btnFrictionCustom').innerHTML = `✏️ ${n}<span class="lock-icon">🔒</span>`;
+        setFriction(document.getElementById('btnFrictionCustom'), 'custom');
+        document.getElementById('customMediumModal').style.display = 'none';
+        showToast(`✏️ 介質已設定為：${n} (${f})`, "safe");
+    } else {
+        showToast(t('fricInvalid'), "bad");
+    }
+}
+
 function setFriction(btn, mode) {
     const doSet = () => {
         document.querySelectorAll('.toggle-btn[data-type="friction"]').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        currentE = parseFloat(btn.dataset.val);
         currentMode = mode;
         
-        const specialMediums = { 'pad': true, 'roller': true };
+        if (mode === 'custom') {
+            currentE = customMedium.friction;
+        } else {
+            currentE = parseFloat(btn.dataset.val);
+        }
+        
+        const specialMediums = { 'pad': true, 'roller': true, 'custom': true };
         
         if (specialMediums[mode]) {
             document.querySelectorAll('.toggle-btn[data-type="scene"]').forEach(b => b.classList.remove('active'));
@@ -2735,6 +2825,10 @@ function renderRedirectNode() {
                  <circle cx="-10" cy="-1" r="6" fill="#1e293b" />
                  <circle cx="10" cy="-1" r="6" fill="#1e293b" />
                  <circle cx="0" cy="0" r="4" fill="#0a1410" />`;
+    } else if (currentMode === 'custom') {
+        // 自訂模式：給予一個通用的戰術六角形節點
+        html += `<polygon points="0,-12 10,-6 10,6 0,12 -10,6 -10,-6" fill="var(--safe)" stroke="#0a1410" stroke-width="2" />
+                 <circle cx="0" cy="0" r="3" fill="#0a1410" />`;
     }
     
     els.redirectNode.innerHTML = html;
@@ -2804,7 +2898,7 @@ function updateEngine() {
     els.ropeAnchor.setAttribute('x2', A.x); els.ropeAnchor.setAttribute('y2', A.y);
     els.anchorGroup.setAttribute('transform', `translate(${A.x}, ${A.y})`);
     
-    if (currentMode === 'pad' || currentMode === 'roller') {
+    if (currentMode === 'pad' || currentMode === 'roller' || currentMode === 'custom') {
         if (els.buildingScene) els.buildingScene.style.display = 'block';
         let isLeft = A.x < P.x;
         let floorY = Math.max(A.y, P.y); 
@@ -2887,7 +2981,11 @@ function updateEngine() {
     else if (currentMode === 'pulley') { mName = t('btnFricPull').replace(/⚙️\s*/, ''); mIcon = '⚙️'; }
     else if (currentMode === 'pad') { mName = t('btnFricPad').replace(/🛏️\s*/, ''); mIcon = '🛏️'; }
     else if (currentMode === 'roller') { mName = t('btnFricRoller').replace(/🛞\s*/, ''); mIcon = '🛞'; }
+    else if (currentMode === 'custom') { mName = customMedium.name; mIcon = '✏️'; }
     
+    // 💡 標題列同步更新為所選介質名稱
+    els.lblBranchName.textContent = mName;
+
     if (currentAction === 'static') {
         eduText = t('edu_static').replace('{T}', T_operator_pull.toFixed(0));
         eduColor = "var(--text)"; eduBg = "rgba(255,255,255,0.05)";
