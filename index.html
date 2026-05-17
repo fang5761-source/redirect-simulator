@@ -162,9 +162,19 @@
   }
 
   .taking-screenshot .card {
-      background: var(--card) !important; 
-      border-color: var(--line) !important;
       box-shadow: none !important;
+  }
+  
+  /* 💡 核心修正：確保相片模式截圖時，卡片背景必須完全透明，否則會像墨鏡一樣把相片變暗 */
+  body.camera-mode .taking-screenshot .card {
+      background: transparent !important; 
+      border-color: transparent !important;
+  }
+  
+  /* 一般黑底模式下的截圖卡片維持預設底色即可 */
+  body:not(.camera-mode) .taking-screenshot .card {
+      background: var(--card) !important;
+      border-color: var(--line) !important;
   }
   
   .capture-transparent { background-color: transparent !important; }
