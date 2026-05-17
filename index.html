@@ -111,6 +111,18 @@
       background: transparent !important;
       box-shadow: none !important;
   }
+  
+  /* 在淨空模式下顯示懸浮快捷鍵 */
+  #floating-tools {
+      display: none;
+      position: fixed;
+      bottom: max(30px, calc(env(safe-area-inset-bottom) + 30px));
+      right: 20px;
+      flex-direction: column;
+      gap: 15px;
+      z-index: 10000;
+  }
+  .capture-mode #floating-tools { display: flex !important; }
 
   /* 💡 截圖專用模式 (保留設定面版，僅隱藏頂部與按鈕，維持座標) */
   .taking-screenshot .topbar,
@@ -309,7 +321,7 @@
 </script>
 
 <script>
-// 💡 V6.9.0
+// 💡 V6.9.1 (包含多國語言與 UI 防呆升級)
 const i18n = {
   zh: {
     appTitle: "下方固定點架設儀 (全地形)",
@@ -444,7 +456,24 @@ const i18n = {
     shotFmtTitle: "📸 選擇截圖格式",
     shotFmtDesc: "請問您需要哪種背景格式？",
     shotFmtDark: "⬛ 標準深色背景",
-    shotFmtTrans: "🏁 透明去背 (適合放入 PPT)"
+    shotFmtTrans: "🏁 透明去背 (適合放入 PPT)",
+    spIntro: "本工具為散木團隊精心開發。若這套沙盤對您的實務與教學有幫助，歡迎自由隨喜給予我們一點實質鼓勵，這將化為我們開發下一套救援系統的核心動力！",
+    spBank: "🏦 銀行與郵局轉帳 (可免海外手續費)",
+    spBank1: "永豐銀行 (代碼 807) • 戶名：吳佩芳",
+    spCopyBank1: "📋 複製永豐帳號",
+    spBank2: "中華郵政 (代碼 700) • 戶名：吳佩芳",
+    spCopyBank2: "📋 複製郵局帳號",
+    spNote: "💡 匯款後請直接到下方自動販賣機領取金鑰 (費用填 0 元即可)<br><span style='color: var(--text);'>✏️ 提醒：請在匯款備註欄填寫 APP 名稱</span>",
+    spStoreTitle: "🛒 專業版自動販賣機 (支援刷卡)",
+    spStoreSub: "熟悉的販賣機！支援 Apple Pay 與信用卡",
+    spStoreBtn: "前往自動販賣機 🛒",
+    camCtrlHide: "👁️ 一鍵淨空 (雙擊畫面也可)",
+    toastCopy: "📋 帳號已複製！感謝您的心意！",
+    toastModeHide: "👁️ 純淨觀察模式 (雙擊還原)",
+    toastModeShow: "🎛️ 控制面板已還原",
+    toastUpdate: "🔄 系統更新中，為您重新載入...",
+    toastShare: "🔗 網址已複製，您可以貼上分享給其他人囉！",
+    shareText: "推薦這套散木團隊專屬的黑科技！結合實境相機與動態摩擦力引擎，快來試試！"
   },
   en: {
     appTitle: "Redirect Simulator",
@@ -579,7 +608,24 @@ const i18n = {
     shotFmtTitle: "📸 Screenshot Format",
     shotFmtDesc: "Which background format do you need?",
     shotFmtDark: "⬛ Standard Dark Background",
-    shotFmtTrans: "🏁 Transparent (Best for PPT)"
+    shotFmtTrans: "🏁 Transparent (Best for PPT)",
+    spIntro: "Carefully developed by SunMoon Team. If this tool helps you, feel free to buy us a coffee to support future developments!",
+    spBank: "🏦 Bank Transfer",
+    spBank1: "SinoPac Bank (Code 807)",
+    spCopyBank1: "📋 Copy Bank Account",
+    spBank2: "Chunghwa Post (Code 700)",
+    spCopyBank2: "📋 Copy Post Account",
+    spNote: "💡 After transferring, grab your key from the store below (enter 0 cost).<br><span style='color: var(--text);'>✏️ Please note the APP name in transfer remarks.</span>",
+    spStoreTitle: "🛒 PRO License Store",
+    spStoreSub: "Supports Apple Pay & Credit Cards",
+    spStoreBtn: "Go to Store 🛒",
+    camCtrlHide: "👁️ Hide UI (or double-tap)",
+    toastCopy: "📋 Copied! Thank you!",
+    toastModeHide: "👁️ View Mode (Double-tap to restore)",
+    toastModeShow: "🎛️ Control Panel Restored",
+    toastUpdate: "🔄 Updating system, please wait...",
+    toastShare: "🔗 Link copied! Ready to share.",
+    shareText: "Check out this redirect simulator by SunMoon Team! It calculates dynamic friction and angles."
   },
   ja: {
     appTitle: "リダイレクト砂盤 (全地形)",
@@ -714,7 +760,24 @@ const i18n = {
     shotFmtTitle: "📸 スクリーンショット形式",
     shotFmtDesc: "背景フォーマットを選択してください",
     shotFmtDark: "⬛ 標準ダーク背景",
-    shotFmtTrans: "🏁 透過 (PPT向け)"
+    shotFmtTrans: "🏁 透過 (PPT向け)",
+    spIntro: "SunMoonチームによる開発。もしお役に立てましたら、今後の開発支援をお願いいたします！",
+    spBank: "🏦 銀行振込",
+    spBank1: "SinoPac銀行 (コード 807)",
+    spCopyBank1: "📋 口座番号をコピー",
+    spBank2: "台湾郵政 (コード 700)",
+    spCopyBank2: "📋 口座番号をコピー",
+    spNote: "💡 振込後、下のストアからキーを取得してください（金額0を入力）。<br><span style='color: var(--text);'>✏️ 振込時の備考にアプリ名を入力してください。</span>",
+    spStoreTitle: "🛒 PROライセンスストア",
+    spStoreSub: "Apple Pay / クレジットカード対応",
+    spStoreBtn: "ストアへ行く 🛒",
+    camCtrlHide: "👁️ UI非表示 (ダブルタップも可)",
+    toastCopy: "📋 コピーしました！ありがとうございます！",
+    toastModeHide: "👁️ 観察モード (ダブルタップで復元)",
+    toastModeShow: "🎛️ UIを復元しました",
+    toastUpdate: "🔄 システムを更新しています...",
+    toastShare: "🔗 リンクをコピーしました！共有できます。",
+    shareText: "SunMoon Teamの開発したリダイレクトシミュレーター！ぜひ試してみてください！"
   },
   ko: {
     appTitle: "하단 고정점 시뮬레이터",
@@ -849,7 +912,24 @@ const i18n = {
     shotFmtTitle: "📸 스크린샷 형식",
     shotFmtDesc: "어떤 배경을 원하십니까?",
     shotFmtDark: "⬛ 기본 어두운 배경",
-    shotFmtTrans: "🏁 투명 배경 (PPT용)"
+    shotFmtTrans: "🏁 투명 배경 (PPT용)",
+    spIntro: "SunMoon 팀이 개발했습니다. 도움이 되셨다면 향후 개발을 위해 후원해 주세요!",
+    spBank: "🏦 계좌 이체",
+    spBank1: "SinoPac 은행 (코드 807)",
+    spCopyBank1: "📋 계좌 복사",
+    spBank2: "우체국 (코드 700)",
+    spCopyBank2: "📋 계좌 복사",
+    spNote: "💡 이체 후 아래 스토어에서 키를 받으세요 (금액 0 입력).<br><span style='color: var(--text);'>✏️ 메모에 앱 이름을 적어주세요.</span>",
+    spStoreTitle: "🛒 PRO 라이선스 스토어",
+    spStoreSub: "Apple Pay 및 신용카드 지원",
+    spStoreBtn: "스토어 가기 🛒",
+    camCtrlHide: "👁️ UI 숨기기 (또는 더블 탭)",
+    toastCopy: "📋 복사되었습니다! 감사합니다!",
+    toastModeHide: "👁️ 관찰 모드 (더블 탭으로 복원)",
+    toastModeShow: "🎛️ 제어 패널이 복원되었습니다",
+    toastUpdate: "🔄 시스템을 업데이트 중입니다...",
+    toastShare: "🔗 링크가 복사되었습니다! 공유할 수 있습니다.",
+    shareText: "SunMoon Team이 개발한 하단 고정점 시뮬레이터! 체험해보세요!"
   },
   fr: {
     appTitle: "Simulateur de Déviation",
@@ -982,7 +1062,24 @@ const i18n = {
     shotFmtTitle: "📸 Format de Capture",
     shotFmtDesc: "Quel fond souhaitez-vous ?",
     shotFmtDark: "⬛ Fond Sombre",
-    shotFmtTrans: "🏁 Transparent (PPT)"
+    shotFmtTrans: "🏁 Transparent (PPT)",
+    spIntro: "Développé par SunMoon Team. Si cet outil vous aide, soutenez-nous pour les futures mises à jour !",
+    spBank: "🏦 Virement Bancaire",
+    spBank1: "Banque SinoPac (Code 807)",
+    spCopyBank1: "📋 Copier le compte",
+    spBank2: "Poste de Taïwan (Code 700)",
+    spCopyBank2: "📋 Copier le compte",
+    spNote: "💡 Après le virement, obtenez la clé dans la boutique (entrez 0).<br><span style='color: var(--text);'>✏️ Mettez le nom de l'APP en remarque.</span>",
+    spStoreTitle: "🛒 Boutique de Licences PRO",
+    spStoreSub: "Prend en charge Apple Pay & CB",
+    spStoreBtn: "Aller à la Boutique 🛒",
+    camCtrlHide: "👁️ Masquer UI (ou double-tap)",
+    toastCopy: "📋 Copié ! Merci de votre soutien !",
+    toastModeHide: "👁️ Mode Observation (Double-tap pour restaurer)",
+    toastModeShow: "🎛️ Panneau restauré",
+    toastUpdate: "🔄 Mise à jour du système...",
+    toastShare: "🔗 Lien copié ! Prêt à partager.",
+    shareText: "Découvrez ce simulateur de SunMoon Team ! Il calcule les frictions et forces dynamiques."
   },
   de: {
     appTitle: "Umlenkung Simulator",
@@ -1117,7 +1214,24 @@ const i18n = {
     shotFmtTitle: "📸 Screenshot-Format",
     shotFmtDesc: "Welchen Hintergrund bevorzugen Sie?",
     shotFmtDark: "⬛ Dunkler Hintergrund",
-    shotFmtTrans: "🏁 Transparent (Für PPT)"
+    shotFmtTrans: "🏁 Transparent (Für PPT)",
+    spIntro: "Entwickelt vom SunMoon Team. Unterstützen Sie uns für weitere Tools!",
+    spBank: "🏦 Banküberweisung",
+    spBank1: "SinoPac Bank (Code 807)",
+    spCopyBank1: "📋 Konto kopieren",
+    spBank2: "Chunghwa Post (Code 700)",
+    spCopyBank2: "📋 Konto kopieren",
+    spNote: "💡 Holen Sie sich nach der Überweisung den Key im Store (Betrag 0).<br><span style='color: var(--text);'>✏️ Bitte APP-Namen im Verwendungszweck angeben.</span>",
+    spStoreTitle: "🛒 PRO Lizenz Store",
+    spStoreSub: "Apple Pay & Kreditkarten",
+    spStoreBtn: "Zum Store 🛒",
+    camCtrlHide: "👁️ UI ausblenden (oder Doppeltippen)",
+    toastCopy: "📋 Kopiert! Vielen Dank!",
+    toastModeHide: "👁️ Beobachtungsmodus (Doppeltippen zum Wiederherstellen)",
+    toastModeShow: "🎛️ Bedienfeld wiederhergestellt",
+    toastUpdate: "🔄 System wird aktualisiert...",
+    toastShare: "🔗 Link kopiert! Bereit zum Teilen.",
+    shareText: "Schauen Sie sich diesen Simulator des SunMoon Teams an!"
   },
   es: {
     appTitle: "Simulador de Desviación",
@@ -1252,7 +1366,24 @@ const i18n = {
     shotFmtTitle: "📸 Formato de Captura",
     shotFmtDesc: "¿Qué fondo necesitas?",
     shotFmtDark: "⬛ Fondo Oscuro",
-    shotFmtTrans: "🏁 Transparente (Para PPT)"
+    shotFmtTrans: "🏁 Transparente (Para PPT)",
+    spIntro: "Desarrollado por el equipo SunMoon. ¡Apóyanos para futuras herramientas!",
+    spBank: "🏦 Transferencia Bancaria",
+    spBank1: "SinoPac Bank (Código 807)",
+    spCopyBank1: "📋 Copiar Cuenta",
+    spBank2: "Chunghwa Post (Código 700)",
+    spCopyBank2: "📋 Copiar Cuenta",
+    spNote: "💡 Después de la transferencia, obtén tu clave en la tienda (ingresa 0).<br><span style='color: var(--text);'>✏️ Por favor, indica el nombre de la APP.</span>",
+    spStoreTitle: "🛒 Tienda de Licencias PRO",
+    spStoreSub: "Soporta Apple Pay y Tarjetas",
+    spStoreBtn: "Ir a la Tienda 🛒",
+    camCtrlHide: "👁️ Ocultar UI (o doble toque)",
+    toastCopy: "📋 ¡Copiado! ¡Gracias!",
+    toastModeHide: "👁️ Modo Observación (Doble toque para volver)",
+    toastModeShow: "🎛️ Panel de control restaurado",
+    toastUpdate: "🔄 Actualizando sistema...",
+    toastShare: "🔗 ¡Enlace copiado! Listo para compartir.",
+    shareText: "¡Mira este simulador de SunMoon Team!"
   },
   pt: {
     appTitle: "Simulador de Desvio",
@@ -1387,7 +1518,24 @@ const i18n = {
     shotFmtTitle: "📸 Formato de Captura",
     shotFmtDesc: "Qual fundo você prefere?",
     shotFmtDark: "⬛ Fundo Escuro",
-    shotFmtTrans: "🏁 Transparente (PPT)"
+    shotFmtTrans: "🏁 Transparente (PPT)",
+    spIntro: "Desenvolvido pela SunMoon. Apoie-nos para criar mais ferramentas!",
+    spBank: "🏦 Transferência Bancária",
+    spBank1: "SinoPac Bank (Código 807)",
+    spCopyBank1: "📋 Copiar Conta",
+    spBank2: "Chunghwa Post (Código 700)",
+    spCopyBank2: "📋 Copiar Conta",
+    spNote: "💡 Após a transferência, pegue a chave na loja (insira 0).<br><span style='color: var(--text);'>✏️ Coloque o nome do APP nas observações.</span>",
+    spStoreTitle: "🛒 Loja de Licenças PRO",
+    spStoreSub: "Suporte para Apple Pay e Cartões",
+    spStoreBtn: "Ir para a Loja 🛒",
+    camCtrlHide: "👁️ Ocultar UI (ou toque duplo)",
+    toastCopy: "📋 Copiado! Obrigado!",
+    toastModeHide: "👁️ Modo Observação (Toque duplo para voltar)",
+    toastModeShow: "🎛️ Painel de controle restaurado",
+    toastUpdate: "🔄 Atualizando sistema...",
+    toastShare: "🔗 Link copiado! Pronto para compartilhar.",
+    shareText: "Confira este simulador do SunMoon Team!"
   }
 };
 
@@ -1463,7 +1611,7 @@ window.copyAccount = function(elementId) {
   dummy.select();
   document.execCommand('copy');
   document.body.removeChild(dummy);
-  showToast('📋 帳號已複製！感謝您的心意！', 'safe');
+  showToast(t('toastCopy'), 'safe');
 };
 
 function triggerFlash(el) {
@@ -1476,7 +1624,7 @@ function triggerFlash(el) {
 
 <div id="status-bar-protector" data-html2canvas-ignore="true"></div>
 
-<!-- 💡 將畫面控制台移出操作框，改為全域浮動面板，不受雙擊隱藏影響 -->
+<!-- 💡 畫面控制台：新增一鍵淨空按鈕 -->
 <div id="cameraControls" style="display:none; position: fixed; top: 70px; left: 10px; flex-direction: column; background: rgba(0,0,0,0.75); padding: 8px 12px; border-radius: 10px; border: 1px solid var(--warn); z-index: 9990; backdrop-filter: blur(8px); box-shadow: 0 8px 25px rgba(0,0,0,0.6); min-width: 150px;" data-html2canvas-ignore="true">
     <div id="camCtrlHeader" style="display:flex; justify-content:space-between; align-items:center; cursor:move; margin-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:4px; user-select:none;">
         <span style="font-size:12px; font-weight:bold; color:var(--warn);">🎛️ 畫面控制台</span>
@@ -1495,7 +1643,16 @@ function triggerFlash(el) {
             <span>🪢繩粗</span>
             <input type="range" id="sliderRope" min="2" max="12" step="1" value="6">
         </div>
+        <div style="margin-top: 5px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.2); text-align: center;">
+            <button onclick="toggleCaptureMode()" style="background: var(--card); color: var(--text); border: 1px solid var(--warn); padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; width: 100%;" data-i18n="camCtrlHide">👁️ 一鍵淨空 (雙擊畫面也可)</button>
+        </div>
     </div>
+</div>
+
+<!-- 💡 戰術懸浮快捷鍵：只在 capture-mode (淨空模式) 顯示 -->
+<div id="floating-tools" data-html2canvas-ignore="true">
+    <button class="icon-btn" onclick="attemptFeature('featCam', toggleCamera)" style="background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); border: 1px solid var(--safe); box-shadow: 0 4px 12px rgba(0,0,0,0.5); width: 48px; height: 48px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 20px;">📷</button>
+    <button class="icon-btn" onclick="attemptFeature('featShot', () => { document.getElementById('shotFormatModal').style.display='flex'; })" style="background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); border: 1px solid var(--safe); box-shadow: 0 4px 12px rgba(0,0,0,0.5); width: 48px; height: 48px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 20px;">📸</button>
 </div>
 
 <div id="bg-layer">
@@ -1516,7 +1673,7 @@ function triggerFlash(el) {
     <div style="display:flex; flex-direction:column; gap:10px;">
       <button class="primary-btn btn-unlock" onclick="doTakeScreenshot(false)" style="margin:0; background:var(--card); color:var(--text); border:1px solid var(--line);" data-i18n="shotFmtDark">⬛ 標準深色背景</button>
       <button class="primary-btn btn-unlock" onclick="doTakeScreenshot(true)" style="margin:0; background:var(--safe); color:#0a1410;" data-i18n="shotFmtTrans">🏁 透明去背 (適合放入 PPT)</button>
-      <button class="primary-btn btn-cancel" onclick="document.getElementById('shotFormatModal').style.display='none'" style="margin:0; background:transparent; color:var(--muted);">取消返回</button>
+      <button class="primary-btn btn-cancel" onclick="document.getElementById('shotFormatModal').style.display='none'" style="margin:0; background:transparent; color:var(--muted);" data-i18n="cancel">取消返回</button>
     </div>
   </div>
 </div>
@@ -1528,7 +1685,7 @@ function triggerFlash(el) {
     <div style="flex:1; overflow-y:auto; border-radius:8px; border:2px solid var(--line); background:#ccc;">
         <img id="shotPreviewImg" src="" style="width: 100%; display: block; object-fit: contain;">
     </div>
-    <button class="primary-btn btn-cancel" onclick="document.getElementById('shotModal').style.display='none'" style="margin:0; flex-shrink:0;">返回系統</button>
+    <button class="primary-btn btn-cancel" onclick="document.getElementById('shotModal').style.display='none'" style="margin:0; flex-shrink:0;" data-i18n="cancel">返回系統</button>
   </div>
 </div>
 
@@ -1538,8 +1695,8 @@ function triggerFlash(el) {
     <p style="font-size:13px; color:var(--muted); margin-bottom:12px;">請輸入新的負載重量 (kg)：</p>
     <input type="number" id="loadInput" class="pwd-input" placeholder="例如：100" step="10" min="10" style="letter-spacing: normal;">
     <div class="modal-btn-group">
-      <button class="primary-btn btn-cancel" onclick="document.getElementById('loadModal').style.display='none'">取消返回</button>
-      <button class="primary-btn btn-unlock" onclick="confirmLoadChange()">確認套用</button>
+      <button class="primary-btn btn-cancel" onclick="document.getElementById('loadModal').style.display='none'" data-i18n="cancel">取消返回</button>
+      <button class="primary-btn btn-unlock" onclick="confirmLoadChange()" data-i18n="confirmFric">確認套用</button>
     </div>
   </div>
 </div>
@@ -1866,7 +2023,7 @@ function triggerFlash(el) {
             <div class="menu-content">
               <div style="text-align: center; margin-bottom: 15px;">
                 <span data-i18n="devTitle" style="display:inline-block; background:var(--safe); color:#0a1410; font-weight:bold; padding:4px 14px; border-radius:20px; font-size:13px; letter-spacing:0.5px; box-shadow: 0 2px 6px rgba(74,222,128,0.3);">下方固定點架設儀 專業正式版</span>
-                <div style="font-size: 11px; color: var(--muted); margin-top: 8px; font-family: monospace;">Version 6.9.0</div>
+                <div style="font-size: 11px; color: var(--muted); margin-top: 8px; font-family: monospace;">Version 6.9.1</div>
               </div>
               <p style="margin-top: 0; margin-bottom: 6px; font-weight: bold; color: var(--text); text-align: center;" data-i18n="devTeam">本工具由 <span style="color:var(--warn);">散木團隊</span> 開發製作</p>
               <p style="margin-top: 0; margin-bottom: 4px; font-size: 13px; text-align: center;" data-i18n="devT1">教學架構與工程判斷／徐世豐</p>
@@ -1896,24 +2053,24 @@ function triggerFlash(el) {
       <details class="main-accordion" style="margin-top: 10px;">
         <summary><div style="display:flex; align-items:center; gap:8px;"><span class="menu-icon">☕</span> <span data-i18n="menuSponsor" style="color: var(--warn);">請團隊喝咖啡 / 取得金鑰方式</span></div></summary>
         <div class="menu-group" style="padding: 15px;">
-          <p style="font-size: 13.5px; color: var(--text); margin-top: 0; margin-bottom: 15px; line-height: 1.6; text-align: justify;">本工具為散木團隊精心開發。若這套沙盤對您的實務與教學有幫助，歡迎自由隨喜給予我們一點實質鼓勵，這將化為我們開發下一套救援系統的核心動力！</p>
+          <p style="font-size: 13.5px; color: var(--text); margin-top: 0; margin-bottom: 15px; line-height: 1.6; text-align: justify;" data-i18n="spIntro">本工具為散木團隊精心開發。若這套沙盤對您的實務與教學有幫助，歡迎自由隨喜給予我們一點實質鼓勵，這將化為我們開發下一套救援系統的核心動力！</p>
           
           <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--safe); border-radius: 8px; padding: 12px; margin-bottom: 12px;">
-            <div style="color: var(--safe); font-weight: bold; font-size: 13px; margin-bottom: 8px;">🏦 銀行與郵局轉帳 (可免海外手續費)</div>
+            <div style="color: var(--safe); font-weight: bold; font-size: 13px; margin-bottom: 8px;" data-i18n="spBank">🏦 銀行與郵局轉帳 (可免海外手續費)</div>
             
             <div style="background:rgba(255,255,255,0.05); padding:8px; border-radius:6px; margin-bottom:8px;">
-              <div style="font-size: 13px; color: var(--muted); margin-bottom: 4px;">永豐銀行 (代碼 807) • 戶名：吳佩芳</div>
+              <div style="font-size: 13px; color: var(--muted); margin-bottom: 4px;" data-i18n="spBank1">永豐銀行 (代碼 807) • 戶名：吳佩芳</div>
               <div style="font-size: 18px; color: var(--text); font-family: monospace; letter-spacing: 1px; font-weight: bold; margin-bottom: 8px;" id="bankAccount">20401800252531</div>
-              <button type="button" onclick="window.copyAccount('bankAccount')" style="width: 100%; background: var(--safe); color: #0a1410; border: none; padding: 6px; border-radius: 4px; font-size: 13px; font-weight: bold; cursor: pointer;">📋 複製永豐帳號</button>
+              <button type="button" onclick="window.copyAccount('bankAccount')" style="width: 100%; background: var(--safe); color: #0a1410; border: none; padding: 6px; border-radius: 4px; font-size: 13px; font-weight: bold; cursor: pointer;" data-i18n="spCopyBank1">📋 複製永豐帳號</button>
             </div>
 
             <div style="background:rgba(255,255,255,0.05); padding:8px; border-radius:6px; margin-bottom:8px;">
-              <div style="font-size: 13px; color: var(--muted); margin-bottom: 4px;">中華郵政 (代碼 700) • 戶名：吳佩芳</div>
+              <div style="font-size: 13px; color: var(--muted); margin-bottom: 4px;" data-i18n="spBank2">中華郵政 (代碼 700) • 戶名：吳佩芳</div>
               <div style="font-size: 18px; color: var(--text); font-family: monospace; letter-spacing: 1px; font-weight: bold; margin-bottom: 8px;" id="postAccount">24415000144326</div>
-              <button type="button" onclick="window.copyAccount('postAccount')" style="width: 100%; background: var(--safe); color: #0a1410; border: none; padding: 6px; border-radius: 4px; font-size: 13px; font-weight: bold; cursor: pointer;">📋 複製郵局帳號</button>
+              <button type="button" onclick="window.copyAccount('postAccount')" style="width: 100%; background: var(--safe); color: #0a1410; border: none; padding: 6px; border-radius: 4px; font-size: 13px; font-weight: bold; cursor: pointer;" data-i18n="spCopyBank2">📋 複製郵局帳號</button>
             </div>
 
-            <div style="font-size: 12.5px; color: var(--warn); margin-bottom: 4px; line-height: 1.5;">
+            <div style="font-size: 12.5px; color: var(--warn); margin-bottom: 4px; line-height: 1.5;" data-i18n="spNote">
               💡 匯款後請直接到下方自動販賣機領取金鑰 (費用填 0 元即可)<br>
               <span style="color: var(--text);">✏️ 提醒：請在匯款備註欄填寫 APP 名稱</span>
             </div>
@@ -1921,10 +2078,10 @@ function triggerFlash(el) {
 
           <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--line); border-radius: 8px; padding: 12px;">
             <div style="text-align: left; margin-bottom: 12px;">
-              <div style="color: var(--text); font-weight: bold; font-size: 13px; margin-bottom: 4px;">🛒 專業版自動販賣機 (支援刷卡)</div>
-              <div style="font-size: 12px; color: var(--muted);">熟悉的販賣機！支援 Apple Pay 與信用卡</div>
+              <div style="color: var(--text); font-weight: bold; font-size: 13px; margin-bottom: 4px;" data-i18n="spStoreTitle">🛒 專業版自動販賣機 (支援刷卡)</div>
+              <div style="font-size: 12px; color: var(--muted);" data-i18n="spStoreSub">熟悉的販賣機！支援 Apple Pay 與信用卡</div>
             </div>
-            <button type="button" onclick="window.open('https://fang5761.gumroad.com/l/redirect-simulator', '_blank')" style="width: 100%; background: var(--line); color: var(--text); border: none; padding: 10px; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer;">前往自動販賣機 🛒</button>
+            <button type="button" onclick="window.open('https://fang5761.gumroad.com/l/redirect-simulator', '_blank')" style="width: 100%; background: var(--line); color: var(--text); border: none; padding: 10px; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer;" data-i18n="spStoreBtn">前往自動販賣機 🛒</button>
           </div>
           
           <button type="button" class="btn-collapse-inner" onclick="const p = this.closest('details'); if(p) p.removeAttribute('open');" data-i18n="collapse">🔼 收起說明</button>
@@ -2291,21 +2448,6 @@ function clearPhotoOverlay() {
     }
 }
 
-function loadImage(event) { 
-  const file = event.target.files[0]; 
-  if (file) { 
-    if(stream) toggleCamera(); 
-    const reader = new FileReader(); 
-    reader.onload = function(e) { 
-      image.src = e.target.result; image.style.opacity = "1"; 
-      mainCard.classList.add('camera-mode'); document.body.classList.add('camera-mode');
-      document.querySelector('label[title="載入照片"]').classList.add('active');
-      
-      resetCameraControls();
-      cameraControls.style.display = 'flex';
-    }; reader.readAsDataURL(file); 
-  } 
-}
 function toggleGrid() { gridVisible = !gridVisible; gridOverlay.style.opacity = gridVisible ? "0.5" : "0"; }
 
 // 💡 截圖引擎核心修正：使用 taking-screenshot 類別，保留面板與數據，僅隱藏按鈕！
@@ -2834,18 +2976,23 @@ window.addEventListener('mousemove', processDrag);
 window.addEventListener('touchend', () => isDragging = false);
 window.addEventListener('mouseup', () => isDragging = false);
 
+// 💡 重構切換淨空模式函式，供雙擊與按鈕共用
+function toggleCaptureMode() {
+    document.body.classList.toggle('capture-mode');
+    showToast(document.body.classList.contains('capture-mode') ? t('toastModeHide') : t('toastModeShow'), "safe");
+}
+
 // 雙擊進入沉浸觀察模式 (全域觸發)
 let lastTapTime = 0;
 document.addEventListener('pointerdown', (e) => {
     // 排除互動元素，避免點擊按鈕時誤觸隱藏
-    if (e.target.closest('button, input, label, select, details, summary, .draggable-anchor, .icon-btn, .toggle-btn, .primary-btn, #cameraControls')) {
+    if (e.target.closest('button, input, label, select, details, summary, .draggable-anchor, .icon-btn, .toggle-btn, .primary-btn, #cameraControls, #floating-tools')) {
         return;
     }
     
     const now = Date.now();
     if (now - lastTapTime < 300) {
-        document.body.classList.toggle('capture-mode');
-        showToast(document.body.classList.contains('capture-mode') ? "👁️ 純淨觀察模式 (雙擊還原)" : "🎛️ 控制面板已還原", "safe");
+        toggleCaptureMode();
         lastTapTime = 0;
     } else {
         lastTapTime = now;
@@ -2929,7 +3076,7 @@ function checkForUpdates() {
         const wrapper = document.getElementById('scroll-wrapper');
         if (wrapper) wrapper.scrollTo({ top: 0, behavior: 'smooth' });
         
-        showToast("🔄 系統更新中，為您重新載入...", "warn");
+        showToast(t('toastUpdate'), "warn");
         if ('caches' in window) {
           caches.keys().then((names) => {
             names.forEach(name => caches.delete(name));
@@ -2944,10 +3091,10 @@ function checkForUpdates() {
 const shareBtnAction = document.getElementById('shareBtnAction');
 if(shareBtnAction) {
     shareBtnAction.addEventListener('click', async () => {
-      const shareData = { title: '轉向點受力分析儀', text: '推薦這套散木團隊專屬的黑科技！結合實境相機與動態摩擦力引擎，快來試試！', url: window.location.href };
+      const shareData = { title: t('appTitle'), text: t('shareText'), url: window.location.href };
       try {
         if (navigator.share) { await navigator.share(shareData); } 
-        else { const dummy = document.createElement('input'); document.body.appendChild(dummy); dummy.value = window.location.href; dummy.select(); document.execCommand('copy'); document.body.removeChild(dummy); showToast('🔗 網址已複製，您可以貼上分享給其他人囉！', 'safe'); }
+        else { const dummy = document.createElement('input'); document.body.appendChild(dummy); dummy.value = window.location.href; dummy.select(); document.execCommand('copy'); document.body.removeChild(dummy); showToast(t('toastShare'), 'safe'); }
       } catch (err) { }
     });
 }
