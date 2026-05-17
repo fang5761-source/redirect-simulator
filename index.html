@@ -53,7 +53,7 @@
     transition: background-color 0.3s ease;
   }
 
-  body.camera-mode { background-color: transparent !important; }
+  html.camera-mode, body.camera-mode { background-color: transparent !important; }
   
   body.camera-mode .env-bg { display: none !important; }
   body.camera-mode .diorama-bg { display: none !important; }
@@ -84,16 +84,17 @@
   input, textarea { -webkit-user-select: auto; user-select: auto; box-sizing: border-box; }
   *{box-sizing:border-box}
 
-  #bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background-color: var(--bg); overflow: hidden; display: flex; align-items: center; justify-content: center; }
+  /* 💡 圖層修復：確保背景媒體不會被底色吃掉 */
+  #bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; background-color: var(--bg); overflow: hidden; display: flex; align-items: center; justify-content: center; }
   #media-container { width: 100%; height: 100%; position: absolute; transition: transform 0.2s ease-out; transform-origin: center center; }
   #bg-video, #bg-image { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s; }
   
   #white-paper-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; opacity: 0; pointer-events: none; transition: opacity 0.2s; z-index: 1; }
 
-  #grid-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 20px 20px; opacity: 0.5; pointer-events: none; transition: opacity 0.3s; }
+  #grid-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 20px 20px; opacity: 0.5; pointer-events: none; transition: opacity 0.3s; }
 
   .app-container { 
-    max-width: 500px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; position: relative; z-index: 1; 
+    max-width: 500px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; position: relative; z-index: 2; 
     padding: calc(env(safe-area-inset-top) + 10px) 10px calc(env(safe-area-inset-bottom) + 40px) 10px; 
   }
   input[type="file"] { display: none; }
@@ -112,7 +113,6 @@
       box-shadow: none !important;
   }
   
-  /* 💡 淨空模式下的懸浮快捷鍵 */
   #floating-tools {
       display: none;
       position: fixed;
@@ -130,10 +130,8 @@
   }
   .capture-mode #floating-tools { display: flex !important; }
 
-  /* 💡 截圖專用模式 (隱藏多餘按鈕與說明，強制保留標題與數據儀表板) */
+  /* 💡 截圖專用模式：保留標題、數據儀表板、省力比 MA 與 教學說明 */
   .taking-screenshot .icon-bar,
-  .taking-screenshot .control-deck,
-  .taking-screenshot .edu-wrap,
   .taking-screenshot .menu-list,
   .taking-screenshot #floating-tools {
       display: none !important;
@@ -142,15 +140,39 @@
       pointer-events: none !important;
   }
   
-  /* 確保截圖時，即使是在淨空模式下，也強制顯示標題列與數據面板 */
   .taking-screenshot .topbar,
   .taking-screenshot .dashboard {
       display: flex !important;
       opacity: 1 !important;
       visibility: visible !important;
   }
+  
+  .taking-screenshot .control-deck {
+      display: flex !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      background: transparent !important;
+      border: none !important;
+      padding: 0 !important;
+  }
+  
+  .taking-screenshot .control-deck .control-row:not(#maRow) {
+      display: none !important;
+  }
+  
+  .taking-screenshot #maRow {
+      opacity: 1 !important;
+      visibility: visible !important;
+  }
+  
+  .taking-screenshot .edu-wrap {
+      display: block !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+  }
+
   .taking-screenshot .card {
-      background: rgba(15, 30, 22, 0.5) !important; /* 確保截圖時有一點對比底色 */
+      background: rgba(15, 30, 22, 0.5) !important; 
       border-color: transparent !important;
       box-shadow: none !important;
   }
@@ -341,7 +363,7 @@
 </script>
 
 <script>
-// 💡 V6.9.2 (多國語言、自訂介質獨立化、截圖資料保全)
+// 💡 V6.9.3 (修復相簿背景疊圖、完善截圖教育區塊)
 const i18n = {
   zh: {
     appTitle: "下方固定點架設儀 (全地形)",
@@ -2042,7 +2064,7 @@ function triggerFlash(el) {
             <div class="menu-content">
               <div style="text-align: center; margin-bottom: 15px;">
                 <span data-i18n="devTitle" style="display:inline-block; background:var(--safe); color:#0a1410; font-weight:bold; padding:4px 14px; border-radius:20px; font-size:13px; letter-spacing:0.5px; box-shadow: 0 2px 6px rgba(74,222,128,0.3);">下方固定點架設儀 專業正式版</span>
-                <div style="font-size: 11px; color: var(--muted); margin-top: 8px; font-family: monospace;">Version 6.9.2</div>
+                <div style="font-size: 11px; color: var(--muted); margin-top: 8px; font-family: monospace;">Version 6.9.3</div>
               </div>
               <p style="margin-top: 0; margin-bottom: 6px; font-weight: bold; color: var(--text); text-align: center;" data-i18n="devTeam">本工具由 <span style="color:var(--warn);">散木團隊</span> 開發製作</p>
               <p style="margin-top: 0; margin-bottom: 4px; font-size: 13px; text-align: center;" data-i18n="devT1">教學架構與工程判斷／徐世豐</p>
@@ -2446,7 +2468,9 @@ async function toggleCamera() {
     stream.getTracks().forEach(track => track.stop()); stream = null; videoTrack = null; 
     video.style.opacity = "0"; btnCamera.classList.remove('active'); 
     torchOn = false; btnFlashlight.classList.remove('active');
-    mainCard.classList.remove('camera-mode'); document.body.classList.remove('camera-mode');
+    document.getElementById('mainCard').classList.remove('camera-mode'); 
+    document.body.classList.remove('camera-mode');
+    document.documentElement.classList.remove('camera-mode');
     resetCameraControls();
   } else { 
     try { 
@@ -2455,7 +2479,9 @@ async function toggleCamera() {
       stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }); 
       videoTrack = stream.getVideoTracks()[0];
       video.srcObject = stream; video.style.opacity = "1"; btnCamera.classList.add('active'); 
-      mainCard.classList.add('camera-mode'); document.body.classList.add('camera-mode');
+      document.getElementById('mainCard').classList.add('camera-mode'); 
+      document.body.classList.add('camera-mode');
+      document.documentElement.classList.add('camera-mode');
       
       resetCameraControls();
       cameraControls.style.display = 'flex';
@@ -2499,15 +2525,41 @@ function clearPhotoOverlay() {
     document.getElementById('upload-image').value = ""; 
     btnPhoto.classList.remove('active'); 
     if (!stream) {
-        mainCard.classList.remove('camera-mode');
+        document.getElementById('mainCard').classList.remove('camera-mode');
         document.body.classList.remove('camera-mode');
+        document.documentElement.classList.remove('camera-mode');
         resetCameraControls();
     }
 }
 
+function loadImage(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        if (stream) { 
+            stream.getTracks().forEach(track => track.stop()); stream = null; videoTrack = null; 
+            video.style.opacity = "0"; btnCamera.classList.remove('active'); 
+            torchOn = false; btnFlashlight.classList.remove('active');
+        }
+        image.src = e.target.result;
+        image.style.opacity = "1";
+        const btnPhoto = document.querySelector('label[title="載入照片"]');
+        if(btnPhoto) btnPhoto.classList.add('active');
+        
+        document.getElementById('mainCard').classList.add('camera-mode'); 
+        document.body.classList.add('camera-mode');
+        document.documentElement.classList.add('camera-mode');
+        
+        resetCameraControls();
+        cameraControls.style.display = 'flex';
+    };
+    reader.readAsDataURL(file);
+}
+
 function toggleGrid() { gridVisible = !gridVisible; gridOverlay.style.opacity = gridVisible ? "0.5" : "0"; }
 
-// 💡 截圖引擎核心修正：強制保留面板與數據，僅隱藏按鈕！
+// 💡 截圖引擎核心修正：強制保留面板、省力比 MA 與 數據，自動捕捉相簿或相機的像素圖
 async function doTakeScreenshot(isTransparent) {
   document.getElementById('shotFormatModal').style.display = 'none';
   const target = document.body;
@@ -2521,7 +2573,6 @@ async function doTakeScreenshot(isTransparent) {
   const placeholders = [];
   
   inputs.forEach(inp => {
-      // 避免隱藏不該隱藏的輸入框（例如 W 的重量輸入）
       if(inp.closest('[data-html2canvas-ignore]')) return;
       const span = document.createElement('span');
       span.textContent = inp.value;
@@ -2532,25 +2583,39 @@ async function doTakeScreenshot(isTransparent) {
   await new Promise(r => setTimeout(r, 100));
   
   let tempCanvas = null;
-  if (!isTransparent && stream && videoTrack && video.style.opacity === "1") {
+  let targetMedia = null;
+
+  if (!isTransparent) {
+      if (video.style.opacity === "1" && stream && videoTrack) targetMedia = video;
+      else if (image.style.opacity === "1" && image.src) targetMedia = image;
+  }
+
+  if (targetMedia) {
       tempCanvas = document.createElement('canvas');
-      tempCanvas.width = video.videoWidth;
-      tempCanvas.height = video.videoHeight;
-      tempCanvas.style.position = 'absolute';
-      tempCanvas.style.top = '0';
-      tempCanvas.style.left = '0';
-      tempCanvas.style.width = '100%';
-      tempCanvas.style.height = '100%';
-      tempCanvas.style.objectFit = 'cover';
-      tempCanvas.style.zIndex = '-1';
-      const zoomVal = document.getElementById('sliderZoom').value;
-      const ctx = tempCanvas.getContext('2d');
-      ctx.translate(tempCanvas.width/2, tempCanvas.height/2);
-      ctx.scale(zoomVal, zoomVal);
-      ctx.translate(-tempCanvas.width/2, -tempCanvas.height/2);
-      ctx.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
-      document.getElementById('media-container').appendChild(tempCanvas);
-      video.style.opacity = '0';
+      tempCanvas.width = targetMedia.tagName === 'VIDEO' ? targetMedia.videoWidth : targetMedia.naturalWidth;
+      tempCanvas.height = targetMedia.tagName === 'VIDEO' ? targetMedia.videoHeight : targetMedia.naturalHeight;
+      
+      if (tempCanvas.width > 0 && tempCanvas.height > 0) {
+          tempCanvas.style.position = 'absolute';
+          tempCanvas.style.top = '0';
+          tempCanvas.style.left = '0';
+          tempCanvas.style.width = '100%';
+          tempCanvas.style.height = '100%';
+          tempCanvas.style.objectFit = 'cover';
+          tempCanvas.style.zIndex = '-1';
+          
+          const zoomVal = parseFloat(document.getElementById('sliderZoom').value);
+          const ctx = tempCanvas.getContext('2d');
+          ctx.translate(tempCanvas.width/2, tempCanvas.height/2);
+          ctx.scale(zoomVal, zoomVal);
+          ctx.translate(-tempCanvas.width/2, -tempCanvas.height/2);
+          
+          ctx.drawImage(targetMedia, 0, 0, tempCanvas.width, tempCanvas.height);
+          document.getElementById('media-container').appendChild(tempCanvas);
+          targetMedia.style.opacity = '0';
+      } else {
+          tempCanvas = null;
+      }
   }
 
   try {
@@ -2566,7 +2631,6 @@ async function doTakeScreenshot(isTransparent) {
     });
     
     document.getElementById('shotPreviewImg').src = canvas.toDataURL('image/png');
-    // 如果是去背圖，預覽底色換成網格方便辨識
     document.getElementById('shotPreviewImg').parentElement.style.background = isTransparent ? 'repeating-conic-gradient(#333 0% 25%, #222 0% 50%) 50% / 20px 20px' : '#000';
     document.getElementById('shotModal').style.display = 'flex';
     
@@ -2574,7 +2638,8 @@ async function doTakeScreenshot(isTransparent) {
       showToast("❌ 截圖失敗，請稍後再試！", "bad"); 
   }
   
-  if (tempCanvas) { tempCanvas.remove(); video.style.opacity = '1'; }
+  if (tempCanvas) { tempCanvas.remove(); }
+  if (targetMedia) { targetMedia.style.opacity = '1'; }
   placeholders.forEach(p => { p.inp.style.display = ''; p.span.remove(); }); 
   target.classList.remove('taking-screenshot');
   target.classList.remove('capture-transparent');
@@ -2632,7 +2697,6 @@ function setScene(btn, sceneKey) {
     btn.classList.add('active');
     currentScene = sceneKey;
     
-    // 如果原本處於會覆蓋場景的介質，自動切回直拉
     if (currentMode === 'pad' || currentMode === 'roller' || currentMode === 'custom') {
         currentMode = 'base';
         document.querySelectorAll('.toggle-btn[data-type="friction"]').forEach(b => b.classList.remove('active'));
