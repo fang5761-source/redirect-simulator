@@ -2545,7 +2545,7 @@ function loadImage(event) {
 }
 function toggleGrid() { gridVisible = !gridVisible; gridOverlay.style.opacity = gridVisible ? "0.15" : "0"; }
 
-// 💡 截圖引擎核心修正：凍結背景維度，確保比例不會因 body 延展而變形
+// 💡 截圖引擎核心修正：雙層融合截圖法 (完美解耦 AR 鏡頭變形 Bug，並保留數據面板)
 async function doTakeScreenshot(isTransparent) {
   document.getElementById('shotFormatModal').style.display = 'none';
   const target = document.body;
@@ -2553,33 +2553,15 @@ async function doTakeScreenshot(isTransparent) {
   
   if (scrollWrap) scrollWrap.scrollTop = 0;
   
+  // 1. 隱藏背景層，完全阻絕引擎碰觸鏡頭與相片，防止變形
   const bgLayer = document.getElementById('bg-layer');
   const gridLayer = document.getElementById('grid-overlay');
-  const svgWrap = document.getElementById('svgWrap');
-  
-  const bgRect = bgLayer.getBoundingClientRect();
-  const gridRect = gridLayer.getBoundingClientRect();
-  const svgRect = svgWrap.getBoundingClientRect();
-  
-  bgLayer.style.setProperty('height', bgRect.height + 'px', 'important');
-  bgLayer.style.setProperty('width', bgRect.width + 'px', 'important');
-  bgLayer.style.setProperty('position', 'absolute', 'important');
-  bgLayer.style.setProperty('top', '0px', 'important');
-  bgLayer.style.setProperty('left', '0px', 'important');
-
-  gridLayer.style.setProperty('height', gridRect.height + 'px', 'important');
-  gridLayer.style.setProperty('width', gridRect.width + 'px', 'important');
-  gridLayer.style.setProperty('position', 'absolute', 'important');
-  gridLayer.style.setProperty('top', '0px', 'important');
-  gridLayer.style.setProperty('left', '0px', 'important');
-
-  svgWrap.style.setProperty('height', svgRect.height + 'px', 'important');
+  bgLayer.style.display = 'none';
+  gridLayer.style.display = 'none';
   
   document.documentElement.classList.add('taking-screenshot');
   target.classList.add('taking-screenshot');
-  if (isTransparent) {
-      target.classList.add('capture-transparent');
-  }
+  if (isTransparent) { target.classList.add('capture-transparent'); }
   
   const inputs = target.querySelectorAll('input[type="number"]'); 
   const placeholders = [];
@@ -2593,65 +2575,11 @@ async function doTakeScreenshot(isTransparent) {
   });
   
   await new Promise(r => setTimeout(r, 150));
-  
-  let tempMediaDiv = null;
-  const videoEl = document.getElementById('bg-video');
-  const imageEl = document.getElementById('bg-image');
-
-  if (!isTransparent) {
-      tempMediaDiv = document.createElement('div');
-      tempMediaDiv.style.position = 'absolute';
-      tempMediaDiv.style.top = '0';
-      tempMediaDiv.style.left = '0';
-      tempMediaDiv.style.width = '100%';
-      tempMediaDiv.style.height = '100%';
-      tempMediaDiv.style.backgroundSize = 'cover';
-      tempMediaDiv.style.backgroundPosition = 'center';
-      tempMediaDiv.style.zIndex = '-1';
-
-      let hasMedia = false;
-      // 💡 擊殺 AR 截圖大魔王：不強制旋轉！直接給它一個直立形狀的畫布！
-      if (videoEl.style.opacity === "1" && stream && videoTrack) {
-          const canvas = document.createElement('canvas');
-          let vW = videoEl.videoWidth;
-          let vH = videoEl.videoHeight;
-          const ctx = canvas.getContext('2d');
-          
-          const isPortrait = window.innerHeight > window.innerWidth;
-          // 如果手機直拿，但影片宣稱它是橫的 (iOS Bug)
-          if (isPortrait && vW > vH) {
-              // 不去翻轉它！而是直接把畫布形狀改成直立的！
-              // 這樣 iOS 內建已經自動轉正的畫面，就會無縫接軌地放進這個直立畫布裡，完全不變形！
-              canvas.width = vH;
-              canvas.height = vW;
-              ctx.drawImage(videoEl, 0, 0, vH, vW);
-          } else {
-              // 正常比例
-              canvas.width = vW;
-              canvas.height = vH;
-              ctx.drawImage(videoEl, 0, 0, vW, vH);
-          }
-          
-          tempMediaDiv.style.backgroundImage = `url(${canvas.toDataURL('image/jpeg', 0.9)})`;
-          videoEl.style.opacity = '0';
-          hasMedia = true;
-      } 
-      else if (imageEl.style.opacity === "1" && imageEl.src) {
-          tempMediaDiv.style.backgroundImage = `url(${imageEl.src})`;
-          imageEl.style.opacity = '0';
-          hasMedia = true;
-      }
-
-      if (hasMedia) {
-          document.getElementById('media-container').appendChild(tempMediaDiv);
-      } else {
-          tempMediaDiv = null;
-      }
-  }
 
   try {
-    const canvas = await html2canvas(document.body, { 
-        backgroundColor: isTransparent ? null : (document.body.classList.contains('camera-mode') ? '#0a1410' : '#0a1410'), 
+    // 2. 讓引擎只專心擷取「純淨去背」的 UI 儀表板與數據沙盤
+    const uiCanvas = await html2canvas(document.body, { 
+        backgroundColor: null, 
         scale: 2, 
         useCORS: true,
         windowWidth: window.innerWidth,
@@ -2661,8 +2589,84 @@ async function doTakeScreenshot(isTransparent) {
             return false;
         }
     });
+
+    // 3. 建立原生畫布，手動完美合成「背景 + 數據UI」
+    const finalCanvas = document.createElement('canvas');
+    finalCanvas.width = uiCanvas.width;
+    finalCanvas.height = uiCanvas.height;
+    const ctx = finalCanvas.getContext('2d');
+
+    if (!isTransparent) {
+        ctx.fillStyle = '#0a1410';
+        ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+
+        const videoEl = document.getElementById('bg-video');
+        const imageEl = document.getElementById('bg-image');
+        const zoom = parseFloat(document.getElementById('sliderZoom').value) || 1;
+
+        // 手動計算完美等比例填充 (Object-fit: cover)
+        function drawMedia(el, rawW, rawH) {
+            if (!rawW || !rawH) return;
+            let w = rawW, h = rawH;
+            let rotate = false;
+            const isPortrait = window.innerHeight > window.innerWidth;
+            
+            // 防禦 iOS 原生鏡頭橫向 Bug：強制轉正
+            if (el.tagName === 'VIDEO' && isPortrait && rawW > rawH) {
+                w = rawH; 
+                h = rawW;
+                rotate = true;
+            }
+
+            const sX = finalCanvas.width / w;
+            const sY = finalCanvas.height / h;
+            const scale = Math.max(sX, sY) * zoom;
+            
+            const drawW = w * scale;
+            const drawH = h * scale;
+            const dX = (finalCanvas.width - drawW) / 2;
+            const dY = (finalCanvas.height - drawH) / 2;
+
+            ctx.save();
+            if (rotate) {
+                ctx.translate(finalCanvas.width / 2, finalCanvas.height / 2);
+                ctx.rotate(90 * Math.PI / 180);
+                ctx.drawImage(el, -(rawW * scale) / 2, -(rawH * scale) / 2, rawW * scale, rawH * scale);
+            } else {
+                ctx.drawImage(el, dX, dY, drawW, drawH);
+            }
+            ctx.restore();
+        }
+
+        if (videoEl.style.opacity === "1" && stream && videoTrack) {
+            drawMedia(videoEl, videoEl.videoWidth, videoEl.videoHeight);
+        } else if (imageEl.style.opacity === "1" && imageEl.src) {
+            drawMedia(imageEl, imageEl.naturalWidth, imageEl.naturalHeight);
+        }
+
+        // 疊加白紙效果
+        const whiteOp = parseFloat(document.getElementById('sliderWhite').value) || 0;
+        if (whiteOp > 0) {
+            ctx.fillStyle = `rgba(255, 255, 255, ${whiteOp})`;
+            ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+        }
+
+        // 疊加網格
+        if (gridVisible) {
+            ctx.strokeStyle = 'rgba(19, 42, 27, 0.15)';
+            ctx.lineWidth = 1 * uiCanvas.width / window.innerWidth;
+            const gridSize = 20 * uiCanvas.width / window.innerWidth;
+            ctx.beginPath();
+            for(let x = 0; x <= finalCanvas.width; x += gridSize) { ctx.moveTo(x, 0); ctx.lineTo(x, finalCanvas.height); }
+            for(let y = 0; y <= finalCanvas.height; y += gridSize) { ctx.moveTo(0, y); ctx.lineTo(finalCanvas.width, y); }
+            ctx.stroke();
+        }
+    }
+
+    // 4. 將去背的 UI 數據儀表板蓋在完美的背景上！
+    ctx.drawImage(uiCanvas, 0, 0);
     
-    document.getElementById('shotPreviewImg').src = canvas.toDataURL('image/png');
+    document.getElementById('shotPreviewImg').src = finalCanvas.toDataURL('image/png');
     document.getElementById('shotPreviewImg').parentElement.style.background = isTransparent ? 'repeating-conic-gradient(#333 0% 25%, #222 0% 50%) 50% / 20px 20px' : '#000';
     document.getElementById('shotModal').style.display = 'flex';
     
@@ -2670,30 +2674,14 @@ async function doTakeScreenshot(isTransparent) {
       showToast("❌ 截圖失敗，請稍後再試！", "bad"); 
   }
   
-  if (tempMediaDiv) {
-      tempMediaDiv.remove();
-      if (videoEl.srcObject) videoEl.style.opacity = '1';
-      if (imageEl.src) imageEl.style.opacity = '1';
-  }
+  // 5. 復原背景與 UI
+  bgLayer.style.display = '';
+  gridLayer.style.display = '';
   placeholders.forEach(p => { p.inp.style.display = ''; p.span.remove(); }); 
   
   target.classList.remove('taking-screenshot');
   document.documentElement.classList.remove('taking-screenshot');
   target.classList.remove('capture-transparent');
-  
-  bgLayer.style.removeProperty('height');
-  bgLayer.style.removeProperty('width');
-  bgLayer.style.removeProperty('position');
-  bgLayer.style.removeProperty('top');
-  bgLayer.style.removeProperty('left');
-  
-  gridLayer.style.removeProperty('height');
-  gridLayer.style.removeProperty('width');
-  gridLayer.style.removeProperty('position');
-  gridLayer.style.removeProperty('top');
-  gridLayer.style.removeProperty('left');
-  
-  svgWrap.style.removeProperty('height');
 }
 
 const svgEl = document.getElementById('canvas');
