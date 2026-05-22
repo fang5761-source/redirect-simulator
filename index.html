@@ -53,22 +53,10 @@
     transition: background-color 0.3s ease;
   }
 
-  html.camera-mode, body.camera-mode { background-color: transparent !important; }
+  body.camera-mode { background-color: transparent !important; }
   
   body.camera-mode .env-bg { display: none !important; }
   body.camera-mode .diorama-bg { display: none !important; }
-  
-  body.camera-mode .edu-wrap {
-    background: rgba(0, 0, 0, 0.85) !important;
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-  }
-  body.camera-mode .dashboard .dash-box {
-    background: rgba(0, 0, 0, 0.8) !important;
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-    border-color: rgba(255, 255, 255, 0.2);
-  }
 
   #status-bar-protector {
     position: fixed; top: 0; left: 0; width: 100%; height: env(safe-area-inset-top);
@@ -84,96 +72,24 @@
   input, textarea { -webkit-user-select: auto; user-select: auto; box-sizing: border-box; }
   *{box-sizing:border-box}
 
-  /* 圖層修復：確保背景媒體不會被底色吃掉 */
-  #bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; background-color: var(--bg); overflow: hidden; display: flex; align-items: center; justify-content: center; }
+  #bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background-color: var(--bg); overflow: hidden; display: flex; align-items: center; justify-content: center; }
   #media-container { width: 100%; height: 100%; position: absolute; transition: transform 0.2s ease-out; transform-origin: center center; }
   #bg-video, #bg-image { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s; }
   
   #white-paper-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; opacity: 0; pointer-events: none; transition: opacity 0.2s; z-index: 1; }
-  
-  /* 💡 徹底解決灰灰濛濛：只要不是相機/相簿模式，白紙就絕對消失！ */
-  body:not(.camera-mode) #white-paper-overlay { display: none !important; }
 
-  /* 網格修復：預設隱藏 (opacity: 0) */
-  #grid-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 20px 20px; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+  #grid-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 20px 20px; opacity: 0.5; pointer-events: none; transition: opacity 0.3s; }
 
   .app-container { 
-    max-width: 500px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; position: relative; z-index: 2; 
+    max-width: 500px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; position: relative; z-index: 1; 
     padding: calc(env(safe-area-inset-top) + 10px) 10px calc(env(safe-area-inset-bottom) + 40px) 10px; 
   }
   input[type="file"] { display: none; }
 
   .card { width:100%; background:var(--card); border:2px solid var(--line); border-radius:16px; padding: 10px; box-shadow:0 10px 30px rgba(0,0,0,.5); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); transition: border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease; }
   .card.camera-mode { background: transparent !important; border-color: rgba(255,255,255,0.2) !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; box-shadow: none !important; }
+  .capture-mode .capture-hide { display: none !important; }
   
-  .capture-mode .capture-hide { 
-      opacity: 0 !important;
-      visibility: hidden !important;
-      pointer-events: none !important;
-  }
-  .capture-mode .card {
-      border-color: transparent !important;
-      background: transparent !important;
-      box-shadow: none !important;
-  }
-  
-  #floating-tools {
-      display: none;
-      position: fixed;
-      bottom: max(30px, calc(env(safe-area-inset-bottom) + 30px));
-      right: 20px;
-      flex-direction: column;
-      gap: 12px;
-      z-index: 10000;
-      background: rgba(0,0,0,0.4);
-      padding: 6px;
-      border-radius: 30px;
-      border: 1px solid rgba(255,255,255,0.1);
-      backdrop-filter: blur(5px);
-      -webkit-backdrop-filter: blur(5px);
-  }
-  .capture-mode #floating-tools { display: flex !important; }
-
-  /* 截圖專用模式 */
-  html.taking-screenshot, body.taking-screenshot { height: auto !important; overflow: visible !important; position: relative !important; }
-  .taking-screenshot #scroll-wrapper { height: auto !important; overflow: visible !important; position: relative !important; }
-  
-  .taking-screenshot .capture-hide {
-      opacity: 1 !important;
-      visibility: visible !important;
-  }
-
-  .taking-screenshot .icon-bar,
-  .taking-screenshot .menu-list,
-  .taking-screenshot #floating-tools,
-  .taking-screenshot button[onclick^="openCustom"] {
-      display: none !important;
-  }
-  
-  .taking-screenshot .topbar,
-  .taking-screenshot .dashboard,
-  .taking-screenshot .control-deck {
-      display: flex !important;
-      opacity: 1 !important;
-      visibility: visible !important;
-  }
-  
-  .taking-screenshot .edu-wrap {
-      display: block !important;
-      opacity: 1 !important;
-      visibility: visible !important;
-  }
-
-  .taking-screenshot .card { box-shadow: none !important; }
-  body.camera-mode .taking-screenshot .card { background: transparent !important; border-color: transparent !important; }
-  body:not(.camera-mode) .taking-screenshot .card { background: var(--card) !important; border-color: var(--line) !important; }
-  
-  .capture-transparent { background-color: transparent !important; }
-  .capture-transparent #bg-layer, 
-  .capture-transparent #grid-overlay { display: none !important; }
-  .capture-transparent .card { background: transparent !important; }
-  .capture-transparent .app-container { filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.8)) !important; }
-
   .topbar { display: flex; align-items: center; margin-bottom: 8px; width: 100%; justify-content: space-between; }
   
   .title-left { 
@@ -191,65 +107,51 @@
   #langSelect:focus { border-color: var(--safe); }
   #langSelect option { background: var(--bg); color: var(--text); }
 
-  .icon-bar { 
-    display: flex; justify-content: space-between; align-items: center; gap: 6px; 
-    background: rgba(0,0,0,0.4); padding: 6px 8px; border-radius: 12px; 
-    margin-bottom: 8px; border: 1px solid var(--line); transition: all 0.3s ease;
-  }
-  body.camera-mode .icon-bar {
-      position: fixed;
-      bottom: max(20px, env(safe-area-inset-bottom));
-      left: 50%;
-      transform: translateX(-50%);
-      width: calc(100% - 20px);
-      max-width: 480px;
-      z-index: 10000;
-      background: rgba(10, 20, 16, 0.95);
-      border: 2px solid var(--safe);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-      margin-bottom: 0;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-  }
-
+  .icon-bar { display: flex; justify-content: space-between; align-items: center; gap: 6px; background: rgba(0,0,0,0.4); padding: 6px 8px; border-radius: 12px; margin-bottom: 8px; border: 1px solid var(--line); }
   .icon-btn { flex: 1; aspect-ratio: 1/1; max-height: 36px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid transparent; display: flex; justify-content: center; align-items: center; position: relative; cursor: pointer; transition: all 0.2s; font-size: 16px; color: var(--text); padding: 0; }
   .icon-btn:active { background: var(--line); transform: scale(0.95); }
   .icon-btn.active { background: var(--safe); color: var(--bg); border-color: var(--safe); }
   .lock-icon { position: absolute; bottom: 2px; right: 2px; font-size: 10px; background: rgba(0,0,0,0.8); border-radius: 50%; padding: 2px; }
   body.is-vip .lock-icon { display: none; }
 
+  /* 💡 恢復隱藏溢出，裁切多餘背景避免畫面亂飄 */
   .svgWrap { position:relative; width:100%; height: 35vh; min-height: 280px; max-height: 380px; background: transparent; border-radius: 12px; border: 1px dashed var(--line); overflow: hidden; margin-bottom: 8px; }
-  svg { display: block; width: 100%; height: 100%; }
+  svg { display: block; width: 100%; height: 100%; overflow: hidden; }
   
-  #ropeLoad, #ropeAnchor, #forceArrowLine, #forceArrowHead, #angleText, .mask-text { filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.9)); }
+  #ropeLoad, #ropeAnchor, #forceArrowLine, #forceArrowHead, #angleText, .mask-text {
+      filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.9));
+  }
 
   .draggable-anchor { cursor: grab; touch-action: none; }
   .draggable-anchor:active { cursor: grabbing; }
 
-  .dashboard { display: flex; justify-content: space-between; gap: 6px; margin-bottom: 8px; }
-  .dash-box { flex: 1; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .dashboard { display: flex; justify-content: space-between; gap: 6px; margin-bottom: 8px; position: relative; z-index: 10; }
+  .dash-box { flex: 1; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; text-align: center; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
   .dash-box .lbl { font-size: 11px; color: var(--muted); font-weight: bold; margin-bottom: 4px; }
-  .dash-box .val { font-size: 18px; font-weight: 900; font-family: monospace; display: inline-block; }
+  .dash-box .val { font-size: 18px; font-weight: 900; font-family: monospace; }
   .dash-box .sub { font-size: 10px; opacity: 0.8; margin-top: 2px; }
 
-  .control-deck { background: rgba(0,0,0,0.3); border: 1px solid var(--line); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+  /* 💡 移除控制面板的 capture-hide，讓戰術設定保留在截圖中 */
+  .control-deck { background: rgba(0,0,0,0.4); border: 1px solid var(--line); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 8px; position: relative; z-index: 10; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
   .control-row { display: flex; flex-direction: column; gap: 6px; }
-  .btn-group-lbl { font-size: 12px; color: var(--safe); font-weight: bold; }
+  .btn-group-lbl { font-size: 12px; color: var(--safe); font-weight: bold; text-shadow: 0 1px 2px #000; }
   
   .toggle-group { display: flex; gap: 6px; width: 100%; justify-content: center; flex-wrap: wrap; }
-  .toggle-btn { flex: 1 1 auto; background: rgba(0,0,0,0.4); border: 1px solid var(--line); color: var(--muted); border-radius: 6px; padding: 8px 2px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.2s; position: relative; display: flex; align-items: center; justify-content: center;}
+  .toggle-btn { flex: 1 1 auto; background: rgba(0,0,0,0.6); border: 1px solid var(--line); color: var(--muted); border-radius: 6px; padding: 8px 2px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.2s; position: relative; display: flex; align-items: center; justify-content: center;}
   
   .toggle-btn.active { background: var(--safe); color: var(--bg); border-color: var(--safe); }
   .toggle-btn[data-type="action"].active { background: var(--tagline); color: var(--bg); border-color: var(--tagline); }
   .toggle-btn[data-type="scene"].active { background: var(--muted); color: var(--bg); border-color: var(--muted); }
   .toggle-btn[data-type="ma"].active { background: var(--safe); color: var(--bg); border-color: var(--safe); }
 
-  .edu-wrap { margin-top: 8px; padding: 12px; background: rgba(255, 216, 77, 0.1); border-radius: 8px; border: 1px solid var(--warn); text-align: justify; font-size: 13.5px; font-weight: bold; color: var(--text); line-height: 1.6; transition: background 0.3s, border 0.3s; }
+  /* 💡 教學面板加上深色玻璃背板，避免白底隱形 */
+  .edu-wrap { margin-top: 8px; padding: 12px; background: rgba(10, 20, 16, 0.85) !important; border-radius: 8px; border: 1px solid var(--warn); text-align: justify; font-size: 13.5px; font-weight: bold; color: var(--text) !important; line-height: 1.6; transition: background 0.3s, border 0.3s; position: relative; z-index: 10; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
   .mask-text { paint-order: stroke fill; stroke: var(--bg); stroke-width: 4px; stroke-linecap: round; stroke-linejoin: round; }
 
+  #cameraControls { display: none; position: absolute; top: 10px; left: 10px; flex-direction: column; background: rgba(0,0,0,0.85); padding: 8px 12px; border-radius: 10px; border: 1px solid var(--warn); z-index: 100; backdrop-filter: blur(8px); box-shadow: 0 8px 25px rgba(0,0,0,0.6); min-width: 140px; }
   .control-slider-wrap { display: flex; align-items: center; gap: 8px; }
   .control-slider-wrap span { font-size: 12px; color: var(--text); font-weight: bold; width: 45px; }
-  .control-slider-wrap input[type=range] { width: 85px; accent-color: var(--safe); }
+  .control-slider-wrap input[type=range] { width: 80px; accent-color: var(--safe); }
 
   .modal-overlay { 
     display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
@@ -321,12 +223,6 @@
   
   .footer-disclaimer { margin-top: 20px; padding: 15px; font-size: 12px; color: var(--muted); line-height: 1.6; text-align: justify; background: rgba(150,150,150,0.05); border-radius: 10px; border-left: 4px solid var(--bad); }
 
-  @keyframes valFlash {
-      0% { transform: scale(1); filter: brightness(1); }
-      30% { transform: scale(1.15); filter: brightness(1.5); text-shadow: 0 0 10px rgba(255,255,255,0.5); }
-      100% { transform: scale(1); filter: brightness(1); text-shadow: none; }
-  }
-  .val-flash { animation: valFlash 0.35s ease-out; }
 </style>
 </head>
 <body>
@@ -360,6 +256,7 @@
 </script>
 
 <script>
+// 💡 保留完整的 8 國語言資料庫，並更新高空專用介質名稱
 const i18n = {
   zh: {
     appTitle: "下方固定點架設儀 (全地形)",
@@ -375,7 +272,7 @@ const i18n = {
     btnSteel: "🏗️ 鋼架空橋",
     btnNone: "⬛ 淨空",
     frictionLabel: "🛡️ 轉向點 (COD) 摩擦力介質",
-    btnCustom: "✏️ 自訂設定",
+    btnCustom: "✏️ 自訂",
     directPull: "直拉",
     btnFricCara: "🪝 鉤環",
     btnFricPull: "⚙️ 滑輪",
@@ -389,7 +286,7 @@ const i18n = {
     btnHaul: "⬆️ 系統上拉",
     btnLow: "⬇️ 系統下放",
     maLabel: "⚙️ 系統省力比 (MA)",
-    eduDefault: "📍 試著在沙盤中任意拖曳「轉向點」或「地面操作」，對齊照片角度來觀察力量變化。<br><span style='color:var(--safe)'>💡 秘技：雙擊沙盤空白處可一鍵隱藏/喚醒控制台！</span>",
+    eduDefault: "📍 試著在沙盤中任意拖曳「轉向點」或「地面操作」，對齊照片角度來觀察力量變化。",
     sceneTree: "樹幹",
     sceneSteel: "鋼架",
     sceneNone: "轉向點",
@@ -419,16 +316,16 @@ const i18n = {
     op1: "滑動沙盤中的 <b>轉向點</b> 與 <b>地面操作</b>，可自由拖曳對齊 AR 畫面進行推演。",
     op2: "點擊上方 <b>模擬地形與環境</b>，一鍵切換攀樹、鋼架場景或乾淨畫布。",
     op3: "切換 <b>轉向點 (COD) 摩擦力介質</b>，觀察各種實戰介質對操作者負擔的影響。",
-    op4: "點擊右上角 <b>✏️自訂設定</b>，可手動設定轉向介質名稱與摩擦係數，並保留於自訂兵牌上。",
+    op4: "點擊 <b>✏️自訂</b>，可手動設定轉向介質名稱與摩擦係數。",
     op5: "切換 <b>🕹️系統操作動作</b>，比對靜止、上拉與下放時，摩擦力帶來的截然不同效應。",
     devTitle: "下方固定點架設儀 專業正式版",
     devTeam: "本工具由 <span style='color:var(--warn);'>散木團隊</span> 開發製作",
     devT1: "教學架構與工程判斷／徐世豐",
     devT2: "工具設計與互動介面／吳佩芳（朵朵）",
-    customNameTitle: "✏️ 自訂專屬介質",
-    customNameDesc: "請為您的專屬介質命名（如：怪手吊臂）：",
-    customNamePlh: "例如：怪手吊臂",
-    customFricTitle: "⚙️ 設定介質摩擦係數",
+    customNameTitle: "✏️ 自訂介質名稱",
+    customNameDesc: "請輸入您要模擬的轉向地形或介質：",
+    customNamePlh: "例如：水泥柱、怪手吊臂",
+    customFricTitle: "⚙️ 自訂摩擦係數",
     fricTip: "💡 <b>戰術提示：</b><br><span style='color:var(--bad)'>0.3</span> = 摩擦力極大 (如: 粗糙岩壁)<br><span style='color:var(--safe)'>0.9</span> = 摩擦力極小 (如: 高效滑輪)",
     fricPlh: "輸入 0.1 ~ 1.0 之間的數字",
     cancel: "取消返回",
@@ -490,28 +387,7 @@ const i18n = {
     featFric: "⚙️ 動態摩擦力運算",
     featFricDesc: "解鎖所有實戰介質的摩擦係數！精準推演不同地形對系統的受力影響。",
     featAction: "🕹️ 上拉下放引擎",
-    featActionDesc: "解鎖動態操作！真實模擬上拉與下放時，摩擦力造成的恐怖張力翻倍效應！",
-    shotFmtTitle: "📸 選擇截圖格式",
-    shotFmtDesc: "請問您需要哪種背景格式？",
-    shotFmtDark: "⬛ 標準深色背景",
-    shotFmtTrans: "🏁 透明去背 (適合放入 PPT)",
-    spIntro: "本工具為散木團隊精心開發。若這套沙盤對您的實務與教學有幫助，歡迎自由隨喜給予我們一點實質鼓勵，這將化為我們開發下一套救援系統的核心動力！",
-    spBank: "🏦 銀行與郵局轉帳 (可免海外手續費)",
-    spBank1: "永豐銀行 (代碼 807) • 戶名：吳佩芳",
-    spCopyBank1: "📋 複製永豐帳號",
-    spBank2: "中華郵政 (代碼 700) • 戶名：吳佩芳",
-    spCopyBank2: "📋 複製郵局帳號",
-    spNote: "💡 匯款後請直接到下方自動販賣機領取金鑰 (費用填 0 元即可)<br><span style='color: var(--text);'>✏️ 提醒：請在匯款備註欄填寫 APP 名稱</span>",
-    spStoreTitle: "🛒 專業版自動販賣機 (支援刷卡)",
-    spStoreSub: "熟悉的販賣機！支援 Apple Pay 與信用卡",
-    spStoreBtn: "前往自動販賣機 🛒",
-    camCtrlHide: "👁️ 一鍵淨空 (雙擊畫面也可)",
-    toastCopy: "📋 帳號已複製！感謝您的心意！",
-    toastModeHide: "👁️ 純淨觀察模式 (雙擊還原)",
-    toastModeShow: "🎛️ 控制面板已還原",
-    toastUpdate: "🔄 系統更新中，為您重新載入...",
-    toastShare: "🔗 網址已複製，您可以貼上分享給其他人囉！",
-    shareText: "推薦這套散木團隊專屬的黑科技！結合實境相機與動態摩擦力引擎，快來試試！"
+    featActionDesc: "解鎖動態操作！真實模擬上拉與下放時，摩擦力造成的恐怖張力翻倍效應！"
   },
   en: {
     appTitle: "Redirect Simulator",
@@ -527,7 +403,7 @@ const i18n = {
     btnSteel: "🏗️ Truss",
     btnNone: "⬛ Blank",
     frictionLabel: "🛡️ COD Friction Type",
-    btnCustom: "✏️ Setup Custom",
+    btnCustom: "✏️ Custom",
     directPull: " Pull",
     btnFricCara: "🪝 Carabiner",
     btnFricPull: "⚙️ Pulley",
@@ -571,14 +447,14 @@ const i18n = {
     op1: "Drag the <b>Redirect Node</b> or <b>Ground OP</b> to simulate force changes dynamically.",
     op2: "Click <b>Terrain & Environment</b> to switch between scenes.",
     op3: "Change <b>COD Friction Type</b> to observe how different mediums affect the load.",
-    op4: "Click <b>✏️Setup Custom</b> to define custom medium and coefficient.",
+    op4: "Click <b>✏️Custom</b> to manually set the object name and friction coefficient.",
     op5: "Toggle <b>System Action</b> to compare the effects of friction during Static, Hauling, and Lowering.",
     devTitle: "Redirect Sandbox PRO",
     devTeam: "Developed by <span style='color:var(--warn);'>SunMoon Team</span>",
     devT1: "Engineering & Architecture / Shih-Feng Hsu",
     devT2: "UI/UX Design / Pei-Fang Wu",
-    customNameTitle: "✏️ Custom Medium",
-    customNameDesc: "Enter your custom medium name:",
+    customNameTitle: "✏️ Custom COD Name",
+    customNameDesc: "Enter the custom terrain or object name:",
     customNamePlh: "e.g., Concrete pillar",
     customFricTitle: "⚙️ Custom Friction",
     fricTip: "💡 <b>Tip:</b><br><span style='color:var(--bad)'>0.3</span> = High Friction<br><span style='color:var(--safe)'>0.9</span> = Low Friction",
@@ -642,28 +518,7 @@ const i18n = {
     featFric: "⚙️ Dynamic Friction",
     featFricDesc: "Unlock all advanced friction settings!",
     featAction: "🕹️ Haul & Lower Engine",
-    featActionDesc: "Simulate massive tension spikes from friction!",
-    shotFmtTitle: "📸 Screenshot Format",
-    shotFmtDesc: "Which background format do you need?",
-    shotFmtDark: "⬛ Standard Dark Background",
-    shotFmtTrans: "🏁 Transparent (Best for PPT)",
-    spIntro: "Carefully developed by SunMoon Team. If this tool helps you, feel free to buy us a coffee to support future developments!",
-    spBank: "🏦 Bank Transfer",
-    spBank1: "SinoPac Bank (Code 807)",
-    spCopyBank1: "📋 Copy Bank Account",
-    spBank2: "Chunghwa Post (Code 700)",
-    spCopyBank2: "📋 Copy Post Account",
-    spNote: "💡 After transferring, grab your key from the store below (enter 0 cost).<br><span style='color: var(--text);'>✏️ Please note the APP name in transfer remarks.</span>",
-    spStoreTitle: "🛒 PRO License Store",
-    spStoreSub: "Supports Apple Pay & Credit Cards",
-    spStoreBtn: "Go to Store 🛒",
-    camCtrlHide: "👁️ Hide UI (or double-tap)",
-    toastCopy: "📋 Copied! Thank you!",
-    toastModeHide: "👁️ View Mode (Double-tap to restore)",
-    toastModeShow: "🎛️ Control Panel Restored",
-    toastUpdate: "🔄 Updating system, please wait...",
-    toastShare: "🔗 Link copied! Ready to share.",
-    shareText: "Check out this redirect simulator by SunMoon Team! It calculates dynamic friction and angles."
+    featActionDesc: "Simulate massive tension spikes from friction!"
   },
   ja: {
     appTitle: "リダイレクト砂盤 (全地形)",
@@ -679,7 +534,7 @@ const i18n = {
     btnSteel: "🏗️ 鉄骨",
     btnNone: "⬛ 空白",
     frictionLabel: "🛡️ COD 摩擦タイプ",
-    btnCustom: "✏️ カスタム設定",
+    btnCustom: "✏️ カスタム",
     directPull: " 直引き",
     btnFricCara: "🪝 カラビナ",
     btnFricPull: "⚙️ プーリー",
@@ -723,13 +578,13 @@ const i18n = {
     op1: "サンドボックス内の <b>支点</b> と <b>操作側</b> をドラッグしてシミュレーションします。",
     op2: "<b>地形と環境</b> をクリックし、環境を切り替えます。",
     op3: "<b>COD摩擦タイプ</b> を変更し、負担にどう影響するか観察します。",
-    op4: "<b>✏️カスタム設定</b> をクリックして、名称と摩擦係数を手動設定できます。",
+    op4: "<b>✏️カスタム</b> をクリックして、名称と摩擦係数を手動設定できます。",
     op5: "<b>システム動作</b> を切り替えて、静止、引き上げ、ロワリング時の摩擦を比較します。",
     devTitle: "リダイレクト砂盤 PRO",
     devTeam: "開発：<span style='color:var(--warn);'>SunMoon Team</span>",
     devT1: "アーキテクチャ・監修 / Shih-Feng Hsu",
     devT2: "UI/UX デザイン / Pei-Fang Wu",
-    customNameTitle: "✏️ 専用カスタム",
+    customNameTitle: "✏️ COD名カスタム",
     customNameDesc: "地形やオブジェクト名を入力：",
     customNamePlh: "例：コンクリート柱",
     customFricTitle: "⚙️ 摩擦係数カスタム",
@@ -794,28 +649,7 @@ const i18n = {
     featFric: "⚙️ 動的摩擦力計算",
     featFricDesc: "すべての摩擦係数を解放します！",
     featAction: "🕹️ 引き上げ・ロワリングエンジン",
-    featActionDesc: "摩擦による張力倍増効果をリアルにシミュレーション！",
-    shotFmtTitle: "📸 スクリーンショット形式",
-    shotFmtDesc: "背景フォーマットを選択してください",
-    shotFmtDark: "⬛ 標準ダーク背景",
-    shotFmtTrans: "🏁 透過 (PPT向け)",
-    spIntro: "SunMoonチームによる開発。もしお役に立てましたら、今後の開発支援をお願いいたします！",
-    spBank: "🏦 銀行振込",
-    spBank1: "SinoPac銀行 (コード 807)",
-    spCopyBank1: "📋 口座番号をコピー",
-    spBank2: "台湾郵政 (コード 700)",
-    spCopyBank2: "📋 口座番号をコピー",
-    spNote: "💡 振込後、下のストアからキーを取得してください（金額0を入力）。<br><span style='color: var(--text);'>✏️ 振込時の備考にアプリ名を入力してください。</span>",
-    spStoreTitle: "🛒 PROライセンスストア",
-    spStoreSub: "Apple Pay / クレジットカード対応",
-    spStoreBtn: "ストアへ行く 🛒",
-    camCtrlHide: "👁️ UI非表示 (ダブルタップも可)",
-    toastCopy: "📋 コピーしました！ありがとうございます！",
-    toastModeHide: "👁️ 観察モード (ダブルタップで復元)",
-    toastModeShow: "🎛️ UIを復元しました",
-    toastUpdate: "🔄 システムを更新しています...",
-    toastShare: "🔗 リンクをコピーしました！共有できます。",
-    shareText: "SunMoon Teamの開発したリダイレクトシミュレーター！ぜひ試してみてください！"
+    featActionDesc: "摩擦による張力倍増効果をリアルにシミュレーション！"
   },
   ko: {
     appTitle: "하단 고정점 시뮬레이터",
@@ -909,7 +743,7 @@ const i18n = {
     pwaStep7: "'홈 화면에 추가' 선택",
     pwaStep8: "'추가' 탭",
     installBtn: "📥 앱 설치",
-    disclaimer: "<strong style='color: var(--bad); font 소 size: 14px;'>⚠️ 면책 조항:</strong><br>이론적 추정치입니다. 실제 거칠기에 따라 달라집니다. 전문 교관을 따르세요.<br><br><span style='color:var(--warn);'>※ 본 앱은 1기기 라이선스입니다. 기기 변경 시 비밀번호 재발급 및 고객 지원은 제공되지 않습니다. 개발 지원을 위해 재구매를 부탁드립니다.</span>",
+    disclaimer: "<strong style='color: var(--bad); font-size: 14px;'>⚠️ 면책 조항:</strong><br>이론적 추정치입니다. 실제 거칠기에 따라 달라집니다. 전문 교관을 따르세요.<br><br><span style='color:var(--warn);'>※ 본 앱은 1기기 라이선스입니다. 기기 변경 시 비밀번호 재발급 및 고객 지원은 제공되지 않습니다. 개발 지원을 위해 재구매를 부탁드립니다.</span>",
     vipTitle: "🔒 PRO 기능 잠금 해제",
     vipEnable1: "기능 활성화: '",
     vipEnable2: "'!",
@@ -946,28 +780,7 @@ const i18n = {
     featFric: "⚙️ 동적 마찰력 연산",
     featFricDesc: "모든 마찰력을 잠금 해제하세요!",
     featAction: "🕹️ 올리기/내리기 엔진",
-    featActionDesc: "장력 2배 효과를 실제처럼 시뮬레이션하세요!",
-    shotFmtTitle: "📸 스크린샷 형식",
-    shotFmtDesc: "어떤 배경을 원하십니까?",
-    shotFmtDark: "⬛ 기본 어두운 배경",
-    shotFmtTrans: "🏁 투명 배경 (PPT용)",
-    spIntro: "SunMoon 팀이 개발했습니다. 도움이 되셨다면 향후 개발을 위해 후원해 주세요!",
-    spBank: "🏦 계좌 이체",
-    spBank1: "SinoPac 은행 (코드 807)",
-    spCopyBank1: "📋 계좌 복사",
-    spBank2: "우체국 (코드 700)",
-    spCopyBank2: "📋 계좌 복사",
-    spNote: "💡 이체 후 아래 스토어에서 키를 받으세요 (금액 0 입력).<br><span style='color: var(--text);'>✏️ 메모에 앱 이름을 적어주세요.</span>",
-    spStoreTitle: "🛒 PRO 라이선스 스토어",
-    spStoreSub: "Apple Pay 및 신용카드 지원",
-    spStoreBtn: "스토어 가기 🛒",
-    camCtrlHide: "👁️ UI 숨기기 (또는 더블 탭)",
-    toastCopy: "📋 복사되었습니다! 감사합니다!",
-    toastModeHide: "👁️ 관찰 모드 (더블 탭으로 복원)",
-    toastModeShow: "🎛️ 제어 패널이 복원되었습니다",
-    toastUpdate: "🔄 시스템을 업데이트 중입니다...",
-    toastShare: "🔗 링크가 복사되었습니다! 공유할 수 있습니다.",
-    shareText: "SunMoon Team이 개발한 하단 고정점 시뮬레이터! 체험해보세요!"
+    featActionDesc: "장력 2배 효과를 실제처럼 시뮬레이션하세요!"
   },
   fr: {
     appTitle: "Simulateur de Déviation",
@@ -1096,28 +909,7 @@ const i18n = {
     featFric: "⚙️ Friction Dynamique",
     featFricDesc: "Débloquez toutes les frictions !",
     featAction: "🕹️ Moteur Hissage/Descente",
-    featActionDesc: "Simulez les pics extrêmes liés aux frictions !",
-    shotFmtTitle: "📸 Format de Capture",
-    shotFmtDesc: "Quel fond souhaitez-vous ?",
-    shotFmtDark: "⬛ Fond Sombre",
-    shotFmtTrans: "🏁 Transparent (PPT)",
-    spIntro: "Développé par SunMoon Team. Si cet outil vous aide, soutenez-nous pour les futures mises à jour !",
-    spBank: "🏦 Virement Bancaire",
-    spBank1: "Banque SinoPac (Code 807)",
-    spCopyBank1: "📋 Copier le compte",
-    spBank2: "Poste de Taïwan (Code 700)",
-    spCopyBank2: "📋 Copier le compte",
-    spNote: "💡 Après le virement, obtenez la clé dans la boutique (entrez 0).<br><span style='color: var(--text);'>✏️ Mettez le nom de l'APP en remarque.</span>",
-    spStoreTitle: "🛒 Boutique de Licences PRO",
-    spStoreSub: "Prend en charge Apple Pay & CB",
-    spStoreBtn: "Aller à la Boutique 🛒",
-    camCtrlHide: "👁️ Masquer UI (ou double-tap)",
-    toastCopy: "📋 Copié ! Merci de votre soutien !",
-    toastModeHide: "👁️ Mode Observation (Double-tap pour restaurer)",
-    toastModeShow: "🎛️ Panneau restauré",
-    toastUpdate: "🔄 Mise à jour du système...",
-    toastShare: "🔗 Lien copié ! Prêt à partager.",
-    shareText: "Découvrez ce simulateur de SunMoon Team ! Il calcule les frictions et forces dynamiques."
+    featActionDesc: "Simulez les pics extrêmes liés aux frictions !"
   },
   de: {
     appTitle: "Umlenkung Simulator",
@@ -1248,28 +1040,7 @@ const i18n = {
     featAction: "🕹️ Hebe- & Ablass-Engine",
     featActionDesc: "Simulieren Sie extreme Spannungsspitzen!",
     featShot: "📸 Taktischer Screenshot",
-    featShotDesc: "Export in hoher Auflösung ohne Wasserzeichen!",
-    shotFmtTitle: "📸 Screenshot-Format",
-    shotFmtDesc: "Welchen Hintergrund bevorzugen Sie?",
-    shotFmtDark: "⬛ Dunkler Hintergrund",
-    shotFmtTrans: "🏁 Transparent (Für PPT)",
-    spIntro: "Entwickelt vom SunMoon Team. Unterstützen Sie uns für weitere Tools!",
-    spBank: "🏦 Banküberweisung",
-    spBank1: "SinoPac Bank (Code 807)",
-    spCopyBank1: "📋 Konto kopieren",
-    spBank2: "Chunghwa Post (Code 700)",
-    spCopyBank2: "📋 Konto kopieren",
-    spNote: "💡 Holen Sie sich nach der Überweisung den Key im Store (Betrag 0).<br><span style='color: var(--text);'>✏️ Bitte APP-Namen im Verwendungszweck angeben.</span>",
-    spStoreTitle: "🛒 PRO Lizenz Store",
-    spStoreSub: "Apple Pay & Kreditkarten",
-    spStoreBtn: "Zum Store 🛒",
-    camCtrlHide: "👁️ UI ausblenden (oder Doppeltippen)",
-    toastCopy: "📋 Kopiert! Vielen Dank!",
-    toastModeHide: "👁️ Beobachtungsmodus (Doppeltippen zum Wiederherstellen)",
-    toastModeShow: "🎛️ Bedienfeld wiederhergestellt",
-    toastUpdate: "🔄 System wird aktualisiert...",
-    toastShare: "🔗 Link kopiert! Bereit zum Teilen.",
-    shareText: "Schauen Sie sich diesen Simulator des SunMoon Teams an!"
+    featShotDesc: "Export in hoher Auflösung ohne Wasserzeichen!"
   },
   es: {
     appTitle: "Simulador de Desviación",
@@ -1326,7 +1097,7 @@ const i18n = {
     menuOp: "Manual del Sistema",
     menuInfo: "Info de Versión",
     menuPWA: "Añadir a la Pantalla",
-    op1: "Arrastre la <b>Op. al suelo</b> para simular fuerzas dinámicamente.",
+    op1: "Arrastre la <b>Op. al suelo</b> para simular fuerzas dinamicamente.",
     op2: "Haga clic en <b>Terreno y Entorno</b> para cambiar.",
     op3: "Cambie el <b>Tipo de fricción</b> para observar el impacto.",
     op4: "Haga clic en <b>✏️ Personalizado</b> para definir manualmente.",
@@ -1345,7 +1116,7 @@ const i18n = {
     confirmName: "Confirmar",
     confirmFric: "Aplicar",
     thCodT: "🔄 Desviación (COD)",
-    thCodD: "Ponto que cambia la dirección de la cuerda. La fuerza depende del ángulo.",
+    thCodD: "Punto que cambia la dirección de la cuerda. La fuerza depende del ángulo.",
     thFricT: "🛡️ Fricción",
     thFricD: "Enemigo al izar, amigo para frenar al bajar.",
     thMultT: "🚨 Efecto Multiplicador",
@@ -1400,28 +1171,7 @@ const i18n = {
     featAction: "🕹️ Motor de Izado/Descenso",
     featActionDesc: "¡Simula picos extremos de fuerza!",
     featShot: "📸 Captura Táctica",
-    featShotDesc: "¡Exportación en alta resolución sin marca de agua!",
-    shotFmtTitle: "📸 Formato de Captura",
-    shotFmtDesc: "¿Qué fondo necesitas?",
-    shotFmtDark: "⬛ Fondo Oscuro",
-    shotFmtTrans: "🏁 Transparente (Para PPT)",
-    spIntro: "Desarrollado por el equipo SunMoon. ¡Apóyanos para futuras herramientas!",
-    spBank: "🏦 Transferencia Bancaria",
-    spBank1: "SinoPac Bank (Código 807)",
-    spCopyBank1: "📋 Copiar Cuenta",
-    spBank2: "Chunghwa Post (Código 700)",
-    spCopyBank2: "📋 Copiar Cuenta",
-    spNote: "💡 Después de la transferencia, obtén tu clave en la tienda (ingresa 0).<br><span style='color: var(--text);'>✏️ Por favor, indica el nombre de la APP.</span>",
-    spStoreTitle: "🛒 Tienda de Licencias PRO",
-    spStoreSub: "Soporta Apple Pay y Tarjetas",
-    spStoreBtn: "Ir a la Tienda 🛒",
-    camCtrlHide: "👁️ Ocultar UI (o doble toque)",
-    toastCopy: "📋 ¡Copiado! ¡Gracias!",
-    toastModeHide: "👁️ Modo Observación (Doble toque para volver)",
-    toastModeShow: "🎛️ Panel de control restaurado",
-    toastUpdate: "🔄 Actualizando sistema...",
-    toastShare: "🔗 ¡Enlace copiado! Listo para compartir.",
-    shareText: "¡Mira este simulador de SunMoon Team!"
+    featShotDesc: "¡Exportación en alta resolución sin marca de agua!"
   },
   pt: {
     appTitle: "Simulador de Desvio",
@@ -1552,28 +1302,7 @@ const i18n = {
     featAction: "🕹️ Motor de Içamento/Descida",
     featActionDesc: "Simule picos extremos de força da vida real!",
     featShot: "📸 Captura Táctica",
-    featShotDesc: "Exportação em alta resolução sem marca d'água!",
-    shotFmtTitle: "📸 Formato de Captura",
-    shotFmtDesc: "Qual fundo você prefere?",
-    shotFmtDark: "⬛ Fundo Escuro",
-    shotFmtTrans: "🏁 Transparente (PPT)",
-    spIntro: "Desenvolvido pela SunMoon. Apoie-nos para criar mais ferramentas!",
-    spBank: "🏦 Transferência Bancária",
-    spBank1: "SinoPac Bank (Código 807)",
-    spCopyBank1: "📋 Copiar Conta",
-    spBank2: "Chunghwa Post (Código 700)",
-    spCopyBank2: "📋 Copiar Conta",
-    spNote: "💡 Após a transferência, pegue a chave na loja (insira 0).<br><span style='color: var(--text);'>✏️ Coloque o nome do APP nas observações.</span>",
-    spStoreTitle: "🛒 Loja de Licenças PRO",
-    spStoreSub: "Suporte para Apple Pay e Cartões",
-    spStoreBtn: "Ir para a Loja 🛒",
-    camCtrlHide: "👁️ Ocultar UI (ou toque duplo)",
-    toastCopy: "📋 Copiado! Obrigado!",
-    toastModeHide: "👁️ Modo Observação (Toque duplo para voltar)",
-    toastModeShow: "🎛️ Painel de controle restaurado",
-    toastUpdate: "🔄 Atualizando sistema...",
-    toastShare: "🔗 Link copiado! Pronto para compartilhar.",
-    shareText: "Confira este simulador do SunMoon Team!"
+    featShotDesc: "Exportação em alta resolução sem marca d'água!"
   }
 };
 
@@ -1649,52 +1378,13 @@ window.copyAccount = function(elementId) {
   dummy.select();
   document.execCommand('copy');
   document.body.removeChild(dummy);
-  showToast(t('toastCopy'), 'safe');
+  showToast('📋 帳號已複製！感謝您的心意！', 'safe');
 };
-
-function triggerFlash(el) {
-    if(!el) return;
-    el.classList.remove('val-flash');
-    void el.offsetWidth;
-    el.classList.add('val-flash');
-}
 </script>
 
 <div id="status-bar-protector" data-html2canvas-ignore="true"></div>
 
-<!-- 💡 畫面控制台：預設收合，並調整位置至左下角避免擋住沙盤 -->
-<div id="cameraControls" style="display:none; position: fixed; bottom: max(30px, calc(env(safe-area-inset-bottom) + 30px)); left: 15px; top: auto; flex-direction: column; background: rgba(0,0,0,0.75); padding: 8px 12px; border-radius: 10px; border: 1px solid var(--warn); z-index: 9990; backdrop-filter: blur(8px); box-shadow: 0 8px 25px rgba(0,0,0,0.6); min-width: 150px;" data-html2canvas-ignore="true">
-    <div id="camCtrlHeader" style="display:flex; justify-content:space-between; align-items:center; cursor:move; margin-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:4px; user-select:none;">
-        <span style="font-size:12px; font-weight:bold; color:var(--warn);">🎛️ 畫面控制台</span>
-        <span id="camCtrlToggle" style="cursor:pointer; font-size:12px; padding:2px 6px;">▶</span>
-    </div>
-    <div id="camCtrlBody" style="display:none; flex-direction:column; gap:10px;">
-        <div class="control-slider-wrap">
-            <span>📄白紙</span>
-            <input type="range" id="sliderWhite" min="0" max="0.9" step="0.1" value="0.2">
-        </div>
-        <div class="control-slider-wrap">
-            <span>🔍縮放</span>
-            <input type="range" id="sliderZoom" min="1" max="3" step="0.1" value="1">
-        </div>
-        <div class="control-slider-wrap">
-            <span>🪢繩粗</span>
-            <input type="range" id="sliderRope" min="2" max="12" step="1" value="6">
-        </div>
-        <div style="margin-top: 5px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.2); text-align: center;">
-            <button onclick="toggleCaptureMode()" style="background: var(--card); color: var(--text); border: 1px solid var(--warn); padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; width: 100%;" data-i18n="camCtrlHide">👁️ 一鍵淨空 (雙擊畫面也可)</button>
-        </div>
-    </div>
-</div>
-
-<div id="floating-tools" data-html2canvas-ignore="true">
-    <div id="float-drag-handle" style="width: 100%; height: 24px; display: flex; justify-content: center; align-items: center; cursor: grab; opacity: 0.5;">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="12" r="1.5"></circle><circle cx="9" cy="5" r="1.5"></circle><circle cx="9" cy="19" r="1.5"></circle><circle cx="15" cy="12" r="1.5"></circle><circle cx="15" cy="5" r="1.5"></circle><circle cx="15" cy="19" r="1.5"></circle></svg>
-    </div>
-    <button class="icon-btn" onclick="attemptFeature('featCam', toggleCamera)" style="background: rgba(0,0,0,0.6); border: 1px solid var(--safe); box-shadow: 0 4px 12px rgba(0,0,0,0.5); width: 48px; height: 48px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 20px;">📷</button>
-    <button class="icon-btn" onclick="attemptFeature('featShot', () => { document.getElementById('shotFormatModal').style.display='flex'; })" style="background: rgba(0,0,0,0.6); border: 1px solid var(--safe); box-shadow: 0 4px 12px rgba(0,0,0,0.5); width: 48px; height: 48px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 20px;">📸</button>
-</div>
-
+<!-- 獨立背景與白紙透寫層 -->
 <div id="bg-layer">
   <div id="media-container">
       <video id="bg-video" autoplay playsinline muted></video>
@@ -1711,37 +1401,14 @@ function triggerFlash(el) {
     <h3 style="color:var(--safe); margin-top:0;" data-i18n="shotFmtTitle">📸 選擇截圖格式</h3>
     <p style="font-size:13px; color:var(--muted); margin-bottom:12px;" data-i18n="shotFmtDesc">請問您需要哪種背景格式？</p>
     <div style="display:flex; flex-direction:column; gap:10px;">
-      <button class="primary-btn btn-unlock" onclick="doTakeScreenshot(false)" style="margin:0; background:var(--card); color:var(--text); border:1px solid var(--line);" data-i18n="shotFmtDark">⬛ 標準深色背景</button>
-      <button class="primary-btn btn-unlock" onclick="doTakeScreenshot(true)" style="margin:0; background:var(--safe); color:#0a1410;" data-i18n="shotFmtTrans">🏁 透明去背 (適合放入 PPT)</button>
+      <button class="primary-btn btn-unlock" onclick="doTakeScreenshot(false)" style="margin:0; background:var(--safe); color:#0a1410;" data-i18n="shotFmtDark">⬛ 標準深色背景</button>
+      <button class="primary-btn btn-unlock" onclick="doTakeScreenshot(true)" style="margin:0; background:var(--card); color:var(--text); border:1px solid var(--line);" data-i18n="shotFmtTrans">🏁 透明去背 (適合放入 PPT)</button>
       <button class="primary-btn btn-cancel" onclick="document.getElementById('shotFormatModal').style.display='none'" style="margin:0; background:transparent; color:var(--muted);" data-i18n="cancel">取消返回</button>
     </div>
   </div>
 </div>
 
 <div id="shotModal" class="modal-overlay" data-html2canvas-ignore="true" style="z-index: 10000; flex-direction:column; justify-content:center; align-items:center;">
-  <div class="modal-box" style="padding: 15px; max-width: 95%; max-height: 90vh; display:flex; flex-direction:column; gap:10px;">
-    <h3 style="color:var(--safe); margin:0;">📸 戰術截圖已生成</h3>
-    <p style="font-size:13px; color:var(--muted); margin:0;">請 <b>長按下方圖片</b> 選擇「儲存圖片」或「分享」</p>
-    <div style="flex:1; overflow-y:auto; border-radius:8px; border:2px solid var(--line); background:#ccc;">
-        <img id="shotPreviewImg" src="" style="width: 100%; display: block; object-fit: contain;">
-    </div>
-    <button class="primary-btn btn-cancel" onclick="document.getElementById('shotModal').style.display='none'" style="margin:0; flex-shrink:0;" data-i18n="cancel">返回系統</button>
-  </div>
-</div>
-
-<div id="loadModal" class="modal-overlay" data-html2canvas-ignore="true">
-  <div class="modal-box">
-    <h3 style="color:var(--text); margin-top:0;">⚖️ 快速設定負載 (W)</h3>
-    <p style="font-size:13px; color:var(--muted); margin-bottom:12px;">請輸入新的負載重量 (kg)：</p>
-    <input type="number" id="loadInput" class="pwd-input" placeholder="例如：100" step="10" min="10" style="letter-spacing: normal;">
-    <div class="modal-btn-group">
-      <button class="primary-btn btn-cancel" onclick="document.getElementById('loadModal').style.display='none'" data-i18n="cancel">取消返回</button>
-      <button class="primary-btn btn-unlock" onclick="confirmLoadChange()" data-i18n="confirmFric">確認套用</button>
-    </div>
-  </div>
-</div>
-
-<div id="supportModal" class="modal-overlay" data-html2canvas-ignore="true">
   <div class="modal-box">
     <h3 style="color:var(--warn); margin-top:0;" data-i18n="supTitle">💬 系統問題回報</h3>
     <p style="text-align:left; font-size:13px; line-height:1.7; margin-bottom:15px; color:var(--text);" data-i18n="supDesc">
@@ -1754,6 +1421,7 @@ function triggerFlash(el) {
   </div>
 </div>
 
+<!-- 付費解鎖視窗 -->
 <div id="vipModal" class="modal-overlay" data-html2canvas-ignore="true">
   <div class="modal-box" id="vipModalBox">
     <h3><span data-i18n="vipTitle">🔒 專業版功能解鎖</span> <span class="vip-badge" style="display:inline-block; margin-left:8px;">PRO</span></h3>
@@ -1779,24 +1447,32 @@ function triggerFlash(el) {
   </div>
 </div>
 
-<div id="customMediumModal" class="modal-overlay" data-html2canvas-ignore="true">
+<!-- 自訂名稱視窗 -->
+<div id="nameModal" class="modal-overlay" data-html2canvas-ignore="true">
   <div class="modal-box">
-    <h3 style="color:var(--safe); margin-top:0;" data-i18n="customNameTitle">✏️ 自訂專屬介質</h3>
-    <p style="font-size:13px; color:var(--muted); margin-bottom:8px;" data-i18n="customNameDesc">請為您的專屬介質命名（如：怪手吊臂）：</p>
-    <input type="text" id="customMedName" class="pwd-input" placeholder="例如：怪手吊臂" data-i18n-plh="customNamePlh" style="letter-spacing: normal;">
-    
-    <p style="font-size:13px; color:var(--muted); margin-top:10px; margin-bottom:8px;" data-i18n="customFricTitle">⚙️ 設定介質摩擦係數</p>
-    <input type="number" id="customMedFric" class="pwd-input" placeholder="輸入 0.1 ~ 1.0" step="0.1" min="0.1" max="1.0" style="letter-spacing: normal;">
-    
-    <div style="font-size:12px; color:var(--muted); margin-bottom:15px; text-align:left; background:rgba(0,0,0,0.3); padding:10px; border-radius:8px;" data-i18n="fricTip">
+    <h3 style="color:var(--safe); margin-top:0;" data-i18n="customNameTitle">✏️ 自訂介質名稱</h3>
+    <p style="font-size:13px; color:var(--muted); margin-bottom:12px;" data-i18n="customNameDesc">請輸入您要模擬的轉向地形或介質：</p>
+    <input type="text" id="nameInput" class="pwd-input" placeholder="例如：水泥柱、怪手吊臂" data-i18n-plh="customNamePlh" style="letter-spacing: normal;">
+    <div class="modal-btn-group">
+      <button class="primary-btn btn-cancel" onclick="document.getElementById('nameModal').style.display='none'" data-i18n="cancel">取消返回</button>
+      <button class="primary-btn btn-unlock" style="background:var(--safe); color:#0a1410;" onclick="confirmCustomName()" data-i18n="confirmName">確認更改</button>
+    </div>
+  </div>
+</div>
+
+<!-- 自訂摩擦力視窗 -->
+<div id="frictionModal" class="modal-overlay" data-html2canvas-ignore="true">
+  <div class="modal-box">
+    <h3 style="color:var(--warn); margin-top:0;" data-i18n="customFricTitle">⚙️ 自訂摩擦係數</h3>
+    <p style="font-size:13px; color:var(--muted); margin-bottom:12px; text-align:left; background:rgba(0,0,0,0.3); padding:10px; border-radius:8px;" data-i18n="fricTip">
       💡 <b>戰術提示：</b><br>
       <span style="color:var(--bad)">0.3</span> = 摩擦力極大 (如: 粗糙岩壁)<br>
       <span style="color:var(--safe)">0.9</span> = 摩擦力極小 (如: 高效滑輪)
-    </div>
-    
+    </p>
+    <input type="number" id="frictionInput" class="pwd-input" placeholder="輸入 0.1 ~ 1.0 之間的數字" data-i18n-plh="fricPlh" step="0.1" min="0.1" max="1.0" style="letter-spacing: normal;">
     <div class="modal-btn-group">
-      <button class="primary-btn btn-cancel" onclick="document.getElementById('customMediumModal').style.display='none'" data-i18n="cancel">取消返回</button>
-      <button class="primary-btn btn-unlock" style="background:var(--safe); color:#0a1410;" onclick="confirmCustomMedium()" data-i18n="confirmFric">確認套用</button>
+      <button class="primary-btn btn-cancel" onclick="document.getElementById('frictionModal').style.display='none'" data-i18n="cancel">取消返回</button>
+      <button class="primary-btn btn-unlock" onclick="confirmCustomFriction()" data-i18n="confirmFric">確認套用</button>
     </div>
   </div>
 </div>
@@ -1805,6 +1481,7 @@ function triggerFlash(el) {
   <div class="app-container">
 
     <div class="card" id="mainCard">
+      <!-- 💡 操作功能列截圖時隱藏，不干擾畫面 -->
       <div class="topbar capture-hide">
           <div class="title-left" id="mainTitleText">
             <span data-i18n="appTitle">下方固定點架設儀 (全地形)</span> <span class="vip-badge">PRO</span>
@@ -1814,18 +1491,47 @@ function triggerFlash(el) {
           </div>
       </div>
 
+      <!-- 💡 操作功能列截圖時隱藏，不干擾畫面 -->
       <div class="icon-bar capture-hide">
         <button class="icon-btn" id="btn-camera" onclick="attemptFeature('featCam', toggleCamera)" title="實境相機">📷<span class="lock-icon">🔒</span></button>
         <button class="icon-btn" id="btn-flashlight" onclick="toggleFlashlight()" title="手電筒">🔦</button>
         <label class="icon-btn" id="btn-photo" onclick="handleImageUploadClick(event)" title="載入照片" style="margin:0;">📁<span class="lock-icon">🔒</span></label>
         <input type="file" id="upload-image" accept="image/*" onchange="loadImage(event)">
         <button class="icon-btn" onclick="toggleGrid()" title="工程網格">🌐</button>
-        <button class="icon-btn" onclick="attemptFeature('featShot', () => { document.getElementById('shotFormatModal').style.display='flex'; })" title="戰術截圖">📸<span class="lock-icon">🔒</span></button>
+        <button class="icon-btn" onclick="attemptFeature('featShot', takeScreenshot)" title="戰術截圖">📸<span class="lock-icon">🔒</span></button>
         <button class="icon-btn" onclick="resetEngine()" title="重置沙盤">↺</button>
       </div>
 
       <div class="svgWrap" id="svgWrap">
+        <!-- 💡 疊圖控制台：新增「上下左右」平移 (Pan) 功能，解決實境照片對不準的問題！ -->
+        <div id="cameraControls" class="capture-hide" style="display:none; position: absolute; top: 10px; left: 10px; flex-direction: column; background: rgba(0,0,0,0.85); padding: 8px 12px; border-radius: 10px; border: 1px solid var(--warn); z-index: 100; backdrop-filter: blur(8px); box-shadow: 0 8px 25px rgba(0,0,0,0.6); min-width: 140px;">
+            <div id="camCtrlHeader" style="display:flex; justify-content:space-between; align-items:center; cursor:move; margin-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:4px; user-select:none;">
+                <span style="font-size:12px; font-weight:bold; color:var(--warn);">🎛️ 疊圖控制台</span>
+                <span id="camCtrlToggle" style="cursor:pointer; font-size:12px; padding:2px 6px;">▼</span>
+            </div>
+            <div id="camCtrlBody" style="display:flex; flex-direction:column; gap:10px;">
+                <div class="control-slider-wrap">
+                    <span>📄白紙</span>
+                    <input type="range" id="sliderWhite" min="0" max="0.9" step="0.1" value="0.2">
+                </div>
+                <div class="control-slider-wrap">
+                    <span>🔍縮放</span>
+                    <input type="range" id="sliderZoom" min="0.5" max="3" step="0.1" value="1">
+                </div>
+                <div class="control-slider-wrap">
+                    <span>↔️左右</span>
+                    <input type="range" id="sliderX" min="-100" max="100" step="2" value="0">
+                </div>
+                <div class="control-slider-wrap">
+                    <span>↕️上下</span>
+                    <input type="range" id="sliderY" min="-100" max="100" step="2" value="0">
+                </div>
+            </div>
+        </div>
+
+        <!-- 💡 SVG 解鎖 overflow: visible，容許無邊際拖曳 -->
         <svg id="canvas" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet">
+          <!-- 高空大樓情境圖層 -->
           <g id="buildingScene" style="display:none;">
               <path id="buildingPath" d="" fill="#334155" stroke="#1e293b" stroke-width="2" />
               <path id="parapetPath" d="" fill="#475569" stroke="#1e293b" stroke-width="2" />
@@ -1835,13 +1541,15 @@ function triggerFlash(el) {
           </g>
           
           <g class="env-bg">
-            <line x1="-150" y1="360" x2="550" y2="360" stroke="rgba(255,255,255,0.15)" stroke-width="2" stroke-dasharray="10 5" />
+            <line x1="-1000" y1="360" x2="2000" y2="360" stroke="rgba(255,255,255,0.15)" stroke-width="2" stroke-dasharray="10 5" />
             <text x="390" y="375" fill="rgba(255,255,255,0.2)" font-size="12" font-weight="bold" text-anchor="end" data-i18n="ground">地面 Ground</text>
           </g>
 
           <g id="bgTree" class="env-bg" stroke="none" fill="rgba(139, 90, 43, 0.25)">
-             <path d="M -110 1000 C -110 200 -90 -200 -90 -1000 L -30 -1000 C -30 200 -50 1000 -50 1000 Z" />
-             <path d="M -35 15 Q 15 0 90 -50 L 100 -20 Q 20 35 -40 75 Z" />
+             <!-- 💡 繪製無限長樹幹，並將中心點設為樹枝交界處 -->
+             <path d="M -35 -2000 C -35 -500 -15 0 -25 2000 L 45 2000 C 55 0 35 -500 35 -2000 Z" />
+             <!-- 💡 樹枝直接從原點 (0,0) 長出 -->
+             <path d="M 25 10 C 60 -10 90 -25 150 -45 L 150 -15 C 90 5 60 20 25 40 Z" />
           </g>
 
           <g id="bgSteel" class="env-bg" stroke="none" fill="rgba(245, 158, 11, 0.15)" style="display:none;">
@@ -1854,34 +1562,39 @@ function triggerFlash(el) {
              <rect x="370" y="80" width="20" height="320" fill="rgba(245, 158, 11, 0.1)" />
           </g>
 
-          <line id="ropeLoadBg" stroke="#000" stroke-width="10" stroke-linecap="round" />
+          <!-- 💡 戰術雙層黑邊：保證在任何背景下繩索都絕對清晰可見！ -->
+          <line id="ropeLoadBg" stroke="#000000" stroke-width="12" stroke-linecap="round" />
           <line id="ropeLoad" stroke="var(--text)" stroke-width="6" stroke-linecap="round" />
-          <line id="ropeAnchorBg" stroke="#000" stroke-width="10" stroke-linecap="round" />
+          <line id="ropeAnchorBg" stroke="#000000" stroke-width="12" stroke-linecap="round" />
           <line id="ropeAnchor" stroke="var(--tagline)" stroke-width="6" stroke-linecap="round" />
           
           <path id="angleArc" fill="rgba(255, 216, 77, 0.1)" stroke="var(--warn)" stroke-width="2" />
           <text id="angleText" class="mask-text" fill="var(--warn)" font-size="16" font-weight="bold" text-anchor="middle"></text>
 
-          <g id="redirectNode" class="draggable-anchor tactical-shadow"></g>
+          <g id="redirectNode" class="draggable-anchor"></g>
 
           <g id="forceArrowGroup">
              <line id="forceArrowLine" x1="0" y1="0" x2="0" y2="0" stroke="var(--bad)" stroke-width="6" stroke-linecap="round" />
              <polygon id="forceArrowHead" points="0,0 0,0 0,0" fill="var(--bad)" />
           </g>
 
-          <g id="loadGroup" class="tactical-shadow" style="cursor: pointer;">
+          <g id="loadGroup">
+             <!-- 💡 重物加上深色外框與陰影，防止在白紙上消失 -->
+             <circle cx="0" cy="12" r="11" fill="#000" />
+             <rect x="-13" y="23" width="26" height="28" rx="6" fill="#000" />
              <circle cx="0" cy="12" r="10" fill="#e8f5e9" />
              <rect x="-12" y="24" width="24" height="26" rx="5" fill="#e8f5e9" />
              <text x="0" y="42" fill="#0a1410" font-size="14" font-weight="bold" text-anchor="middle" font-family="monospace">W</text>
           </g>
 
-          <g id="anchorGroup" class="draggable-anchor tactical-shadow">
+          <g id="anchorGroup" class="draggable-anchor">
              <g id="distanceIndicator" opacity="0" style="transition: opacity 0.3s ease;">
-                 <line id="distLine" x1="0" y1="0" x2="0" y2="0" stroke="var(--tagline)" stroke-width="2" stroke-dasharray="4 4" opacity="0.6"/>
-                 <text id="distText" x="0" y="0" fill="var(--tagline)" font-size="11" font-weight="bold" text-anchor="middle" class="mask-text" data-i18n="distExt">長距離延伸至地面</text>
+                <line id="distLine" x1="0" y1="0" x2="0" y2="0" stroke="var(--tagline)" stroke-width="2" stroke-dasharray="4 4" opacity="0.6"/>
+                <text id="distText" x="0" y="0" fill="var(--tagline)" font-size="11" font-weight="bold" text-anchor="middle" class="mask-text" data-i18n="distExt">長距離延伸至地面</text>
              </g>
 
              <circle cx="0" cy="0" r="60" fill="transparent" /> 
+             <rect x="-15" y="-21" width="30" height="42" fill="#000" rx="5" />
              <rect x="-14" y="-20" width="28" height="40" fill="#475569" rx="4" id="anchorBox" />
              <path d="M -15 -5 L 15 5 M -15 5 L 15 15" stroke="var(--tagline)" stroke-width="4" stroke-linecap="round" />
              <text y="-25" fill="var(--tagline)" font-size="13" font-weight="bold" text-anchor="middle" pointer-events="none" id="anchorLabel" class="mask-text" data-i18n="groundOp">地面操作</text>
@@ -1889,7 +1602,7 @@ function triggerFlash(el) {
         </svg>
       </div>
 
-      <div class="dashboard capture-hide">
+      <div class="dashboard">
           <div class="dash-box" style="border-top: 3px solid var(--text);">
               <span class="lbl" data-i18n="loadW">負載端 (W)</span>
               <div style="display:flex; align-items:center; gap:2px;">
@@ -1909,13 +1622,15 @@ function triggerFlash(el) {
           <div class="dash-box" id="dashBranch" style="border-top: 3px solid var(--bad);">
               <span class="lbl" style="display:flex; align-items:center; gap:4px;">
                   <span id="lblBranchName">樹幹</span><span data-i18n="codForce">(COD)受力</span>
+                  <button class="capture-hide" onclick="customName()" style="background:transparent; border:1px solid var(--muted); color:var(--muted); border-radius:4px; padding:0px 4px; font-size:10px; cursor:pointer;" title="點擊自訂介質名稱" data-i18n="btnCustom">✏️自訂</button>
               </span>
               <span class="val" id="txtBranchForce" style="color:var(--bad);">-- kg</span>
               <span class="sub" id="txtBranchMult">--</span>
           </div>
       </div>
       
-      <div class="control-deck capture-hide">
+      <!-- 💡 移除了 .capture-hide，截圖時會永久保留操作參數設定，方便未來回顧 -->
+      <div class="control-deck">
          <div class="control-row">
             <div class="btn-group-lbl" style="color:var(--muted);" data-i18n="terrainLabel">🏕️ 模擬地形與環境</div>
             <div class="toggle-group">
@@ -1928,16 +1643,17 @@ function triggerFlash(el) {
          <div class="control-row">
             <div class="btn-group-lbl" style="display:flex; align-items:center; justify-content:center; gap:6px;">
                <span data-i18n="frictionLabel">🛡️ 轉向點 (COD) 摩擦力介質</span>
-               <button onclick="openCustomMediumModal()" style="background:var(--card); border:1px solid var(--warn); color:var(--warn); border-radius:4px; padding:2px 6px; font-size:11px; cursor:pointer;" data-i18n="btnCustom">✏️ 自訂設定</button>
+               <!-- 自訂按鈕保留 capture-hide 避免干擾截圖版面 -->
+               <button class="capture-hide" onclick="customFriction()" style="background:var(--card); border:1px solid var(--warn); color:var(--warn); border-radius:4px; padding:2px 6px; font-size:11px; cursor:pointer;" data-i18n="btnCustom">✏️ 自訂</button>
             </div>
+            <!-- 💡 完美精簡回高空專用的 5 個核心介質 -->
             <div class="toggle-group" style="flex-wrap: wrap;">
-               <button class="toggle-btn active" id="btnFrictionBase" data-type="friction" data-val="0.4" onclick="setFriction(this, 'base')" style="flex: 1 1 calc(33.333% - 6px);">🌳 樹幹直拉</button>
-               <button class="toggle-btn" data-type="friction" data-val="0.6" onclick="setFriction(this, 'carabiner')" style="flex: 1 1 calc(33.333% - 6px);"><span data-i18n="btnFricCara">🪝 鉤環</span><span class="lock-icon">🔒</span></button>
-               <button class="toggle-btn" data-type="friction" data-val="0.95" onclick="setFriction(this, 'pulley')" style="flex: 1 1 calc(33.333% - 6px);"><span data-i18n="btnFricPull">⚙️ 滑輪</span><span class="lock-icon">🔒</span></button>
+               <button class="toggle-btn active" id="btnFrictionBase" data-type="friction" data-val="0.4" onclick="setFriction(this, 'base')" style="flex: 1 1 calc(33% - 6px);">🌳 樹幹直拉</button>
+               <button class="toggle-btn" data-type="friction" data-val="0.6" onclick="setFriction(this, 'carabiner')" style="flex: 1 1 calc(33% - 6px);"><span data-i18n="btnFricCara">🪝 鉤環</span><span class="lock-icon">🔒</span></button>
+               <button class="toggle-btn" data-type="friction" data-val="0.95" onclick="setFriction(this, 'pulley')" style="flex: 1 1 calc(33% - 6px);"><span data-i18n="btnFricPull">⚙️ 滑輪</span><span class="lock-icon">🔒</span></button>
                
-               <button class="toggle-btn" data-type="friction" data-val="0.5" onclick="setFriction(this, 'pad')" style="flex: 1 1 calc(33.333% - 6px); padding: 6px 2px;"><span data-i18n="btnFricPad">🛏️ 鋪墊</span><span class="lock-icon">🔒</span></button>
-               <button class="toggle-btn" data-type="friction" data-val="0.85" onclick="setFriction(this, 'roller')" style="flex: 1 1 calc(33.333% - 6px); padding: 6px 2px;"><span data-i18n="btnFricRoller">🛞 滾輪</span><span class="lock-icon">🔒</span></button>
-               <button class="toggle-btn" id="btnFrictionCustom" data-type="friction" data-val="custom" onclick="setFriction(this, 'custom')" style="flex: 1 1 calc(33.333% - 6px); padding: 6px 2px;">✏️ 自訂<span class="lock-icon">🔒</span></button>
+               <button class="toggle-btn" data-type="friction" data-val="0.5" onclick="setFriction(this, 'pad')" style="flex: 1 1 calc(48% - 6px); padding: 6px 2px;"><span data-i18n="btnFricPad">🛏️ 鋪保護墊</span><span class="lock-icon">🔒</span></button>
+               <button class="toggle-btn" data-type="friction" data-val="0.85" onclick="setFriction(this, 'roller')" style="flex: 1 1 calc(48% - 6px); padding: 6px 2px;"><span data-i18n="btnFricRoller">🛞 護角滾輪</span><span class="lock-icon">🔒</span></button>
             </div>
          </div>
 
@@ -1961,12 +1677,13 @@ function triggerFlash(el) {
          </div>
       </div>
       
-      <div class="edu-wrap capture-hide" id="eduPanel" data-i18n="eduDefault">
-         📍 試著在沙盤中任意拖曳「轉向點」或「地面操作」，對齊照片角度來觀察力量變化。<br><span style='color:var(--safe)'>💡 秘技：雙擊沙盤空白處可一鍵隱藏/喚醒控制台！</span>
+      <div class="edu-wrap" id="eduPanel" data-i18n="eduDefault">
+         📍 試著在沙盤中任意拖曳「轉向點」或「地面操作」，對齊照片角度來觀察力量變化。
       </div>
     </div> 
     
     <div class="menu-list capture-hide">
+      <!-- 選單區域保持不變 -->
       <details class="main-accordion" id="settingsAccordion">
         <summary><div style="display:flex; align-items:center; gap:8px;"><span class="menu-icon">⚙️</span> <span data-i18n="menuSet" style="color: var(--warn);">系統設定與操作指南</span></div></summary>
         <div class="menu-group">
@@ -1974,14 +1691,14 @@ function triggerFlash(el) {
           <div class="menu-action-btn" style="border-bottom: 1px solid rgba(150,150,150,0.1); justify-content: space-between;">
             <div class="menu-header-left"><span class="menu-icon">🌍</span><span data-i18n="menuLang">語言設定 / Language</span></div>
             <select id="langSelect" onchange="changeLang(this.value)" style="background: rgba(255,255,255,0.05); border: 1px solid var(--line); color: var(--text); border-radius: 6px; padding: 4px 8px; font-size: 13px; font-weight: bold; outline: none; cursor: pointer;">
-              <option value="zh">繁體中文</option>
-              <option value="en">English</option>
-              <option value="ja">日本語</option>
-              <option value="ko">한국어</option>
-              <option value="fr">Français</option>
-              <option value="de">Deutsch</option>
-              <option value="es">Español</option>
-              <option value="pt">Português</option>
+              <option value="zh">🇹🇼 繁中</option>
+              <option value="en">🇺🇸 EN</option>
+              <option value="ja">🇯🇵 日本語</option>
+              <option value="ko">🇰🇷 한국어</option>
+              <option value="fr">🇫🇷 Français</option>
+              <option value="de">🇩🇪 Deutsch</option>
+              <option value="es">🇪🇸 Español</option>
+              <option value="pt">🇵🇹 Português</option>
             </select>
           </div>
 
@@ -1995,7 +1712,7 @@ function triggerFlash(el) {
                 <li style="margin-bottom: 6px;" data-i18n="op1">滑動沙盤中的 <b>轉向點</b> 與 <b>地面操作</b>，可自由拖曳對齊 AR 畫面進行推演。</li>
                 <li style="margin-bottom: 6px;" data-i18n="op2">點擊上方 <b>模擬地形與環境</b>，一鍵切換攀樹、鋼架場景或乾淨畫布。</li>
                 <li style="margin-bottom: 6px;" data-i18n="op3">切換 <b>轉向點 (COD) 摩擦力介質</b>，觀察各種實戰介質對操作者負擔的影響。</li>
-                <li style="margin-bottom: 6px;" data-i18n="op4">點擊右上角 <b>✏️自訂設定</b>，可手動設定轉向介質名稱與摩擦係數，並保留於自訂兵牌上。</li>
+                <li style="margin-bottom: 6px;" data-i18n="op4">點擊 <b>✏️自訂</b>，可手動設定轉向介質名稱與摩擦係數。</li>
                 <li style="margin-bottom: 6px;" data-i18n="op5">切換 <b>🕹️系統操作動作</b>，比對靜止、上拉與下放時，摩擦力帶來的截然不同效應。</li>
               </ul>
               <button type="button" class="btn-collapse-inner" onclick="this.closest('details').removeAttribute('open')" data-i18n="collapse">🔼 收起說明</button>
@@ -2057,7 +1774,7 @@ function triggerFlash(el) {
             <div class="menu-content">
               <div style="text-align: center; margin-bottom: 15px;">
                 <span data-i18n="devTitle" style="display:inline-block; background:var(--safe); color:#0a1410; font-weight:bold; padding:4px 14px; border-radius:20px; font-size:13px; letter-spacing:0.5px; box-shadow: 0 2px 6px rgba(74,222,128,0.3);">下方固定點架設儀 專業正式版</span>
-                <div style="font-size: 11px; color: var(--muted); margin-top: 8px; font-family: monospace;">Version 6.9.9</div>
+                <div style="font-size: 11px; color: var(--muted); margin-top: 8px; font-family: monospace;">Version 6.4.0</div>
               </div>
               <p style="margin-top: 0; margin-bottom: 6px; font-weight: bold; color: var(--text); text-align: center;" data-i18n="devTeam">本工具由 <span style="color:var(--warn);">散木團隊</span> 開發製作</p>
               <p style="margin-top: 0; margin-bottom: 4px; font-size: 13px; text-align: center;" data-i18n="devT1">教學架構與工程判斷／徐世豐</p>
@@ -2087,42 +1804,37 @@ function triggerFlash(el) {
       <details class="main-accordion" style="margin-top: 10px;">
         <summary><div style="display:flex; align-items:center; gap:8px;"><span class="menu-icon">☕</span> <span data-i18n="menuSponsor" style="color: var(--warn);">請團隊喝咖啡 / 取得金鑰方式</span></div></summary>
         <div class="menu-group" style="padding: 15px;">
-          <p style="font-size: 13.5px; color: var(--text); margin-top: 0; margin-bottom: 15px; line-height: 1.6; text-align: justify;" data-i18n="spIntro">本工具為散木團隊精心開發。若這套沙盤對您的實務與教學有幫助，歡迎自由隨喜給予我們一點實質鼓勵，這將化為我們開發下一套救援系統的核心動力！</p>
-
-
+          <p style="font-size: 13.5px; color: var(--text); margin-top: 0; margin-bottom: 15px; line-height: 1.6; text-align: justify;">本工具為散木團隊精心開發。若這套沙盤對您的實務與教學有幫助，歡迎自由隨喜給予我們一點實質鼓勵，這將化為我們開發下一套救援系統的核心動力！</p>
           
-        <div style="background: #1c1917; border: 2px solid #b45309; border-radius: 12px; padding: 16px; margin-bottom: 14px; text-align: center; box-shadow: inset 0 0 12px rgba(180,83,9,0.15);">
-            <div style="color: #f59e0b; font-size: 28px; margin-bottom: 4px;">☕</div>
-            <div style="font-size: 15px; font-weight: 900; color: #f2f6f3; margin-bottom: 6px; font-serif-tc;">獲取進階授權金鑰 / 隨喜支持</div>
-            <div style="font-size: 13px; color: #d6d3d1; line-height: 1.6; margin: 0 0 14px; font-weight: normal; text-align: justify;">
-              歡迎使用<b>「台灣在地免海外手續費」</b>全自動領取金鑰密技：<br/><br/>
-              
-              <div style="display: flex; align-items: flex-start; margin-bottom: 10px;">
-                <div style="flex-shrink: 0; font-weight: bold; width: 5.5em; text-align: left;">• 第一步：</div>
-                <div style="flex: 1; text-align: justify;">請先點擊下方按鈕前往「無人咖啡廳」傳送門，透過台灣在地安全金流刷卡隨喜支持（免除海外刷卡手續費）。</div>
-              </div>
-              
-              <div style="display: flex; align-items: flex-start;">
-                <div style="flex-shrink: 0; font-weight: bold; width: 5.5em; text-align: left;">• 第二步：</div>
-                <div style="flex: 1; text-align: justify;">支持完成後，請點擊最下方的「自動販賣機」進入 Gumroad 平台，於購買金額欄位直接填寫 <b>0</b> 元送出，系統就會全自動將授權金鑰寄發到您的信箱囉！</div>
-              </div>
-
+          <!-- 雙軌帳號 -->
+          <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--safe); border-radius: 8px; padding: 12px; margin-bottom: 12px;">
+            <div style="color: var(--safe); font-weight: bold; font-size: 13px; margin-bottom: 8px;">🏦 銀行與郵局轉帳 (可免海外手續費)</div>
+            
+            <div style="background:rgba(255,255,255,0.05); padding:8px; border-radius:6px; margin-bottom:8px;">
+              <div style="font-size: 13px; color: var(--muted); margin-bottom: 4px;">永豐銀行 (代碼 807) • 戶名：吳佩芳</div>
+              <div style="font-size: 18px; color: var(--text); font-family: monospace; letter-spacing: 1px; font-weight: bold; margin-bottom: 8px;" id="bankAccount">20401800252531</div>
+              <button type="button" onclick="window.copyAccount('bankAccount')" style="width: 100%; background: var(--safe); color: #0a1410; border: none; padding: 6px; border-radius: 4px; font-size: 13px; font-weight: bold; cursor: pointer;">📋 複製永豐帳號</button>
             </div>
-            <button type="button" onclick="window.open('https://portaly.cc/wpf610', '_blank')" style="background: linear-gradient(135deg, #b45309, #d97706); color: #fff; border: none; border-radius: 10px; padding: 12px 20px; font-size: 15px; font-weight: bold; width: 100%; cursor: pointer; box-shadow: 0 4px 12px rgba(217,119,6,0.25); transition: all 0.2s;" onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform='scale(1)'">
-              前往無人咖啡廳（免海外手續費） ❤️
-            </button>
+
+            <div style="background:rgba(255,255,255,0.05); padding:8px; border-radius:6px; margin-bottom:8px;">
+              <div style="font-size: 13px; color: var(--muted); margin-bottom: 4px;">中華郵政 (代碼 700) • 戶名：吳佩芳</div>
+              <div style="font-size: 18px; color: var(--text); font-family: monospace; letter-spacing: 1px; font-weight: bold; margin-bottom: 8px;" id="postAccount">24415000144326</div>
+              <button type="button" onclick="window.copyAccount('postAccount')" style="width: 100%; background: var(--safe); color: #0a1410; border: none; padding: 6px; border-radius: 4px; font-size: 13px; font-weight: bold; cursor: pointer;">📋 複製郵局帳號</button>
+            </div>
+
+            <div style="font-size: 12.5px; color: var(--warn); margin-bottom: 4px; line-height: 1.5;">
+              💡 匯款後請直接到下方自動販賣機領取金鑰 (費用填 0 元即可)<br>
+              <span style="color: var(--text);">✏️ 提醒：請在匯款備註欄填寫 APP 名稱</span>
+            </div>
           </div>
 
-
-
-
-
+          <!-- 自動販賣機 -->
           <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--line); border-radius: 8px; padding: 12px;">
             <div style="text-align: left; margin-bottom: 12px;">
-              <div style="color: var(--text); font-weight: bold; font-size: 13px; margin-bottom: 4px;" data-i18n="spStoreTitle">🛒 專業版自動販賣機 (支援刷卡)</div>
-              <div style="font-size: 12px; color: var(--muted);" data-i18n="spStoreSub">熟悉的販賣機！支援 Apple Pay 與信用卡</div>
+              <div style="color: var(--text); font-weight: bold; font-size: 13px; margin-bottom: 4px;">🛒 專業版自動販賣機 (支援刷卡)</div>
+              <div style="font-size: 12px; color: var(--muted);">熟悉的販賣機！支援 Apple Pay 與信用卡</div>
             </div>
-            <button type="button" onclick="window.open('https://fang5761.gumroad.com/l/redirect-simulator', '_blank')" style="width: 100%; background: var(--line); color: var(--text); border: none; padding: 10px; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer;" data-i18n="spStoreBtn">前往自動販賣機 🛒</button>
+            <button type="button" onclick="window.open('https://fang5761.gumroad.com/l/redirect-simulator', '_blank')" style="width: 100%; background: var(--line); color: var(--text); border: none; padding: 10px; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer;">前往自動販賣機 🛒</button>
           </div>
           
           <button type="button" class="btn-collapse-inner" onclick="const p = this.closest('details'); if(p) p.removeAttribute('open');" data-i18n="collapse">🔼 收起說明</button>
@@ -2344,7 +2056,7 @@ function verifyVip() {
     errorMsg.innerHTML = '❌ 授權碼錯誤！若需領取新密碼請 <a href="https://fang5761.gumroad.com/l/redirect-simulator" target="_blank" style="color:var(--safe); text-decoration:underline;">按此前往</a>';
 }
 
-// AR 系統與控制台引擎
+// 💡 AR 系統與控制台引擎 (加入上下左右影像位移)
 let stream = null, videoTrack = null, torchOn = false; 
 const mediaContainer = document.getElementById('media-container');
 const whiteOverlay = document.getElementById('white-paper-overlay');
@@ -2352,19 +2064,18 @@ const video = document.getElementById('bg-video');
 const image = document.getElementById('bg-image');
 const cameraControls = document.getElementById('cameraControls');
 const btnCamera = document.getElementById('btn-camera'), btnFlashlight = document.getElementById('btn-flashlight'), gridOverlay = document.getElementById('grid-overlay'); 
-let gridVisible = false;
+let gridVisible = true;
+
+// 影像變形狀態管理
+let panX = 0, panY = 0, zoom = 1;
+function updateMediaTransform() {
+    mediaContainer.style.transform = `translate(${panX}%, ${panY}%) scale(${zoom})`;
+}
 
 document.getElementById('sliderWhite').addEventListener('input', (e) => { whiteOverlay.style.opacity = e.target.value; });
-document.getElementById('sliderZoom').addEventListener('input', (e) => { mediaContainer.style.transform = `scale(${e.target.value})`; });
-
-// 💡 繩粗微調滑桿的事件監聽
-document.getElementById('sliderRope').addEventListener('input', (e) => {
-    let w = parseInt(e.target.value);
-    els.ropeLoad.setAttribute('stroke-width', w);
-    els.ropeAnchor.setAttribute('stroke-width', w);
-    els.ropeLoadBg.setAttribute('stroke-width', w + 4);
-    els.ropeAnchorBg.setAttribute('stroke-width', w + 4);
-});
+document.getElementById('sliderZoom').addEventListener('input', (e) => { zoom = e.target.value; updateMediaTransform(); });
+document.getElementById('sliderX').addEventListener('input', (e) => { panX = e.target.value; updateMediaTransform(); });
+document.getElementById('sliderY').addEventListener('input', (e) => { panY = e.target.value; updateMediaTransform(); });
 
 document.getElementById('camCtrlToggle').addEventListener('click', (e) => {
     const body = document.getElementById('camCtrlBody');
@@ -2381,19 +2092,14 @@ let isDraggingCtrl = false, ctrlStartX, ctrlStartY, ctrlInitialLeft, ctrlInitial
 const ctrlHeader = document.getElementById('camCtrlHeader');
 
 const startCtrlDrag = (e) => {
-    if (e.target.id === 'camCtrlToggle' || e.target.tagName.toLowerCase() === 'input') return; 
+    if (e.target.id === 'camCtrlToggle') return; 
     isDraggingCtrl = true;
     ctrlStartX = e.touches ? e.touches[0].clientX : e.clientX;
     ctrlStartY = e.touches ? e.touches[0].clientY : e.clientY;
     
-    const rect = cameraControls.getBoundingClientRect();
-    ctrlInitialLeft = rect.left;
-    ctrlInitialTop = rect.top;
-    
-    // 拔除底部錨點鎖定，防止像口香糖一樣被拉長
-    cameraControls.style.bottom = 'auto';
-    cameraControls.style.top = ctrlInitialTop + 'px';
-    cameraControls.style.left = ctrlInitialLeft + 'px';
+    const style = window.getComputedStyle(cameraControls);
+    ctrlInitialLeft = parseInt(style.left, 10) || 0;
+    ctrlInitialTop = parseInt(style.top, 10) || 0;
     
     if (e.cancelable) e.preventDefault();
 };
@@ -2417,95 +2123,20 @@ window.addEventListener('touchmove', doCtrlDrag, {passive: false});
 window.addEventListener('mouseup', stopCtrlDrag);
 window.addEventListener('touchend', stopCtrlDrag);
 
-// 雙指縮放 (Pinch-to-Zoom) 捷徑功能
-let initialPinchDistance = null;
-let initialPinchZoom = 1;
-
-window.addEventListener('touchstart', (e) => {
-    if (e.touches && e.touches.length === 2) {
-        const dx = e.touches[0].clientX - e.touches[1].clientX;
-        const dy = e.touches[0].clientY - e.touches[1].clientY;
-        initialPinchDistance = Math.hypot(dx, dy);
-        initialPinchZoom = parseFloat(document.getElementById('sliderZoom').value) || 1;
-    }
-}, {passive: false});
-
-window.addEventListener('touchmove', (e) => {
-    if (e.touches && e.touches.length === 2 && initialPinchDistance) {
-        if (e.cancelable) e.preventDefault();
-        const dx = e.touches[0].clientX - e.touches[1].clientX;
-        const dy = e.touches[0].clientY - e.touches[1].clientY;
-        const currentDistance = Math.hypot(dx, dy);
-        
-        const scale = currentDistance / initialPinchDistance;
-        let newZoom = initialPinchZoom * scale;
-        newZoom = Math.max(1, Math.min(3, newZoom)); 
-        
-        document.getElementById('sliderZoom').value = newZoom.toFixed(2);
-        document.getElementById('media-container').style.transform = `scale(${newZoom})`;
-    }
-}, {passive: false});
-
-window.addEventListener('touchend', (e) => {
-    if (e.touches && e.touches.length < 2) {
-        initialPinchDistance = null;
-    }
-});
-
-const floatTools = document.getElementById('floating-tools');
-const floatDragHandle = document.getElementById('float-drag-handle');
-let isDraggingFloat = false, floatStartX, floatStartY, floatTranslateX = 0, floatTranslateY = 0, currentFloatX = 0, currentFloatY = 0;
-
-const startFloatDrag = (e) => {
-    isDraggingFloat = true;
-    floatStartX = e.touches ? e.touches[0].clientX : e.clientX;
-    floatStartY = e.touches ? e.touches[0].clientY : e.clientY;
-    if (e.cancelable) e.preventDefault();
-};
-
-const doFloatDrag = (e) => {
-    if(!isDraggingFloat) return;
-    let currentX = e.touches ? e.touches[0].clientX : e.clientX;
-    let currentY = e.touches ? e.touches[0].clientY : e.clientY;
-    let dx = currentX - floatStartX;
-    let dy = currentY - floatStartY;
-    currentFloatX = floatTranslateX + dx;
-    currentFloatY = floatTranslateY + dy;
-    floatTools.style.transform = `translate(${currentFloatX}px, ${currentFloatY}px)`;
-};
-
-const stopFloatDrag = () => {
-    if(isDraggingFloat) {
-        floatTranslateX = currentFloatX;
-        floatTranslateY = currentFloatY;
-        isDraggingFloat = false;
-    }
-};
-
-floatDragHandle.addEventListener('mousedown', startFloatDrag);
-floatDragHandle.addEventListener('touchstart', startFloatDrag, {passive: false});
-window.addEventListener('mousemove', doFloatDrag);
-window.addEventListener('touchmove', doFloatDrag, {passive: false});
-window.addEventListener('mouseup', stopFloatDrag);
-window.addEventListener('touchend', stopFloatDrag);
-
 function resetCameraControls() {
     document.getElementById('sliderWhite').value = 0.2;
     document.getElementById('sliderZoom').value = 1;
+    document.getElementById('sliderX').value = 0;
+    document.getElementById('sliderY').value = 0;
+    whiteOverlay.style.opacity = 0.2; 
+    panX = 0; panY = 0; zoom = 1;
+    updateMediaTransform();
     
-    // 💡 徹底解決灰灰濛濛：只有在真正啟用相機或相簿時，才給予白紙透明度，否則強制歸零
-    whiteOverlay.style.opacity = document.body.classList.contains('camera-mode') ? 0.2 : 0; 
-    
-    mediaContainer.style.transform = 'scale(1)';
     cameraControls.style.display = 'none';
-    cameraControls.style.position = 'fixed';
-    
-    cameraControls.style.left = '15px';
-    cameraControls.style.top = 'auto';
-    cameraControls.style.bottom = 'max(30px, calc(env(safe-area-inset-bottom) + 30px))';
-    
-    document.getElementById('camCtrlBody').style.display = 'none';
-    document.getElementById('camCtrlToggle').textContent = '▶';
+    cameraControls.style.left = '10px';
+    cameraControls.style.top = '10px';
+    document.getElementById('camCtrlBody').style.display = 'flex';
+    document.getElementById('camCtrlToggle').textContent = '▼';
 }
 
 async function toggleCamera() { 
@@ -2513,9 +2144,7 @@ async function toggleCamera() {
     stream.getTracks().forEach(track => track.stop()); stream = null; videoTrack = null; 
     video.style.opacity = "0"; btnCamera.classList.remove('active'); 
     torchOn = false; btnFlashlight.classList.remove('active');
-    document.getElementById('mainCard').classList.remove('camera-mode'); 
-    document.body.classList.remove('camera-mode');
-    document.documentElement.classList.remove('camera-mode');
+    mainCard.classList.remove('camera-mode'); document.body.classList.remove('camera-mode');
     resetCameraControls();
   } else { 
     try { 
@@ -2524,9 +2153,7 @@ async function toggleCamera() {
       stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }); 
       videoTrack = stream.getVideoTracks()[0];
       video.srcObject = stream; video.style.opacity = "1"; btnCamera.classList.add('active'); 
-      document.getElementById('mainCard').classList.add('camera-mode'); 
-      document.body.classList.add('camera-mode');
-      document.documentElement.classList.add('camera-mode');
+      mainCard.classList.add('camera-mode'); document.body.classList.add('camera-mode');
       
       resetCameraControls();
       cameraControls.style.display = 'flex';
@@ -2570,9 +2197,8 @@ function clearPhotoOverlay() {
     document.getElementById('upload-image').value = ""; 
     btnPhoto.classList.remove('active'); 
     if (!stream) {
-        document.getElementById('mainCard').classList.remove('camera-mode');
+        mainCard.classList.remove('camera-mode');
         document.body.classList.remove('camera-mode');
-        document.documentElement.classList.remove('camera-mode');
         resetCameraControls();
     }
 }
@@ -2584,9 +2210,7 @@ function loadImage(event) {
     const reader = new FileReader(); 
     reader.onload = function(e) { 
       image.src = e.target.result; image.style.opacity = "1"; 
-      document.getElementById('mainCard').classList.add('camera-mode'); 
-      document.body.classList.add('camera-mode');
-      document.documentElement.classList.add('camera-mode');
+      mainCard.classList.add('camera-mode'); document.body.classList.add('camera-mode');
       document.querySelector('label[title="載入照片"]').classList.add('active');
       
       resetCameraControls();
@@ -2594,156 +2218,98 @@ function loadImage(event) {
     }; reader.readAsDataURL(file); 
   } 
 }
-function toggleGrid() { gridVisible = !gridVisible; gridOverlay.style.opacity = gridVisible ? "0.15" : "0"; }
+function toggleGrid() { gridVisible = !gridVisible; gridOverlay.style.opacity = gridVisible ? "0.5" : "0"; }
 
-// 💡 截圖引擎核心修正：雙層融合截圖法 + 友軍工程師完美座標換算法
-async function doTakeScreenshot(isTransparent) {
-  document.getElementById('shotFormatModal').style.display = 'none';
+// 💡 截圖引擎升級：導入防卡死專屬預覽視窗
+async function takeScreenshot() {
   const target = document.body;
-  const scrollWrap = document.getElementById('scroll-wrapper');
-  
-  if (scrollWrap) scrollWrap.scrollTop = 0;
-  
-  const bgLayer = document.getElementById('bg-layer');
-  const gridLayer = document.getElementById('grid-overlay');
-  bgLayer.style.display = 'none';
-  gridLayer.style.display = 'none';
-  
-  document.documentElement.classList.add('taking-screenshot');
-  target.classList.add('taking-screenshot');
-  if (isTransparent) { target.classList.add('capture-transparent'); }
+  target.classList.add('capture-mode');
   
   const inputs = target.querySelectorAll('input[type="number"]'); 
   const placeholders = [];
   
+  const wrapper = document.getElementById('scroll-wrapper');
+  const oldBodyH = target.style.height;
+  const oldBodyOv = target.style.overflow;
+  const oldWrapH = wrapper.style.height;
+  const oldWrapOv = wrapper.style.overflow;
+  const oldWrapPos = wrapper.style.position;
+
+  target.style.height = 'auto';
+  target.style.overflow = 'visible';
+  wrapper.style.height = 'auto';
+  wrapper.style.overflow = 'visible';
+  wrapper.style.position = 'relative';
+
   inputs.forEach(inp => {
-      if(inp.closest('[data-html2canvas-ignore]')) return;
+      if(inp.closest('.capture-hide') || inp.closest('[data-html2canvas-ignore]')) return;
       const span = document.createElement('span');
       span.textContent = inp.value;
       span.style.color = 'var(--text)'; span.style.fontSize = '18px'; span.style.fontWeight = 'bold'; span.style.fontFamily = 'monospace'; span.style.margin = '0 2px';
       inp.style.display = 'none'; inp.parentNode.insertBefore(span, inp); placeholders.push({ span, inp });
   });
   
-  await new Promise(r => setTimeout(r, 150));
+  window.scrollTo(0, 0); 
+  await new Promise(r => setTimeout(r, 100));
+  
+  let tempCanvas = null;
+  if (stream && videoTrack && video.style.opacity === "1") {
+      tempCanvas = document.createElement('canvas');
+      tempCanvas.width = video.videoWidth;
+      tempCanvas.height = video.videoHeight;
+      tempCanvas.style.position = 'absolute';
+      tempCanvas.style.top = '0';
+      tempCanvas.style.left = '0';
+      tempCanvas.style.width = '100%';
+      tempCanvas.style.height = '100%';
+      tempCanvas.style.objectFit = 'cover';
+      tempCanvas.style.zIndex = '-1';
+      
+      const ctx = tempCanvas.getContext('2d');
+      const px = (panX / 100) * tempCanvas.width;
+      const py = (panY / 100) * tempCanvas.height;
+      
+      ctx.translate(tempCanvas.width/2 + px, tempCanvas.height/2 + py);
+      ctx.scale(zoom, zoom);
+      ctx.translate(-tempCanvas.width/2, -tempCanvas.height/2);
+      ctx.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
+      document.getElementById('media-container').appendChild(tempCanvas);
+      video.style.opacity = '0';
+  }
 
   try {
-    const uiCanvas = await html2canvas(document.body, { 
-        backgroundColor: null, 
+    const canvas = await html2canvas(target, { 
+        backgroundColor: document.body.classList.contains('camera-mode') ? '#0a1410' : '#0a1410', 
         scale: 2, 
-        useCORS: true,
-        windowWidth: window.innerWidth,
-        ignoreElements: (el) => {
-            if (el.hasAttribute('data-html2canvas-ignore')) return true;
-            if (el.classList && el.classList.contains('menu-list')) return true;
-            return false;
-        }
+        useCORS: true, 
+        ignoreElements: (el) => el.hasAttribute('data-html2canvas-ignore') || el.classList.contains('capture-hide') 
     });
-
-    const finalCanvas = document.createElement('canvas');
-    finalCanvas.width = uiCanvas.width;
-    finalCanvas.height = uiCanvas.height;
-    const ctx = finalCanvas.getContext('2d');
-
-    if (!isTransparent) {
-        ctx.fillStyle = '#0a1410';
-        ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
-
-        const videoEl = document.getElementById('bg-video');
-        const imageEl = document.getElementById('bg-image');
-        const zoom = parseFloat(document.getElementById('sliderZoom').value) || 1;
-        const canvasScale = finalCanvas.width / window.innerWidth;
-
-        function drawMedia(el, rawW, rawH) {
-            if (!rawW || !rawH) return;
-            let srcW = rawW, srcH = rawH;
-            let rotate = false;
-            const isPortrait = window.innerHeight > window.innerWidth;
-            
-            if (el.tagName === 'VIDEO' && isPortrait && rawW > rawH) {
-                srcW = rawH; 
-                srcH = rawW;
-                rotate = true;
-            }
-
-            const screenW = window.innerWidth;
-            const screenH = window.innerHeight;
-            const sX = screenW / srcW;
-            const sY = screenH / srcH;
-            const coverScale = Math.max(sX, sY) * zoom;
-            
-            const drawW = srcW * coverScale;
-            const drawH = srcH * coverScale;
-            const dX = (screenW - drawW) / 2;
-            const dY = (screenH - drawH) / 2;
-
-            ctx.save();
-            if (rotate) {
-                ctx.translate(finalCanvas.width / 2, finalCanvas.height / 2);
-                ctx.rotate(90 * Math.PI / 180);
-                ctx.drawImage(el,
-                    -(srcH * coverScale * canvasScale) / 2,
-                    -(srcW * coverScale * canvasScale) / 2,
-                    srcH * coverScale * canvasScale,
-                    srcW * coverScale * canvasScale
-                );
-            } else {
-                ctx.drawImage(el,
-                    dX * canvasScale,
-                    dY * canvasScale,
-                    drawW * canvasScale,
-                    drawH * canvasScale
-                );
-            }
-            ctx.restore();
-        }
-
-        if (videoEl.style.opacity === "1" && stream && videoTrack) {
-            drawMedia(videoEl, videoEl.videoWidth, videoEl.videoHeight);
-        } else if (imageEl.style.opacity === "1" && imageEl.src) {
-            drawMedia(imageEl, imageEl.naturalWidth, imageEl.naturalHeight);
-        }
-
-        const whiteOp = parseFloat(document.getElementById('sliderWhite').value) || 0;
-        if (whiteOp > 0) {
-            ctx.fillStyle = `rgba(255, 255, 255, ${whiteOp})`;
-            ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
-        }
-
-        if (gridVisible) {
-            ctx.strokeStyle = 'rgba(19, 42, 27, 0.15)';
-            ctx.lineWidth = 1 * canvasScale;
-            const gridSize = 20 * canvasScale;
-            ctx.beginPath();
-            for(let x = 0; x <= finalCanvas.width; x += gridSize) { ctx.moveTo(x, 0); ctx.lineTo(x, finalCanvas.height); }
-            for(let y = 0; y <= finalCanvas.height; y += gridSize) { ctx.moveTo(0, y); ctx.lineTo(finalCanvas.width, y); }
-            ctx.stroke();
-        }
-    }
-
-    ctx.drawImage(uiCanvas, 0, 0);
     
-    document.getElementById('shotPreviewImg').src = finalCanvas.toDataURL('image/png');
-    document.getElementById('shotPreviewImg').parentElement.style.background = isTransparent ? 'repeating-conic-gradient(#333 0% 25%, #222 0% 50%) 50% / 20px 20px' : '#000';
-    document.getElementById('shotModal').style.display = 'flex';
-    
+    // 💡 放棄強制跳轉下載 (解決 iOS PWA 死胡同問題)，改為彈出專屬視窗
+    const dataUrl = canvas.toDataURL('image/png'); 
+    document.getElementById('screenshotPreview').src = dataUrl;
+    document.getElementById('screenshotModal').style.display = 'flex';
+
   } catch(e) { 
       showToast("❌ 截圖失敗，請稍後再試！", "bad"); 
   }
   
-  bgLayer.style.display = '';
-  gridLayer.style.display = '';
+  if (tempCanvas) { tempCanvas.remove(); video.style.opacity = '1'; }
   placeholders.forEach(p => { p.inp.style.display = ''; p.span.remove(); }); 
+  target.classList.remove('capture-mode');
   
-  target.classList.remove('taking-screenshot');
-  document.documentElement.classList.remove('taking-screenshot');
-  target.classList.remove('capture-transparent');
+  target.style.height = oldBodyH;
+  target.style.overflow = oldBodyOv;
+  wrapper.style.height = oldWrapH;
+  wrapper.style.overflow = oldWrapOv;
+  wrapper.style.position = oldWrapPos;
 }
 
 const svgEl = document.getElementById('canvas');
 const inLoad = document.getElementById('inLoad');
 const els = {
-  ropeLoadBg: document.getElementById('ropeLoadBg'), ropeLoad: document.getElementById('ropeLoad'), 
-  ropeAnchorBg: document.getElementById('ropeAnchorBg'), ropeAnchor: document.getElementById('ropeAnchor'),
+  ropeLoadBg: document.getElementById('ropeLoadBg'), ropeAnchorBg: document.getElementById('ropeAnchorBg'), // 新增黑邊控制
+  ropeLoad: document.getElementById('ropeLoad'), ropeAnchor: document.getElementById('ropeAnchor'),
   redirectNode: document.getElementById('redirectNode'), loadGroup: document.getElementById('loadGroup'),
   anchorGroup: document.getElementById('anchorGroup'), anchorBox: document.getElementById('anchorBox'), anchorLabel: document.getElementById('anchorLabel'),
   angleArc: document.getElementById('angleArc'), angleText: document.getElementById('angleText'),
@@ -2756,7 +2322,7 @@ const els = {
   distanceIndicator: document.getElementById('distanceIndicator'), distLine: document.getElementById('distLine'), distText: document.getElementById('distText'),
   buildingScene: document.getElementById('buildingScene'), buildingPath: document.getElementById('buildingPath'), parapetPath: document.getElementById('parapetPath'),
   lblRoof: document.getElementById('lblRoof'), lblWall: document.getElementById('lblWall'), lblParapet: document.getElementById('lblParapet'),
-  bgTree: document.getElementById('bgTree'), svgWrap: document.getElementById('svgWrap')
+  bgTree: document.getElementById('bgTree')
 };
 
 let P = { x: 120, y: 80 }; 
@@ -2775,10 +2341,8 @@ let currentMode = 'base';
 let currentAction = 'static';
 let currentMA = 1; 
 let lastShapeData = '';
-let customMedium = { name: "自訂", friction: 0.5 };
 
 function getSceneName() {
-    if (currentMode === 'custom') return customMedium.name;
     if (scenes[currentScene].customName) return scenes[currentScene].customName;
     return t(scenes[currentScene].i18nKey);
 }
@@ -2788,7 +2352,8 @@ function setScene(btn, sceneKey) {
     btn.classList.add('active');
     currentScene = sceneKey;
     
-    if (currentMode === 'pad' || currentMode === 'roller' || currentMode === 'custom') {
+    // 防呆：如果是高空專用介質，跳回樹或鋼架時重置為直拉
+    if (currentMode === 'pad' || currentMode === 'roller') {
         currentMode = 'base';
         document.querySelectorAll('.toggle-btn[data-type="friction"]').forEach(b => b.classList.remove('active'));
         document.getElementById('btnFrictionBase').classList.add('active');
@@ -2805,29 +2370,54 @@ function setScene(btn, sceneKey) {
     els.btnFrictionBase.innerHTML = `${scenes[sceneKey].icon} ${getSceneName()}${t('directPull')}`;
     els.btnFrictionBase.dataset.val = scenes[sceneKey].friction;
 
-    if (currentMode === 'base') { currentE = scenes[sceneKey].friction; }
+    if (currentMode === 'base') {
+        currentE = scenes[sceneKey].friction;
+    }
     
     lastShapeData = ''; 
     updateEngine();
 }
 
-function openCustomMediumModal() {
-    document.getElementById('customMedName').value = customMedium.name === "自訂" ? "" : customMedium.name;
-    document.getElementById('customMedFric').value = customMedium.friction;
-    document.getElementById('customMediumModal').style.display = 'flex';
-    setTimeout(() => document.getElementById('customMedName').focus(), 100);
+function customName() {
+    document.getElementById('nameInput').value = getSceneName();
+    document.getElementById('nameModal').style.display = 'flex';
+    setTimeout(() => document.getElementById('nameInput').focus(), 100);
 }
 
-function confirmCustomMedium() {
-    let n = document.getElementById('customMedName').value.trim() || t('btnCustom').replace('✏️ ', '');
-    let f = parseFloat(document.getElementById('customMedFric').value);
-    if (!isNaN(f) && f > 0 && f <= 1) {
-        customMedium.name = n;
-        customMedium.friction = f;
-        document.getElementById('btnFrictionCustom').innerHTML = `✏️ ${n}<span class="lock-icon">🔒</span>`;
-        setFriction(document.getElementById('btnFrictionCustom'), 'custom');
-        document.getElementById('customMediumModal').style.display = 'none';
-        showToast(`✏️ 介質已設定為：${n} (${f})`, "safe");
+function confirmCustomName() {
+    let newName = document.getElementById('nameInput').value.trim();
+    if (newName !== "") {
+        scenes[currentScene].customName = newName;
+        els.lblBranchName.textContent = newName;
+        els.btnFrictionBase.innerHTML = `${scenes[currentScene].icon} ${newName}${t('directPull')}`;
+        updateEngine();
+        showToast(`✏️ ${t('nameUpdated')} ${newName}`, "safe");
+    }
+    document.getElementById('nameModal').style.display = 'none';
+}
+
+function customFriction() {
+    document.getElementById('frictionInput').value = currentE;
+    document.getElementById('frictionModal').style.display = 'flex';
+    setTimeout(() => document.getElementById('frictionInput').focus(), 100);
+}
+
+function confirmCustomFriction() {
+    let newE = parseFloat(document.getElementById('frictionInput').value);
+    if (!isNaN(newE) && newE > 0 && newE <= 1) {
+        currentE = newE;
+        document.querySelectorAll('.toggle-btn[data-type="friction"]').forEach(b => b.classList.remove('active'));
+        showToast(`✏️ ${t('fricUpdated')} ${currentE}`, "safe");
+        
+        if (currentAction === 'static') {
+            const haulBtn = document.querySelector('.toggle-btn[data-type="action"][data-val="haul"]');
+            document.querySelectorAll('.toggle-btn[data-type="action"]').forEach(b => b.classList.remove('active'));
+            haulBtn.classList.add('active');
+            currentAction = 'haul';
+            document.getElementById('maRow').style.display = 'flex';
+        }
+        updateEngine();
+        document.getElementById('frictionModal').style.display = 'none';
     } else {
         showToast(t('fricInvalid'), "bad");
     }
@@ -2837,15 +2427,10 @@ function setFriction(btn, mode) {
     const doSet = () => {
         document.querySelectorAll('.toggle-btn[data-type="friction"]').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
+        currentE = parseFloat(btn.dataset.val);
         currentMode = mode;
         
-        if (mode === 'custom') {
-            currentE = customMedium.friction;
-        } else {
-            currentE = parseFloat(btn.dataset.val);
-        }
-        
-        const specialMediums = { 'pad': true, 'roller': true, 'custom': true };
+        const specialMediums = { 'pad': true, 'roller': true };
         
         if (specialMediums[mode]) {
             document.querySelectorAll('.toggle-btn[data-type="scene"]').forEach(b => b.classList.remove('active'));
@@ -2871,8 +2456,6 @@ function setFriction(btn, mode) {
         }
         lastShapeData = ''; 
         updateEngine();
-        triggerFlash(els.txtAnchorTension);
-        triggerFlash(els.txtBranchForce);
     };
     if (mode !== 'base') attemptFeature('featFric', doSet); else doSet();
 }
@@ -2890,8 +2473,6 @@ function setAction(btn) {
         }
         
         updateEngine();
-        triggerFlash(els.txtAnchorTension);
-        triggerFlash(els.txtBranchForce);
     };
     if (btn.dataset.val !== 'static') attemptFeature('featAction', doSet); else doSet();
 }
@@ -2901,8 +2482,6 @@ function setMA(btn) {
     btn.classList.add('active');
     currentMA = parseInt(btn.dataset.val);
     updateEngine();
-    triggerFlash(els.txtAnchorTension);
-    triggerFlash(els.txtBranchForce);
 }
 
 function renderRedirectNode() {
@@ -2930,9 +2509,6 @@ function renderRedirectNode() {
                  <circle cx="-10" cy="-1" r="6" fill="#1e293b" />
                  <circle cx="10" cy="-1" r="6" fill="#1e293b" />
                  <circle cx="0" cy="0" r="4" fill="#0a1410" />`;
-    } else if (currentMode === 'custom') {
-        html += `<polygon points="0,-12 10,-6 10,6 0,12 -10,6 -10,-6" fill="var(--safe)" stroke="#0a1410" stroke-width="2" />
-                 <circle cx="0" cy="0" r="3" fill="#0a1410" />`;
     }
     
     els.redirectNode.innerHTML = html;
@@ -2973,131 +2549,209 @@ function updateEngine() {
     
     let vForceL = { x: vecL.x * W, y: vecL.y * W };
     let vForceA = { x: vecA.x * T_rope_to_anchor, y: vecA.y * T_rope_to_anchor };
-    let vecForce = { x: vForceL.x + vForceA.x, y: vForceL.y + vForceA.y }; 
-    let Force = Math.hypot(vecForce.x, vecForce.y); 
+    
+    let vecForce = { x: vForceL.x + vForceA.x, y: vForceL.y + vForceA.y };
+    let Force = Math.hypot(vecForce.x, vecForce.y);
     let multiplier = Force / W;
     
-    let dirForce = { x: 0, y: 0 }; 
+    let dirForce = { x: 0, y: 0 };
     if(Force > 0) { dirForce.x = vecForce.x / Force; dirForce.y = vecForce.y / Force; }
     
-    renderRedirectNode(); 
+    renderRedirectNode();
     els.redirectNode.setAttribute('transform', `translate(${P.x}, ${P.y})`);
     
-    let loadY = P.y + 160; if (loadY > 340) loadY = 340; if (loadY < P.y + 55) loadY = P.y + 55; 
+    // 💡 重物繩索智慧伸縮引擎：防止 W 掉出畫面或疊在一起
+    let loadY = Math.max(P.y + 55, Math.min(340, P.y + 160)); 
     let loadPt = { x: P.x, y: loadY };
     
-    els.ropeLoadBg.setAttribute('x1', P.x); els.ropeLoadBg.setAttribute('y1', P.y); els.ropeLoadBg.setAttribute('x2', loadPt.x); els.ropeLoadBg.setAttribute('y2', loadPt.y);
-    els.ropeLoad.setAttribute('x1', P.x); els.ropeLoad.setAttribute('y1', P.y); els.ropeLoad.setAttribute('x2', loadPt.x); els.ropeLoad.setAttribute('y2', loadPt.y);
+    // 💡 雙層黑邊繩索：確保在全白相片上也完美清晰
+    els.ropeLoadBg.setAttribute('x1', P.x); els.ropeLoadBg.setAttribute('y1', P.y);
+    els.ropeLoadBg.setAttribute('x2', loadPt.x); els.ropeLoadBg.setAttribute('y2', loadPt.y);
+    els.ropeLoad.setAttribute('x1', P.x); els.ropeLoad.setAttribute('y1', P.y);
+    els.ropeLoad.setAttribute('x2', loadPt.x); els.ropeLoad.setAttribute('y2', loadPt.y);
+    
     els.loadGroup.setAttribute('transform', `translate(${loadPt.x}, ${loadPt.y})`);
     
-    els.ropeAnchorBg.setAttribute('x1', P.x); els.ropeAnchorBg.setAttribute('y1', P.y); els.ropeAnchorBg.setAttribute('x2', A.x); els.ropeAnchorBg.setAttribute('y2', A.y);
-    els.ropeAnchor.setAttribute('x1', P.x); els.ropeAnchor.setAttribute('y1', P.y); els.ropeAnchor.setAttribute('x2', A.x); els.ropeAnchor.setAttribute('y2', A.y);
+    els.ropeAnchorBg.setAttribute('x1', P.x); els.ropeAnchorBg.setAttribute('y1', P.y);
+    els.ropeAnchorBg.setAttribute('x2', A.x); els.ropeAnchorBg.setAttribute('y2', A.y);
+    els.ropeAnchor.setAttribute('x1', P.x); els.ropeAnchor.setAttribute('y1', P.y);
+    els.ropeAnchor.setAttribute('x2', A.x); els.ropeAnchor.setAttribute('y2', A.y);
+    
     els.anchorGroup.setAttribute('transform', `translate(${A.x}, ${A.y})`);
     
-    if (currentMode === 'pad' || currentMode === 'roller' || currentMode === 'custom') {
+    // 動態建築演算核心
+    if (currentMode === 'pad' || currentMode === 'roller') {
         if (els.buildingScene) els.buildingScene.style.display = 'block';
-        let isLeft = A.x < P.x; let floorY = Math.max(A.y, P.y); let parapetY = P.y; let pWidth = 35;
+        let isLeft = A.x < P.x;
+        let floorY = Math.max(A.y, P.y); 
+        let parapetY = P.y;
+        let pWidth = 35; // 女兒牆厚度
+
         if (isLeft) {
-            let body = `M -200,600 L -200,${floorY} L ${P.x - pWidth},${floorY} L ${P.x - pWidth},600 Z`; let para = `M ${P.x - pWidth},${floorY} L ${P.x - pWidth},${parapetY} L ${P.x},${parapetY} L ${P.x},600 L ${P.x - pWidth},600 Z`;
-            if (els.buildingPath) els.buildingPath.setAttribute('d', body); if (els.parapetPath) els.parapetPath.setAttribute('d', para);
-            if (els.lblRoof) { els.lblRoof.setAttribute('transform', `translate(${P.x - pWidth - 30}, ${floorY + 25})`); els.lblRoof.setAttribute('text-anchor', 'end'); }
-            if (els.lblWall) { els.lblWall.setAttribute('transform', `translate(${P.x + 20}, ${parapetY + 60}) rotate(90)`); els.lblWall.setAttribute('text-anchor', 'start'); }
-            if (els.lblParapet) { if (floorY - parapetY > 40) { els.lblParapet.setAttribute('transform', `translate(${P.x - pWidth/2}, ${parapetY + (floorY - parapetY)/2}) rotate(90)`); els.lblParapet.style.display = 'block'; } else { els.lblParapet.style.display = 'none'; } }
+            let body = `M -2000,2000 L -2000,${floorY} L ${P.x - pWidth},${floorY} L ${P.x - pWidth},2000 Z`;
+            let para = `M ${P.x - pWidth},${floorY} L ${P.x - pWidth},${parapetY} L ${P.x},${parapetY} L ${P.x},2000 L ${P.x - pWidth},2000 Z`;
+            
+            if (els.buildingPath) els.buildingPath.setAttribute('d', body);
+            if (els.parapetPath) els.parapetPath.setAttribute('d', para);
+
+            if (els.lblRoof) {
+                els.lblRoof.setAttribute('transform', `translate(${P.x - pWidth - 30}, ${floorY + 25})`);
+                els.lblRoof.setAttribute('text-anchor', 'end');
+            }
+            if (els.lblWall) {
+                els.lblWall.setAttribute('transform', `translate(${P.x + 20}, ${parapetY + 60}) rotate(90)`);
+                els.lblWall.setAttribute('text-anchor', 'start');
+            }
+            if (els.lblParapet) {
+                if (floorY - parapetY > 40) {
+                    els.lblParapet.setAttribute('transform', `translate(${P.x - pWidth/2}, ${parapetY + (floorY - parapetY)/2}) rotate(90)`);
+                    els.lblParapet.style.display = 'block';
+                } else { els.lblParapet.style.display = 'none'; }
+            }
         } else {
-            let body = `M 600,600 L 600,${floorY} L ${P.x + pWidth},${floorY} L ${P.x + pWidth},600 Z`; let para = `M ${P.x + pWidth},${floorY} L ${P.x + pWidth},${parapetY} L ${P.x},${parapetY} L ${P.x},600 L ${P.x + pWidth},600 Z`;
-            if (els.buildingPath) els.buildingPath.setAttribute('d', body); if (els.parapetPath) els.parapetPath.setAttribute('d', para);
-            if (els.lblRoof) { els.lblRoof.setAttribute('transform', `translate(${P.x + pWidth + 30}, ${floorY + 25})`); els.lblRoof.setAttribute('text-anchor', 'start'); }
-            if (els.lblWall) { els.lblWall.setAttribute('transform', `translate(${P.x - 20}, ${parapetY + 60}) rotate(-90)`); els.lblWall.setAttribute('text-anchor', 'start'); }
-            if (els.lblParapet) { if (floorY - parapetY > 40) { els.lblParapet.setAttribute('transform', `translate(${P.x + pWidth/2}, ${parapetY + (floorY - parapetY)/2}) rotate(-90)`); els.lblParapet.style.display = 'block'; } else { els.lblParapet.style.display = 'none'; } }
+            let body = `M 2000,2000 L 2000,${floorY} L ${P.x + pWidth},${floorY} L ${P.x + pWidth},2000 Z`;
+            let para = `M ${P.x + pWidth},${floorY} L ${P.x + pWidth},${parapetY} L ${P.x},${parapetY} L ${P.x},2000 L ${P.x + pWidth},2000 Z`;
+            
+            if (els.buildingPath) els.buildingPath.setAttribute('d', body);
+            if (els.parapetPath) els.parapetPath.setAttribute('d', para);
+
+            if (els.lblRoof) {
+                els.lblRoof.setAttribute('transform', `translate(${P.x + pWidth + 30}, ${floorY + 25})`);
+                els.lblRoof.setAttribute('text-anchor', 'start');
+            }
+            if (els.lblWall) {
+                els.lblWall.setAttribute('transform', `translate(${P.x - 20}, ${parapetY + 60}) rotate(-90)`);
+                els.lblWall.setAttribute('text-anchor', 'start');
+            }
+            if (els.lblParapet) {
+                if (floorY - parapetY > 40) {
+                    els.lblParapet.setAttribute('transform', `translate(${P.x + pWidth/2}, ${parapetY + (floorY - parapetY)/2}) rotate(-90)`);
+                    els.lblParapet.style.display = 'block';
+                } else { els.lblParapet.style.display = 'none'; }
+            }
         }
-    } else { if (els.buildingScene) els.buildingScene.style.display = 'none'; }
+    } else {
+        if (els.buildingScene) els.buildingScene.style.display = 'none';
+    }
 
-    if (currentScene === 'tree') { let isRight = A.x >= P.x; let scaleX = isRight ? 1 : -1; els.bgTree.setAttribute('transform', `translate(${P.x}, ${P.y}) scale(${scaleX}, 1)`); } else { els.bgTree.removeAttribute('transform'); }
+    // 💡 樹木動態追蹤與智慧左右翻轉 (精準對齊樹枝與轉向點)
+    if (currentScene === 'tree') {
+        let isLeft = A.x < P.x;
+        let scaleX = isLeft ? -1 : 1;
+        // 💡 將樹的 (0,0) 交界處完美貼合轉向點 (P.x, P.y)
+        els.bgTree.setAttribute('transform', `translate(${P.x}, ${P.y}) scale(${scaleX}, 1)`);
+    } else {
+        els.bgTree.removeAttribute('transform');
+    }
 
-    let angleL = Math.PI / 2; let angleA = Math.atan2(vecA.y, vecA.x); if(angleA < 0) angleA += 2 * Math.PI;
+    let angleL = Math.PI / 2; 
+    let angleA = Math.atan2(vecA.y, vecA.x);
+    if(angleA < 0) angleA += 2 * Math.PI;
+    
     let startAng = Math.min(angleL, angleA); let endAng = Math.max(angleL, angleA);
     if (endAng - startAng > Math.PI) { startAng = Math.max(angleL, angleA); endAng = Math.min(angleL, angleA) + 2*Math.PI; }
     els.angleArc.setAttribute("d", describeArc(P.x, P.y, 40, startAng, endAng));
-    let midAng = (startAng + endAng) / 2; els.angleText.textContent = `θ ${thetaDeg.toFixed(0)}°`; els.angleText.setAttribute('x', P.x + 70 * Math.cos(midAng)); els.angleText.setAttribute('y', P.y + 70 * Math.sin(midAng) + 6);
     
-    let arrowLen = 30 + multiplier * 15; let arrowEnd = { x: P.x + dirForce.x * arrowLen, y: P.y + dirForce.y * arrowLen };
-    els.forceArrowLine.setAttribute('x1', P.x); els.forceArrowLine.setAttribute('y1', P.y); els.forceArrowLine.setAttribute('x2', arrowEnd.x); els.forceArrowLine.setAttribute('y2', arrowEnd.y);
-    let headAng = Math.atan2(dirForce.y, dirForce.x); 
-    let h1 = { x: arrowEnd.x - 12 * Math.cos(headAng - 0.5), y: arrowEnd.y - 12 * Math.sin(headAng - 0.5) }; 
+    let midAng = (startAng + endAng) / 2;
+    els.angleText.textContent = `θ ${thetaDeg.toFixed(0)}°`;
+    els.angleText.setAttribute('x', P.x + 70 * Math.cos(midAng)); 
+    els.angleText.setAttribute('y', P.y + 70 * Math.sin(midAng) + 6);
+    
+    let arrowLen = 30 + multiplier * 15; 
+    let arrowEnd = { x: P.x + dirForce.x * arrowLen, y: P.y + dirForce.y * arrowLen };
+    els.forceArrowLine.setAttribute('x1', P.x); els.forceArrowLine.setAttribute('y1', P.y);
+    els.forceArrowLine.setAttribute('x2', arrowEnd.x); els.forceArrowLine.setAttribute('y2', arrowEnd.y);
+    
+    let headAng = Math.atan2(dirForce.y, dirForce.x);
+    let h1 = { x: arrowEnd.x - 12 * Math.cos(headAng - 0.5), y: arrowEnd.y - 12 * Math.sin(headAng - 0.5) };
     let h2 = { x: arrowEnd.x - 12 * Math.cos(headAng + 0.5), y: arrowEnd.y - 12 * Math.sin(headAng + 0.5) };
     els.forceArrowHead.setAttribute('points', `${arrowEnd.x},${arrowEnd.y} ${h1.x},${h1.y} ${h2.x},${h2.y}`);
     
     if (A.y < P.y + 150 && currentAction !== 'static') {
-        els.distanceIndicator.style.opacity = '1'; els.distLine.setAttribute('x1', 0); els.distLine.setAttribute('y1', 25); els.distLine.setAttribute('x2', 0); els.distLine.setAttribute('y2', 400 - A.y + 50); els.distText.setAttribute('x', 0); els.distText.setAttribute('y', 40);
-    } else { els.distanceIndicator.style.opacity = '0'; }
+        els.distanceIndicator.style.opacity = '1';
+        els.distLine.setAttribute('x1', 0); els.distLine.setAttribute('y1', 25);
+        els.distLine.setAttribute('x2', 0); els.distLine.setAttribute('y2', 2000); 
+        els.distText.setAttribute('x', 0); els.distText.setAttribute('y', 40);
+    } else {
+        els.distanceIndicator.style.opacity = '0';
+    }
 
-    let eduText = ""; let eduColor = "var(--safe)"; let eduBg = "rgba(74, 222, 128, 0.1)";
-    let mName = getSceneName(); let mIcon = scenes[currentScene].icon;
+    let eduText = "";
+    let eduColor = "var(--safe)";
+    let eduBg = "rgba(10, 20, 16, 0.85)"; // 💡 固定深色玻璃背板
+    
+    let mName = getSceneName();
+    let mIcon = scenes[currentScene].icon;
 
     if (currentMode === 'carabiner') { mName = t('btnFricCara').replace(/🪝\s*/, ''); mIcon = '🪝'; }
     else if (currentMode === 'pulley') { mName = t('btnFricPull').replace(/⚙️\s*/, ''); mIcon = '⚙️'; }
     else if (currentMode === 'pad') { mName = t('btnFricPad').replace(/🛏️\s*/, ''); mIcon = '🛏️'; }
     else if (currentMode === 'roller') { mName = t('btnFricRoller').replace(/🛞\s*/, ''); mIcon = '🛞'; }
-    else if (currentMode === 'custom') { mName = customMedium.name; mIcon = '✏️'; }
-    els.lblBranchName.textContent = mName;
-
+    
     if (currentAction === 'static') {
-        eduText = t('edu_static').replace('{T}', T_operator_pull.toFixed(0)); eduColor = "var(--text)"; eduBg = "rgba(255,255,255,0.05)";
+        eduText = t('edu_static').replace('{T}', T_operator_pull.toFixed(0));
+        eduColor = "var(--text)";
     } else if (currentAction === 'haul') {
-        if (currentE < 0.6) { eduText = `${mIcon}` + t('edu_haul_base').replace(/{name}/g, mName).replace('{ma}', currentMA).replace('{T}', T_operator_pull.toFixed(0)); eduColor = "var(--bad)"; eduBg = "rgba(239, 68, 68, 0.15)";
-        } else if (currentE >= 0.6 && currentE < 0.9) { eduText = `${mIcon}` + t('edu_haul_cara').replace(/{name}/g, mName).replace('{ma}', currentMA).replace('{T}', T_operator_pull.toFixed(0)); eduColor = "var(--warn)"; eduBg = "rgba(251, 191, 36, 0.15)";
-        } else { eduText = `${mIcon}` + t('edu_haul_pull').replace(/{name}/g, mName).replace('{ma}', currentMA).replace('{T}', T_operator_pull.toFixed(0)); eduColor = "var(--safe)"; eduBg = "rgba(74, 222, 128, 0.15)"; }
+        if (currentE < 0.6) {
+            eduText = `${mIcon}` + t('edu_haul_base').replace(/{name}/g, mName).replace('{ma}', currentMA).replace('{T}', T_operator_pull.toFixed(0));
+            eduColor = "var(--bad)";
+        } else if (currentE >= 0.6 && currentE < 0.9) {
+            eduText = `${mIcon}` + t('edu_haul_cara').replace(/{name}/g, mName).replace('{ma}', currentMA).replace('{T}', T_operator_pull.toFixed(0));
+            eduColor = "var(--warn)";
+        } else {
+            eduText = `${mIcon}` + t('edu_haul_pull').replace(/{name}/g, mName).replace('{ma}', currentMA).replace('{T}', T_operator_pull.toFixed(0));
+            eduColor = "var(--safe)";
+        }
     } else if (currentAction === 'lower') {
-        if (currentE < 0.6) { eduText = `${mIcon}` + t('edu_low_base').replace(/{name}/g, mName).replace('{ma}', currentMA).replace('{T}', T_operator_pull.toFixed(0));
-        } else if (currentE >= 0.6 && currentE < 0.9) { eduText = `${mIcon}` + t('edu_low_cara').replace(/{name}/g, mName).replace('{ma}', currentMA).replace('{T}', T_operator_pull.toFixed(0));
-        } else { eduText = `${mIcon}` + t('edu_low_pull').replace(/{name}/g, mName).replace('{ma}', currentMA).replace('{T}', T_operator_pull.toFixed(0)); eduColor = "var(--bad)"; eduBg = "rgba(239, 68, 68, 0.15)"; }
+        if (currentE < 0.6) {
+            eduText = `${mIcon}` + t('edu_low_base').replace(/{name}/g, mName).replace('{ma}', currentMA).replace('{T}', T_operator_pull.toFixed(0));
+        } else if (currentE >= 0.6 && currentE < 0.9) {
+            eduText = `${mIcon}` + t('edu_low_cara').replace(/{name}/g, mName).replace('{ma}', currentMA).replace('{T}', T_operator_pull.toFixed(0));
+        } else {
+            eduText = `${mIcon}` + t('edu_low_pull').replace(/{name}/g, mName).replace('{ma}', currentMA).replace('{T}', T_operator_pull.toFixed(0));
+            eduColor = "var(--bad)";
+        }
     }
 
-    if (thetaDeg < 60 && multiplier >= 2) { eduText += t('edu_warning').replace(/{name}/g, mName); eduColor = "var(--bad)"; eduBg = "rgba(239, 68, 68, 0.15)"; }
+    if (thetaDeg < 60 && multiplier >= 2) {
+        eduText += t('edu_warning').replace(/{name}/g, mName);
+        eduColor = "var(--bad)";
+    }
 
-    els.eduPanel.innerHTML = eduText; els.eduPanel.style.borderColor = eduColor; els.eduPanel.style.background = eduBg;
+    els.eduPanel.innerHTML = eduText;
+    els.eduPanel.style.borderColor = eduColor;
+    els.eduPanel.style.background = eduBg;
 
     let forceColor = "var(--safe)";
-    if (multiplier >= 2.5) forceColor = "var(--bad)"; else if (multiplier >= 1.8) forceColor = "var(--warn)";
+    if (multiplier >= 2.5) forceColor = "var(--bad)";
+    else if (multiplier >= 1.8) forceColor = "var(--warn)";
     
-    els.forceArrowLine.setAttribute('stroke', forceColor); els.forceArrowHead.setAttribute('fill', forceColor);
-    els.txtAnchorTension.textContent = `${T_operator_pull.toFixed(0)} kg`; els.txtAnchorMult.textContent = t('multLabel').replace('{m}', (T_operator_pull/W).toFixed(1));
-    els.txtBranchForce.textContent = `${Force.toFixed(0)} kg`; els.txtBranchForce.style.color = forceColor; els.txtBranchMult.textContent = t('multLabel').replace('{m}', multiplier.toFixed(1));
+    els.forceArrowLine.setAttribute('stroke', forceColor);
+    els.forceArrowHead.setAttribute('fill', forceColor);
+    
+    els.txtAnchorTension.textContent = `${T_operator_pull.toFixed(0)} kg`;
+    els.txtAnchorMult.textContent = t('multLabel').replace('{m}', (T_operator_pull/W).toFixed(1));
+    
+    els.txtBranchForce.textContent = `${Force.toFixed(0)} kg`;
+    els.txtBranchForce.style.color = forceColor;
+    els.txtBranchMult.textContent = t('multLabel').replace('{m}', multiplier.toFixed(1));
     els.dashBranch.style.borderTopColor = forceColor;
 }
 
 inLoad.addEventListener('input', updateEngine);
 
 let pt = svgEl.createSVGPoint();
-function getSVGPos(e) { 
-    pt.x = e.touches ? e.touches[0].clientX : e.clientX; 
-    pt.y = e.touches ? e.touches[0].clientY : e.clientY; 
-    return pt.matrixTransform(svgEl.getScreenCTM().inverse()); 
-}
+function getSVGPos(e) { pt.x = e.touches ? e.touches[0].clientX : e.clientX; pt.y = e.touches ? e.touches[0].clientY : e.clientY; return pt.matrixTransform(svgEl.getScreenCTM().inverse()); }
 
 let isDragging = false;
 let draggingNode = null; 
 
-function fadeTools(fade) {
-    const ft = document.getElementById('floating-tools');
-    if (ft && !document.body.classList.contains('capture-mode')) {
-        ft.style.opacity = fade ? '0.2' : '1';
-        ft.style.pointerEvents = fade ? 'none' : 'auto';
-    }
-}
-
-function startDragA(e) { 
-    draggingNode = 'A'; isDragging = true; fadeTools(true);
-    if(e.type === 'touchstart' && e.cancelable) { e.preventDefault(); } 
-}
-els.anchorGroup.addEventListener('mousedown', startDragA); 
+function startDragA(e) { draggingNode = 'A'; isDragging = true; if(e.type === 'touchstart' && e.cancelable) { e.preventDefault(); } }
+els.anchorGroup.addEventListener('mousedown', startDragA);
 els.anchorGroup.addEventListener('touchstart', startDragA, {passive: false});
 
-function startDragP(e) { 
-    draggingNode = 'P'; isDragging = true; fadeTools(true);
-    if(e.type === 'touchstart' && e.cancelable) { e.preventDefault(); } 
-}
-els.redirectNode.addEventListener('mousedown', startDragP); 
+function startDragP(e) { draggingNode = 'P'; isDragging = true; if(e.type === 'touchstart' && e.cancelable) { e.preventDefault(); } }
+els.redirectNode.addEventListener('mousedown', startDragP);
 els.redirectNode.addEventListener('touchstart', startDragP, {passive: false});
 
 function processDrag(e) {
@@ -3106,70 +2760,26 @@ function processDrag(e) {
   let pos = getSVGPos(e);
   if (!pos || isNaN(pos.x) || isNaN(pos.y)) return; 
   
+  // 💡 加入地板物理極限 (Y=360)，防止操作員鑽入地底，同時確保節點不越界
   if (draggingNode === 'A') { 
       A.x = Math.max(-100, Math.min(500, pos.x)); 
-      A.y = Math.max(-50, Math.min(380, pos.y)); 
+      A.y = Math.max(-50, Math.min(360, pos.y)); 
   } 
   else if (draggingNode === 'P') { 
       P.x = Math.max(-100, Math.min(500, pos.x)); 
-      P.y = Math.max(-50, Math.min(380, pos.y)); 
+      P.y = Math.max(-50, Math.min(360, pos.y)); 
   }
   updateEngine();
 }
 
 window.addEventListener('touchmove', processDrag, {passive: false});
 window.addEventListener('mousemove', processDrag);
-window.addEventListener('touchend', () => { isDragging = false; fadeTools(false); });
-window.addEventListener('mouseup', () => { isDragging = false; fadeTools(false); });
-
-function toggleCaptureMode() {
-    document.body.classList.toggle('capture-mode');
-    showToast(document.body.classList.contains('capture-mode') ? t('toastModeHide') : t('toastModeShow'), "safe");
-}
-
-let lastTapTime = 0;
-document.addEventListener('pointerdown', (e) => {
-    if (e.target.closest('button, input, label, select, details, summary, .draggable-anchor, .icon-btn, .toggle-btn, .primary-btn, #cameraControls, #floating-tools')) { return; }
-    const now = Date.now();
-    if (now - lastTapTime < 300) { toggleCaptureMode(); lastTapTime = 0; } else { lastTapTime = now; }
-});
-
-let loadHoldTimer = null;
-function startLoadHold(e) {
-    if(e.cancelable) e.preventDefault();
-    loadHoldTimer = setTimeout(() => {
-        document.getElementById('loadInput').value = inLoad.value; 
-        document.getElementById('loadModal').style.display = 'flex';
-        setTimeout(() => document.getElementById('loadInput').focus(), 100);
-    }, 600);
-}
-function clearLoadHold() { if(loadHoldTimer) clearTimeout(loadHoldTimer); }
-els.loadGroup.addEventListener('touchstart', startLoadHold, {passive: false}); 
-els.loadGroup.addEventListener('touchend', clearLoadHold);
-els.loadGroup.addEventListener('touchmove', clearLoadHold); 
-els.loadGroup.addEventListener('mousedown', startLoadHold);
-els.loadGroup.addEventListener('mouseup', clearLoadHold); 
-els.loadGroup.addEventListener('mouseleave', clearLoadHold);
-
-function confirmLoadChange() {
-    let newW = parseFloat(document.getElementById('loadInput').value);
-    if(!isNaN(newW) && newW > 0) {
-        inLoad.value = newW; updateEngine(); showToast(`⚖️ 負載已更新為 ${newW} kg`, "safe");
-        triggerFlash(els.txtAnchorTension); triggerFlash(els.txtBranchForce);
-    }
-    document.getElementById('loadModal').style.display = 'none';
-}
+window.addEventListener('touchend', () => isDragging = false);
+window.addEventListener('mouseup', () => isDragging = false);
 
 function resetEngine() {
   P = { x: 120, y: 80 }; 
-  A = { x: 300, y: 340 }; 
-  let sliderRope = document.getElementById('sliderRope');
-  if(sliderRope) { 
-      els.ropeLoad.setAttribute('stroke-width', sliderRope.value); 
-      els.ropeAnchor.setAttribute('stroke-width', sliderRope.value); 
-      els.ropeLoadBg.setAttribute('stroke-width', parseInt(sliderRope.value) + 4); 
-      els.ropeAnchorBg.setAttribute('stroke-width', parseInt(sliderRope.value) + 4); 
-  }
+  A = { x: 340, y: 360 }; 
   inLoad.value = 100;
   setScene(document.querySelector('.toggle-btn[data-type="scene"][data-val="tree"]'), 'tree');
   document.querySelector('.toggle-btn[data-type="action"][data-val="static"]').click();
@@ -3179,46 +2789,52 @@ setTimeout(() => { applyTranslations(); resetEngine(); }, 100);
 
 let deferredPrompt;
 window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
+    e.preventDefault(); deferredPrompt = e;
     const installBtn = document.getElementById('installAppBtn');
-    if(installBtn) {
+    if (installBtn) {
         installBtn.style.display = 'block';
         installBtn.addEventListener('click', async () => {
-            installBtn.style.display = 'none';
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            deferredPrompt = null;
+            if (deferredPrompt) { deferredPrompt.prompt(); const { outcome } = await deferredPrompt.userChoice; if (outcome === 'accepted') installBtn.style.display = 'none'; deferredPrompt = null; }
         });
     }
 });
 
+if ('serviceWorker' in navigator && ['http:', 'https:'].includes(window.location.protocol)) {
+  window.addEventListener('load', () => {
+    try {
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => { reg.update(); })
+        .catch(err => console.warn('Service Worker 註冊失敗:', err));
+    } catch(err) {
+      console.error('Service Worker 錯誤:', err);
+    }
+  });
+}
+
 function checkForUpdates() {
-    showToast("🔄 檢查更新中...", "safe");
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then(function(registrations) {
-          for(let registration of registrations) {
-            registration.unregister();
-          }
-        }).then(() => {
-            caches.keys().then((keyList) => {
-              return Promise.all(keyList.map((key) => { return caches.delete(key); }));
-            }).then(() => {
-                setTimeout(() => { window.location.reload(true); }, 1000);
-            });
-        });
-    } else {
-        setTimeout(() => { window.location.href = window.location.href.split('?')[0] + '?v=' + new Date().getTime(); }, 1000);
+    if (confirm(t('updateMsg'))) {
+        const wrapper = document.getElementById('scroll-wrapper');
+        if (wrapper) wrapper.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        showToast("🔄 系統更新中，為您重新載入...", "warn");
+        if ('caches' in window) {
+          caches.keys().then((names) => {
+            names.forEach(name => caches.delete(name));
+          });
+        }
+        setTimeout(() => {
+            window.location.href = window.location.href.split('?')[0] + '?v=' + new Date().getTime(); 
+        }, 1000);
     }
 }
 
 const shareBtnAction = document.getElementById('shareBtnAction');
 if(shareBtnAction) {
     shareBtnAction.addEventListener('click', async () => {
-      const shareData = { title: t('appTitle'), text: t('shareText'), url: window.location.href };
+      const shareData = { title: '轉向點受力分析儀', text: '推薦這套散木團隊專屬的黑科技！結合實境相機與動態摩擦力引擎，快來試試！', url: window.location.href };
       try {
         if (navigator.share) { await navigator.share(shareData); } 
-        else { const dummy = document.createElement('input'); document.body.appendChild(dummy); dummy.value = window.location.href; dummy.select(); document.execCommand('copy'); document.body.removeChild(dummy); showToast(t('toastShare'), 'safe'); }
+        else { const dummy = document.createElement('input'); document.body.appendChild(dummy); dummy.value = window.location.href; dummy.select(); document.execCommand('copy'); document.body.removeChild(dummy); showToast('🔗 網址已複製，您可以貼上分享給其他人囉！', 'safe'); }
       } catch (err) { }
     });
 }
@@ -3231,15 +2847,11 @@ menuGroups.forEach(group => {
       if (this.open) {
         group.classList.add('has-open-item');
         items.forEach(other => { if (other !== this && other.open) other.removeAttribute('open'); });
-        setTimeout(() => { this.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 300);
-      } else {
-        const anyOpen = Array.from(items).some(i => i.open);
-        if (!anyOpen) group.classList.remove('has-open-item');
-      }
+        setTimeout(() => { this.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 50);
+      } else { const anyOpen = Array.from(items).some(i => i.open); if (!anyOpen) group.classList.remove('has-open-item'); }
     });
   });
 });
-
 </script>
 </body>
 </html>
