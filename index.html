@@ -1692,7 +1692,7 @@ function triggerFlash(el) {
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="12" r="1.5"></circle><circle cx="9" cy="5" r="1.5"></circle><circle cx="9" cy="19" r="1.5"></circle><circle cx="15" cy="12" r="1.5"></circle><circle cx="15" cy="5" r="1.5"></circle><circle cx="15" cy="19" r="1.5"></circle></svg>
     </div>
     <button class="icon-btn" onclick="attemptFeature('featCam', toggleCamera)" style="background: rgba(0,0,0,0.6); border: 1px solid var(--safe); box-shadow: 0 4px 12px rgba(0,0,0,0.5); width: 48px; height: 48px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 20px;">📷</button>
-    <button class="icon-btn" onclick="attemptFeature('featShot', () => { document.getElementById('shotFormatModal').style.display='flex'; })" style="background: rgba(0,0,0,0.6); border: 1px solid var(--safe); box-shadow: 0 4px 12px rgba(0,0,0,0.5); width: 48px; height: 48px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 20px;">📸</button>
+    <button class="icon-btn" onclick="attemptFeature('featShot', () => { doTakeScreenshot(false); })" style="background: rgba(0,0,0,0.6); border: 1px solid var(--safe); box-shadow: 0 4px 12px rgba(0,0,0,0.5); width: 48px; height: 48px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 20px;">📸</button>
 </div>
 
 <div id="bg-layer">
@@ -1820,7 +1820,7 @@ function triggerFlash(el) {
         <label class="icon-btn" id="btn-photo" onclick="handleImageUploadClick(event)" title="載入照片" style="margin:0;">📁<span class="lock-icon">🔒</span></label>
         <input type="file" id="upload-image" accept="image/*" onchange="loadImage(event)">
         <button class="icon-btn" onclick="toggleGrid()" title="工程網格">🌐</button>
-        <button class="icon-btn" onclick="attemptFeature('featShot', () => { document.getElementById('shotFormatModal').style.display='flex'; })" title="戰術截圖">📸<span class="lock-icon">🔒</span></button>
+        <button class="icon-btn" onclick="attemptFeature('featShot', () => { doTakeScreenshot(false); })" title="戰術截圖">📸<span class="lock-icon">🔒</span></button>
         <button class="icon-btn" onclick="resetEngine()" title="重置沙盤">↺</button>
       </div>
 
@@ -1881,7 +1881,7 @@ function triggerFlash(el) {
                  <text id="distText" x="0" y="0" fill="var(--tagline)" font-size="11" font-weight="bold" text-anchor="middle" class="mask-text" data-i18n="distExt">長距離延伸至地面</text>
              </g>
 
-             <circle cx="0" cy="0" r="60" fill="transparent" /> 
+             <circle cx="0" cy="0" r="90" fill="transparent" /> 
              <rect x="-14" y="-20" width="28" height="40" fill="#475569" rx="4" id="anchorBox" />
              <path d="M -15 -5 L 15 5 M -15 5 L 15 15" stroke="var(--tagline)" stroke-width="4" stroke-linecap="round" />
              <text y="-25" fill="var(--tagline)" font-size="13" font-weight="bold" text-anchor="middle" pointer-events="none" id="anchorLabel" class="mask-text" data-i18n="groundOp">地面操作</text>
@@ -2910,7 +2910,7 @@ function renderRedirectNode() {
     if (lastShapeData === currentShapeData) return; 
     lastShapeData = currentShapeData;
     
-    let html = `<circle cx="0" cy="0" r="60" fill="transparent" />`;
+    let html = `<circle cx="0" cy="0" r="90" fill="transparent" />`;
     let c = scenes[currentScene].color;
     
     if (currentMode === 'base') {
