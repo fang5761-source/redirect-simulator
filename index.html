@@ -2658,6 +2658,8 @@ async function doTakeScreenshot(isTransparent) {
                 rotate = true;
             }
 
+            // 💡 修正：用 window.innerWidth/Height 計算 cover scale（與相機模式顯示一致），
+            //    但繪製時以 finalCanvas 實際尺寸為準，確保背景與 UI 完全對齊無偏移。
             const screenW = window.innerWidth;
             const screenH = window.innerHeight;
             const sX = screenW / srcW;
@@ -2666,8 +2668,9 @@ async function doTakeScreenshot(isTransparent) {
             
             const drawW = srcW * coverScale;
             const drawH = srcH * coverScale;
-            const dX = (screenW - drawW) / 2;
-            const dY = (screenH - drawH) / 2;
+            // 以 finalCanvas 中心為基準置中，不再用 screenW/H 偏移
+            const dX = (finalCanvas.width / canvasScale - drawW) / 2;
+            const dY = (finalCanvas.height / canvasScale - drawH) / 2;
 
             ctx.save();
             if (rotate) {
