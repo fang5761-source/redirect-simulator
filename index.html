@@ -2637,12 +2637,11 @@ async function doTakeScreenshot(isTransparent) {
     // canvasScale：html2canvas scale=2，所以 uiCanvas.width = window.innerWidth * 2
     const canvasScale = uiCanvas.width / window.innerWidth;
 
-    // safeAreaTop：iPhone 瀏海高度（env(safe-area-inset-top)），
-    // app-container 的 padding-top 就是這個值 + 10px，
-    // 背景圖畫在 window 座標系，UI 卻從 safeAreaTop 開始，需要補正才能對齊。
-    const safeAreaTop = parseInt(
-        getComputedStyle(document.documentElement).getPropertyValue('--sat') || '0'
-    ) || (window.screen.height - window.innerHeight > 100 ? 44 : 0);
+    // safeAreaTop：直接讀取 #status-bar-protector 的實際高度
+    // 這個元素的 CSS 高度正好是 env(safe-area-inset-top)，是最可靠的讀法。
+    // 安卓無瀏海時為 0，iPhone 通常為 44~59px。
+    const satEl = document.getElementById('status-bar-protector');
+    const safeAreaTop = satEl ? satEl.offsetHeight : 0;
 
     // 截圖寬度 = 螢幕寬度
     const shotW = Math.round(window.innerWidth * canvasScale);
@@ -2689,7 +2688,11 @@ async function doTakeScreenshot(isTransparent) {
             const drawW = srcW * coverScale;
             const drawH = srcH * coverScale;
             const dX = (screenW - drawW) / 2;
-            const dY = (screenH - drawH) / 2;
+            // dY 加上 safeAreaTop 補正：
+            // 背景圖的座標系從 window 頂部(y=0) 開始，
+            // 但 html2canvas 截到的 UI 從瀏海下方才開始，
+            // 所以背景圖要往上偏移 safeAreaTop 才能與 UI 對齊。
+            const dY = (screenH - drawH) / 2 - safeAreaTop;
 
             ctx.save();
             if (rotate) {
