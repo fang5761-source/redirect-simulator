@@ -2682,24 +2682,34 @@ async function doTakeScreenshot(isTransparent) {
                 rotate = true;
             }
 
-            const screenW = window.innerWidth;
-            // 背景圖 CSS: position:fixed; top:0; height:100% → 含瀏海的完整螢幕高度
-            // coverScale 用完整高度計算，確保 zoom/cover 與畫面顯示一致
-            const fullH = window.innerHeight + safeAreaTop;
-            const sX = screenW / srcW;
-            const sY = fullH / srcH;
+            // ── 直接讀取 #bg-layer 在 viewport 上的實際顯示位置 ──
+            // 不再猜 safeAreaTop 的影響，直接用瀏覽器告訴我們的真實座標。
+            // #bg-layer 是 position:fixed; top:0; left:0; width:100%; height:100%
+            // 它的 getBoundingClientRect() 就是背景層實際佔據的像素範圍。
+            const bgLayer = document.getElementById('bg-layer');
+            const bgRect = bgLayer ? bgLayer.getBoundingClientRect() : {
+                left: 0, top: 0,
+                width: window.innerWidth, height: window.innerHeight
+            };
+
+            const containerW = bgRect.width;
+            const containerH = bgRect.height;
+
+            const sX = containerW / srcW;
+            const sY = containerH / srcH;
             const coverScale = Math.max(sX, sY) * zoom;
 
             const drawW = srcW * coverScale;
             const drawH = srcH * coverScale;
-            const dX = (screenW - drawW) / 2;
-            // 背景圖從螢幕頂端(y=0,含瀏海)置中，但 html2canvas 的 body y=0 在瀏海下方
-            // 所以背景圖在 canvas 上要往下移 safeAreaTop，才能與 UI 對齊
-            const dY = (fullH - drawH) / 2 + safeAreaTop;
+            // 在 bg-layer 範圍內置中
+            const dX = bgRect.left + (containerW - drawW) / 2;
+            const dY = bgRect.top  + (containerH - drawH) / 2;
 
             ctx.save();
             if (rotate) {
-                ctx.translate(finalCanvas.width / 2, finalCanvas.height / 2);
+                const cx = (bgRect.left + bgRect.left + containerW) / 2 * canvasScale;
+                const cy = (bgRect.top  + bgRect.top  + containerH) / 2 * canvasScale;
+                ctx.translate(cx, cy);
                 ctx.rotate(90 * Math.PI / 180);
                 ctx.drawImage(el,
                     -(srcH * coverScale * canvasScale) / 2,
