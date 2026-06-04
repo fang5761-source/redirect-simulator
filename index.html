@@ -2683,17 +2683,19 @@ async function doTakeScreenshot(isTransparent) {
             }
 
             const screenW = window.innerWidth;
-            // 背景圖 CSS position:fixed;top:0;height:100% 從螢幕最頂端(含瀏海)開始
-            // 實測：sat=49, innerH=693 → screenH 必須 = 742 才能與背景圖顯示完全一致
-            const screenH = window.innerHeight + safeAreaTop;
+            // 背景圖 CSS: position:fixed; top:0; height:100% → 含瀏海的完整螢幕高度
+            // coverScale 用完整高度計算，確保 zoom/cover 與畫面顯示一致
+            const fullH = window.innerHeight + safeAreaTop;
             const sX = screenW / srcW;
-            const sY = screenH / srcH;
+            const sY = fullH / srcH;
             const coverScale = Math.max(sX, sY) * zoom;
 
             const drawW = srcW * coverScale;
             const drawH = srcH * coverScale;
             const dX = (screenW - drawW) / 2;
-            const dY = (screenH - drawH) / 2;
+            // 背景圖從螢幕頂端(y=0,含瀏海)置中，但 html2canvas 的 body y=0 在瀏海下方
+            // 所以背景圖在 canvas 上要往下移 safeAreaTop，才能與 UI 對齊
+            const dY = (fullH - drawH) / 2 + safeAreaTop;
 
             ctx.save();
             if (rotate) {
