@@ -28,6 +28,7 @@
 
   :root{
     --bg: #0a1410;
+    --sat: env(safe-area-inset-top, 0px);
     --card: rgba(15, 30, 22, 0.85);
     --line: #183624;
     --grid: #132a1b;
@@ -2632,14 +2633,31 @@ async function doTakeScreenshot(isTransparent) {
         }
     });
 
-    // 💡 核心修正：以螢幕視窗大小裁切，背景與 UI 兩層都對齊同一個基準
+    // ── 計算截圖範圍 ──────────────────────────────────────────────
+    // canvasScale：html2canvas scale=2，所以 uiCanvas.width = window.innerWidth * 2
     const canvasScale = uiCanvas.width / window.innerWidth;
-    const screenCanvasW = Math.round(window.innerWidth * canvasScale);
-    const screenCanvasH = Math.round(window.innerHeight * canvasScale);
+
+    // safeAreaTop：iPhone 瀏海高度（env(safe-area-inset-top)），
+    // app-container 的 padding-top 就是這個值 + 10px，
+    // 背景圖畫在 window 座標系，UI 卻從 safeAreaTop 開始，需要補正才能對齊。
+    const safeAreaTop = parseInt(
+        getComputedStyle(document.documentElement).getPropertyValue('--sat') || '0'
+    ) || (window.screen.height - window.innerHeight > 100 ? 44 : 0);
+
+    // 截圖寬度 = 螢幕寬度
+    const shotW = Math.round(window.innerWidth * canvasScale);
+
+    // 截圖高度 = eduPanel 底部位置（確保風險說明完整截入）
+    const eduPanel = document.getElementById('eduPanel');
+    const eduBottom = eduPanel
+        ? Math.ceil(eduPanel.getBoundingClientRect().bottom * canvasScale)
+        : Math.round(window.innerHeight * canvasScale);
+    // 不超過 uiCanvas 實際高度
+    const shotH = Math.min(eduBottom, uiCanvas.height);
 
     const finalCanvas = document.createElement('canvas');
-    finalCanvas.width = screenCanvasW;
-    finalCanvas.height = screenCanvasH;
+    finalCanvas.width = shotW;
+    finalCanvas.height = shotH;
     const ctx = finalCanvas.getContext('2d');
 
     if (!isTransparent) {
@@ -2655,9 +2673,9 @@ async function doTakeScreenshot(isTransparent) {
             let srcW = rawW, srcH = rawH;
             let rotate = false;
             const isPortrait = window.innerHeight > window.innerWidth;
-            
+
             if (el.tagName === 'VIDEO' && isPortrait && rawW > rawH) {
-                srcW = rawH; 
+                srcW = rawH;
                 srcH = rawW;
                 rotate = true;
             }
@@ -2667,7 +2685,7 @@ async function doTakeScreenshot(isTransparent) {
             const sX = screenW / srcW;
             const sY = screenH / srcH;
             const coverScale = Math.max(sX, sY) * zoom;
-            
+
             const drawW = srcW * coverScale;
             const drawH = srcH * coverScale;
             const dX = (screenW - drawW) / 2;
@@ -2711,16 +2729,16 @@ async function doTakeScreenshot(isTransparent) {
             ctx.lineWidth = 1 * canvasScale;
             const gridSize = 20 * canvasScale;
             ctx.beginPath();
-            for(let x = 0; x <= finalCanvas.width; x += gridSize) { ctx.moveTo(x, 0); ctx.lineTo(x, finalCanvas.height); }
-            for(let y = 0; y <= finalCanvas.height; y += gridSize) { ctx.moveTo(0, y); ctx.lineTo(finalCanvas.width, y); }
+            for (let x = 0; x <= finalCanvas.width; x += gridSize) { ctx.moveTo(x, 0); ctx.lineTo(x, finalCanvas.height); }
+            for (let y = 0; y <= finalCanvas.height; y += gridSize) { ctx.moveTo(0, y); ctx.lineTo(finalCanvas.width, y); }
             ctx.stroke();
         }
     }
 
-    // 只取頂部螢幕高度，裁掉 taking-screenshot 模式展開的多餘部分
+    // UI 層：從 uiCanvas 頂部裁取到 eduPanel 底部（含風險說明），貼滿 finalCanvas
     ctx.drawImage(uiCanvas,
-        0, 0, screenCanvasW, screenCanvasH,
-        0, 0, screenCanvasW, screenCanvasH
+        0, 0, shotW, shotH,
+        0, 0, shotW, shotH
     );
     
     document.getElementById('shotPreviewImg').src = finalCanvas.toDataURL('image/png');
