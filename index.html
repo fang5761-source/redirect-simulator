@@ -1723,7 +1723,7 @@ function triggerFlash(el) {
   <div class="modal-box" style="padding: 15px; max-width: 95%; max-height: 90vh; display:flex; flex-direction:column; gap:10px;">
     <h3 style="color:var(--safe); margin:0;">📸 戰術截圖已生成</h3>
     <p style="font-size:13px; color:var(--muted); margin:0;">請 <b>長按下方圖片</b> 選擇「儲存圖片」或「分享」</p>
-    <div id="debugInfo" style="display:none; font-size:12px; background:#c00; color:#fff; padding:5px 8px; border-radius:6px; word-break:break-all;"></div>
+
     <div style="flex:1; overflow-y:auto; border-radius:8px; border:2px solid var(--line); background:#ccc;">
         <img id="shotPreviewImg" src="" style="width: 100%; display: block; object-fit: contain;">
     </div>
@@ -2644,13 +2644,7 @@ async function doTakeScreenshot(isTransparent) {
     const satEl = document.getElementById('status-bar-protector');
     const safeAreaTop = satEl ? satEl.offsetHeight : 0;
 
-    // ── DEBUG：截圖前顯示關鍵數值，確認後可移除 ──
-    const _dbg = document.getElementById('toastMessage');
-    if (_dbg) {
-        _dbg.textContent = `sat=${safeAreaTop} | innerH=${window.innerHeight} | uiH=${uiCanvas.height} | scale=${canvasScale.toFixed(2)}`;
-        _dbg.style.cssText = 'display:block;position:fixed;top:0;left:0;right:0;z-index:99999;background:rgba(255,0,0,0.85);color:#fff;font-size:13px;padding:4px 8px;text-align:center;white-space:nowrap;overflow:hidden;';
-        setTimeout(()=>{ _dbg.style.display='none'; }, 8000);
-    }
+
 
     // 截圖寬度 = 螢幕寬度
     const shotW = Math.round(window.innerWidth * canvasScale);
@@ -2689,10 +2683,9 @@ async function doTakeScreenshot(isTransparent) {
             }
 
             const screenW = window.innerWidth;
-            // 背景圖 CSS: position:fixed; top:0; height:100% → 佔據含瀏海的完整螢幕高度
-            // 所以背景圖的置中計算必須用「含瀏海」的總高度，才能與 CSS 顯示一致。
-            // window.innerHeight 不含瀏海，要加回 safeAreaTop。
-            const screenH = window.innerHeight; // DEBUG: safeAreaTop 暫時移除，等待實測數值
+            // 背景圖 CSS position:fixed;top:0;height:100% 從螢幕最頂端(含瀏海)開始
+            // 實測：sat=49, innerH=693 → screenH 必須 = 742 才能與背景圖顯示完全一致
+            const screenH = window.innerHeight + safeAreaTop;
             const sX = screenW / srcW;
             const sY = screenH / srcH;
             const coverScale = Math.max(sX, sY) * zoom;
@@ -2752,14 +2745,6 @@ async function doTakeScreenshot(isTransparent) {
         0, 0, shotW, shotH
     );
     
-    // DEBUG：顯示關鍵數值在預覽畫面上
-    const _di = document.getElementById('debugInfo');
-    if (_di) {
-        const satEl2 = document.getElementById('status-bar-protector');
-        const _sat = satEl2 ? satEl2.offsetHeight : -1;
-        _di.textContent = `sat=${_sat} | innerH=${window.innerHeight} | screenH=${window.screen.height} | uiCanvas=${uiCanvas.width}x${uiCanvas.height} | final=${finalCanvas.width}x${finalCanvas.height} | scale=${canvasScale.toFixed(2)}`;
-        _di.style.display = 'block';
-    }
     document.getElementById('shotPreviewImg').src = finalCanvas.toDataURL('image/png');
     document.getElementById('shotPreviewImg').parentElement.style.background = isTransparent ? 'repeating-conic-gradient(#333 0% 25%, #222 0% 50%) 50% / 20px 20px' : '#000';
     document.getElementById('shotModal').style.display = 'flex';
