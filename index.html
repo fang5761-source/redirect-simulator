@@ -1723,6 +1723,7 @@ function triggerFlash(el) {
   <div class="modal-box" style="padding: 15px; max-width: 95%; max-height: 90vh; display:flex; flex-direction:column; gap:10px;">
     <h3 style="color:var(--safe); margin:0;">📸 戰術截圖已生成</h3>
     <p style="font-size:13px; color:var(--muted); margin:0;">請 <b>長按下方圖片</b> 選擇「儲存圖片」或「分享」</p>
+    <div id="debugInfo" style="display:none; font-size:12px; background:#c00; color:#fff; padding:5px 8px; border-radius:6px; word-break:break-all;"></div>
     <div style="flex:1; overflow-y:auto; border-radius:8px; border:2px solid var(--line); background:#ccc;">
         <img id="shotPreviewImg" src="" style="width: 100%; display: block; object-fit: contain;">
     </div>
@@ -2751,6 +2752,14 @@ async function doTakeScreenshot(isTransparent) {
         0, 0, shotW, shotH
     );
     
+    // DEBUG：顯示關鍵數值在預覽畫面上
+    const _di = document.getElementById('debugInfo');
+    if (_di) {
+        const satEl2 = document.getElementById('status-bar-protector');
+        const _sat = satEl2 ? satEl2.offsetHeight : -1;
+        _di.textContent = `sat=${_sat} | innerH=${window.innerHeight} | screenH=${window.screen.height} | uiCanvas=${uiCanvas.width}x${uiCanvas.height} | final=${finalCanvas.width}x${finalCanvas.height} | scale=${canvasScale.toFixed(2)}`;
+        _di.style.display = 'block';
+    }
     document.getElementById('shotPreviewImg').src = finalCanvas.toDataURL('image/png');
     document.getElementById('shotPreviewImg').parentElement.style.background = isTransparent ? 'repeating-conic-gradient(#333 0% 25%, #222 0% 50%) 50% / 20px 20px' : '#000';
     document.getElementById('shotModal').style.display = 'flex';
