@@ -2680,7 +2680,10 @@ async function doTakeScreenshot(isTransparent) {
             }
 
             const screenW = window.innerWidth;
-            const screenH = window.innerHeight;
+            // 背景圖 CSS: position:fixed; top:0; height:100% → 佔據含瀏海的完整螢幕高度
+            // 所以背景圖的置中計算必須用「含瀏海」的總高度，才能與 CSS 顯示一致。
+            // window.innerHeight 不含瀏海，要加回 safeAreaTop。
+            const screenH = window.innerHeight + safeAreaTop;
             const sX = screenW / srcW;
             const sY = screenH / srcH;
             const coverScale = Math.max(sX, sY) * zoom;
@@ -2688,11 +2691,7 @@ async function doTakeScreenshot(isTransparent) {
             const drawW = srcW * coverScale;
             const drawH = srcH * coverScale;
             const dX = (screenW - drawW) / 2;
-            // dY 加上 safeAreaTop 補正：
-            // 背景圖的座標系從 window 頂部(y=0) 開始，
-            // 但 html2canvas 截到的 UI 從瀏海下方才開始，
-            // 所以背景圖要往上偏移 safeAreaTop 才能與 UI 對齊。
-            const dY = (screenH - drawH) / 2 - safeAreaTop;
+            const dY = (screenH - drawH) / 2;
 
             ctx.save();
             if (rotate) {
