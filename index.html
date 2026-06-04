@@ -2643,6 +2643,14 @@ async function doTakeScreenshot(isTransparent) {
     const satEl = document.getElementById('status-bar-protector');
     const safeAreaTop = satEl ? satEl.offsetHeight : 0;
 
+    // ── DEBUG：截圖前顯示關鍵數值，確認後可移除 ──
+    const _dbg = document.getElementById('toastMessage');
+    if (_dbg) {
+        _dbg.textContent = `sat=${safeAreaTop} | innerH=${window.innerHeight} | uiH=${uiCanvas.height} | scale=${canvasScale.toFixed(2)}`;
+        _dbg.style.cssText = 'display:block;position:fixed;top:0;left:0;right:0;z-index:99999;background:rgba(255,0,0,0.85);color:#fff;font-size:13px;padding:4px 8px;text-align:center;white-space:nowrap;overflow:hidden;';
+        setTimeout(()=>{ _dbg.style.display='none'; }, 8000);
+    }
+
     // 截圖寬度 = 螢幕寬度
     const shotW = Math.round(window.innerWidth * canvasScale);
 
@@ -2683,7 +2691,7 @@ async function doTakeScreenshot(isTransparent) {
             // 背景圖 CSS: position:fixed; top:0; height:100% → 佔據含瀏海的完整螢幕高度
             // 所以背景圖的置中計算必須用「含瀏海」的總高度，才能與 CSS 顯示一致。
             // window.innerHeight 不含瀏海，要加回 safeAreaTop。
-            const screenH = window.innerHeight + safeAreaTop;
+            const screenH = window.innerHeight; // DEBUG: safeAreaTop 暫時移除，等待實測數值
             const sX = screenW / srcW;
             const sY = screenH / srcH;
             const coverScale = Math.max(sX, sY) * zoom;
